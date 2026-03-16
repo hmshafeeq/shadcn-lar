@@ -8,10 +8,16 @@ use Illuminate\Database\Eloquent\{
     Relations\BelongsToMany,
     SoftDeletes
 };
+use Modules\Ecommerce\Database\Factories\ProductTagFactory;
 
 class ProductTag extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected static function newFactory(): ProductTagFactory
+    {
+        return ProductTagFactory::new();
+    }
 
     protected $fillable = [
         'name',

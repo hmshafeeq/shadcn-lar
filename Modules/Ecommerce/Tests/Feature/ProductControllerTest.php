@@ -28,7 +28,7 @@ test('it can list all products', function () {
         ->get('/dashboard/ecommerce/products');
 
     $response->assertStatus(200)
-        ->assertInertia(fn ($page) => $page->component('ecommerce/products')
+        ->assertInertia(fn ($page) => $page->component('Ecommerce::products')
             ->has('products.data', 5)
         );
 });
@@ -63,7 +63,7 @@ test('it can show a product', function () {
         ->get("/dashboard/ecommerce/products/{$product->slug}");
 
     $response->assertStatus(200)
-        ->assertInertia(fn ($page) => $page->component('ecommerce/product')
+        ->assertInertia(fn ($page) => $page->component('Ecommerce::product')
             ->has('product')
         );
 });

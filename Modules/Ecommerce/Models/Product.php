@@ -11,10 +11,16 @@ use Illuminate\Database\Eloquent\{
     Relations\HasMany,
     SoftDeletes
 };
+use Modules\Ecommerce\Database\Factories\ProductFactory;
 
 class Product extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected static function newFactory(): ProductFactory
+    {
+        return ProductFactory::new();
+    }
 
     protected $fillable = [
         'name',

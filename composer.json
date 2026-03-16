@@ -21,12 +21,15 @@
         "nwidart/laravel-modules": "^12.0",
         "owen-it/laravel-auditing": "^14.0",
         "phpoffice/phpspreadsheet": "^5.3",
+        "sentry/sentry-laravel": "^4.22",
         "spatie/laravel-medialibrary": "^11.15",
         "spatie/laravel-permission": "^6.24",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^4.1",
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.9",
         "laravel/breeze": "^2.3",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.13",
@@ -92,6 +95,9 @@
         "test": [
             "@php artisan config:clear --quiet",
             "@php artisan test"
+        ],
+        "analyse": [
+            "./vendor/bin/phpstan analyse --memory-limit=512M"
         ]
     },
     "extra": {

@@ -34,7 +34,7 @@ test('it can list all posts', function () {
         ->get('/dashboard/posts');
 
     $response->assertStatus(200)
-        ->assertInertia(fn ($page) => $page->component('Blog::posts')
+        ->assertInertia(fn ($page) => $page->component('Blog::posts', false)
             ->has('posts.data', 5)
         );
 });
@@ -99,7 +99,7 @@ test('it can show create post form', function () {
         ->get('/dashboard/posts/create');
 
     $response->assertStatus(200)
-        ->assertInertia(fn ($page) => $page->component('Blog::create-post')
+        ->assertInertia(fn ($page) => $page->component('Blog::create-post', false)
             ->has('categories')
             ->has('tags')
         );
