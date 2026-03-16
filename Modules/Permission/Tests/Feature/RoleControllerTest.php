@@ -28,7 +28,7 @@ test('it can list all roles', function () {
         ->get('/dashboard/roles');
 
     $response->assertStatus(200)
-        ->assertInertia(fn ($page) => $page->component('roles/index')
+        ->assertInertia(fn ($page) => $page->component('Permission::roles/index')
             ->has('roles.data', 2)
         );
 });

@@ -34,7 +34,7 @@ test('it can list all posts', function () {
         ->get('/dashboard/posts');
 
     $response->assertStatus(200)
-        ->assertInertia(fn ($page) => $page->component('blog/posts')
+        ->assertInertia(fn ($page) => $page->component('Blog::posts')
             ->has('posts.data', 5)
         );
 });
@@ -99,7 +99,7 @@ test('it can show create post form', function () {
         ->get('/dashboard/posts/create');
 
     $response->assertStatus(200)
-        ->assertInertia(fn ($page) => $page->component('blog/create-post')
+        ->assertInertia(fn ($page) => $page->component('Blog::create-post')
             ->has('categories')
             ->has('tags')
         );
@@ -207,7 +207,7 @@ test('it can show a post', function () {
         ->get("/dashboard/posts/{$post->slug}");
 
     $response->assertStatus(200)
-        ->assertInertia(fn ($page) => $page->component('blog/post')
+        ->assertInertia(fn ($page) => $page->component('Blog::post')
             ->has('post', fn ($prop) => $prop->where('id', $post->id)
                 ->where('slug', $post->slug)
                 ->etc()
@@ -222,7 +222,7 @@ test('it can show edit post form', function () {
         ->get("/dashboard/posts/{$post->slug}/edit");
 
     $response->assertStatus(200)
-        ->assertInertia(fn ($page) => $page->component('blog/edit-post')
+        ->assertInertia(fn ($page) => $page->component('Blog::edit-post')
             ->has('post')
             ->has('categories')
             ->has('tags')

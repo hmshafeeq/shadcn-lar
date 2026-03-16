@@ -3,7 +3,7 @@
 @source "../../Modules/*/resources/js/**/*.tsx";
 
 @plugin "@tailwindcss/forms";
-@plugin "tailwindcss-animate";
+@import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
