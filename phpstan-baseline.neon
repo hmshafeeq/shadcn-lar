@@ -5599,6 +5599,12 @@ parameters:
 			path: Modules/Settings/Http/Controllers/SettingsController.php
 
 		-
+			message: '#^Access to an undefined property PHPUnit\\Framework\\TestCase\:\:\$originalModuleStatuses\.$#'
+			identifier: property.notFound
+			count: 2
+			path: Modules/Settings/tests/Feature/ModulesControllerTest.php
+
+		-
 			message: '#^Call to an undefined method PHPUnit\\Framework\\TestCase\:\:actingAs\(\)\.$#'
 			identifier: method.notFound
 			count: 12
