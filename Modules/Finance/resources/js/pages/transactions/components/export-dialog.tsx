@@ -197,7 +197,7 @@ export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
             <div className="grid grid-cols-2 gap-2">
               <Button
                 type="button"
-                variant={exportFormat === 'csv' ? 'default' : 'outline'}
+                variant={exportFormat === 'csv' ? 'default' : 'outline-solid'}
                 className="justify-start"
                 onClick={() => setExportFormat('csv')}
               >
@@ -206,7 +206,7 @@ export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
               </Button>
               <Button
                 type="button"
-                variant={exportFormat === 'excel' ? 'default' : 'outline'}
+                variant={exportFormat === 'excel' ? 'default' : 'outline-solid'}
                 className="justify-start"
                 onClick={() => setExportFormat('excel')}
               >

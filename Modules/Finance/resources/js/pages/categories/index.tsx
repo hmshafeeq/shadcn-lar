@@ -195,14 +195,14 @@ export default function CategoriesIndex({ categories }: Props) {
         {/* Filters */}
         <div className="flex gap-2 flex-wrap mb-6">
           <Button
-            variant={filterType === 'all' ? 'default' : 'outline'}
+            variant={filterType === 'all' ? 'default' : 'outline-solid'}
             size="sm"
             onClick={() => setFilterType('all')}
           >
             {t('filter.all')}
           </Button>
           <Button
-            variant={filterType === 'income' ? 'default' : 'outline'}
+            variant={filterType === 'income' ? 'default' : 'outline-solid'}
             size="sm"
             onClick={() => setFilterType('income')}
             className={filterType === 'income' ? '' : 'text-green-600'}
@@ -210,7 +210,7 @@ export default function CategoriesIndex({ categories }: Props) {
             {t('filter.income')}
           </Button>
           <Button
-            variant={filterType === 'expense' ? 'default' : 'outline'}
+            variant={filterType === 'expense' ? 'default' : 'outline-solid'}
             size="sm"
             onClick={() => setFilterType('expense')}
             className={filterType === 'expense' ? '' : 'text-red-600'}

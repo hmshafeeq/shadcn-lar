@@ -215,7 +215,7 @@ export function ChatInputBar({
       onDrop={handleDrop}
     >
       <div className="max-w-2xl mx-auto">
-        <div className={`relative rounded-2xl border shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1 transition-all ${isDragging ? 'border-primary border-dashed bg-primary/5 ring-2 ring-primary/20' : 'bg-muted/30'}`}>
+        <div className={`relative rounded-2xl border shadow-xs focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1 transition-all ${isDragging ? 'border-primary border-dashed bg-primary/5 ring-2 ring-primary/20' : 'bg-muted/30'}`}>
           {/* Drop zone overlay */}
           {isDragging && (
             <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl pointer-events-none">

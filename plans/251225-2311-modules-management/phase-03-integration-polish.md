@@ -158,7 +158,7 @@ export function ModulesForm({ modules: initialModules }: Props) {
                   </Badge>
                 )}
                 <Badge
-                  variant={module.enabled ? 'default' : 'outline'}
+                  variant={module.enabled ? 'default' : 'outline-solid'}
                   className='text-xs'
                 >
                   {module.enabled ? 'Enabled' : 'Disabled'}

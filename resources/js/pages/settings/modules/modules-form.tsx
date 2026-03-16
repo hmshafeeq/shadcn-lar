@@ -89,7 +89,7 @@ function SortableModuleItem({ module, processing, onToggle }: SortableModuleItem
               </Badge>
             )}
             <Badge
-              variant={module.enabled ? 'default' : 'outline'}
+              variant={module.enabled ? 'default' : 'outline-solid'}
               className='text-xs'
             >
               {module.enabled ? t('settings.modules.enabled') : t('settings.modules.disabled')}

@@ -240,7 +240,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                   placeholder={`Reply ${mail.name}...`}
                   autofocus={false}
                   editable={true}
-                  editorClassName="focus:outline-none"
+                  editorClassName="focus:outline-hidden"
                 />
                 <div className="flex items-center">
                   <Label

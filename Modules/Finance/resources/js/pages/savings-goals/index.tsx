@@ -173,7 +173,7 @@ export default function SavingsGoalsIndex({ goals, currencies, accounts }: Props
           {filterStatuses.map((status) => (
             <Button
               key={status.value}
-              variant={filterStatus === status.value ? 'default' : 'outline'}
+              variant={filterStatus === status.value ? 'default' : 'outline-solid'}
               size="sm"
               onClick={() => setFilterStatus(status.value)}
             >

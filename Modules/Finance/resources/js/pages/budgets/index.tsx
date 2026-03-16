@@ -133,7 +133,7 @@ export default function BudgetsIndex({ budgets, categories, currencies }: Props)
           {filterPeriods.map((period) => (
             <Button
               key={period.value}
-              variant={filterPeriod === period.value ? 'default' : 'outline'}
+              variant={filterPeriod === period.value ? 'default' : 'outline-solid'}
               size="sm"
               onClick={() => setFilterPeriod(period.value)}
             >

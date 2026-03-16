@@ -131,10 +131,10 @@ Tailwind uses mobile-first responsive design. Base styles apply to all screen si
 
 ```html
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-  <div class="bg-white rounded-lg shadow p-6">Card 1</div>
-  <div class="bg-white rounded-lg shadow p-6">Card 2</div>
-  <div class="bg-white rounded-lg shadow p-6">Card 3</div>
-  <div class="bg-white rounded-lg shadow p-6">Card 4</div>
+  <div class="bg-white rounded-lg shadow-sm p-6">Card 1</div>
+  <div class="bg-white rounded-lg shadow-sm p-6">Card 2</div>
+  <div class="bg-white rounded-lg shadow-sm p-6">Card 3</div>
+  <div class="bg-white rounded-lg shadow-sm p-6">Card 4</div>
 </div>
 ```
 
@@ -166,7 +166,7 @@ Tailwind uses mobile-first responsive design. Base styles apply to all screen si
 ### Navigation
 
 ```html
-<nav class="bg-white shadow">
+<nav class="bg-white shadow-sm">
   <div class="container mx-auto px-4">
     <div class="flex items-center justify-between h-16">
       <div class="text-xl font-bold">Logo</div>

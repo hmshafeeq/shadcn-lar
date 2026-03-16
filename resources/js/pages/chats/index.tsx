@@ -75,12 +75,12 @@ export default function Chats() {
                     </Button>
                   </div>
 
-                  <label className='flex h-12 w-full items-center space-x-0 rounded-md border border-input pl-2 focus-within:outline-none focus-within:ring-1 focus-within:ring-ring'>
+                  <label className='flex h-12 w-full items-center space-x-0 rounded-md border border-input pl-2 focus-within:outline-hidden focus-within:ring-1 focus-within:ring-ring'>
                     <IconSearch size={15} className='mr-2 stroke-slate-500' />
                     <span className='sr-only'>Search</span>
                     <input
                       type='text'
-                      className='w-full flex-1 bg-inherit text-sm focus-visible:outline-none border-none focus:ring-0'
+                      className='w-full flex-1 bg-inherit text-sm focus-visible:outline-hidden border-none focus:ring-0'
                       placeholder='Search chat...'
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
@@ -134,7 +134,7 @@ export default function Chats() {
               {/* Right Side */}
               <div
                 className={cn(
-                  'absolute inset-0 hidden left-full z-50 w-full flex-1 flex-col rounded-md border bg-primary-foreground shadow-sm transition-all duration-200 sm:static sm:z-auto sm:flex',
+                  'absolute inset-0 hidden left-full z-50 w-full flex-1 flex-col rounded-md border bg-primary-foreground shadow-xs transition-all duration-200 sm:static sm:z-auto sm:flex',
                   mobileSelectedUser && 'left-0 flex'
                 )}
               >
@@ -199,7 +199,7 @@ export default function Chats() {
                 <div className='flex flex-1 flex-col gap-2 rounded-md px-4 pb-4 pt-0'>
                   <div className='flex size-full flex-1'>
                     <div className='chat-text-container relative -mr-4 flex flex-1 flex-col overflow-y-hidden'>
-                      <div className='chat-flex flex h-40 w-full flex-grow flex-col-reverse justify-start gap-4 overflow-y-auto py-2 pb-4 pr-4'>
+                      <div className='chat-flex flex h-40 w-full grow flex-col-reverse justify-start gap-4 overflow-y-auto py-2 pb-4 pr-4'>
                         {currentMessage &&
                           Object.keys(currentMessage).map((key) => (
                             <Fragment key={key}>
@@ -207,7 +207,7 @@ export default function Chats() {
                                 <div
                                   key={`${msg.sender}-${msg.timestamp}-${index}`}
                                   className={cn(
-                                    'chat-box max-w-72 break-words px-3 py-2 shadow-lg',
+                                    'chat-box max-w-72 wrap-break-word px-3 py-2 shadow-lg',
                                     msg.sender === 'You'
                                       ? 'self-end rounded-[16px_16px_0_16px] bg-primary/85 text-primary-foreground/75'
                                       : 'self-start rounded-[16px_16px_16px_0] bg-secondary'
@@ -231,7 +231,7 @@ export default function Chats() {
                     </div>
                   </div>
                   <form className='flex w-full flex-none gap-2'>
-                    <div className='flex flex-1 items-center gap-2 rounded-md border border-input px-2 py-1 focus-within:outline-none focus-within:ring-1 focus-within:ring-ring lg:gap-4'>
+                    <div className='flex flex-1 items-center gap-2 rounded-md border border-input px-2 py-1 focus-within:outline-hidden focus-within:ring-1 focus-within:ring-ring lg:gap-4'>
                       <div className='space-x-1'>
                         <Button
                           size='icon'
@@ -269,7 +269,7 @@ export default function Chats() {
                         <input
                           type='text'
                           placeholder='Type your messages...'
-                          className='h-8 w-full border-none focus:ring-0 focus:border-none bg-inherit focus-visible:outline-none'
+                          className='h-8 w-full border-none focus:ring-0 focus:border-none bg-inherit focus-visible:outline-hidden'
                         />
                       </label>
                       <Button

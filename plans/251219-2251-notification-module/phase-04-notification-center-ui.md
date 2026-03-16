@@ -320,7 +320,7 @@ export function NotificationItem({
       )}
     >
       <div className={cn(
-        'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center',
+        'shrink-0 w-10 h-10 rounded-full flex items-center justify-center',
         isUnread ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
       )}>
         <Icon className="h-5 w-5" />
@@ -335,7 +335,7 @@ export function NotificationItem({
             {notification.data.title}
           </p>
           {isUnread && (
-            <span className="flex-shrink-0 w-2 h-2 bg-primary rounded-full" />
+            <span className="shrink-0 w-2 h-2 bg-primary rounded-full" />
           )}
         </div>
 
@@ -359,7 +359,7 @@ export function NotificationItem({
         </div>
       </div>
 
-      <div className="flex-shrink-0 flex items-center gap-1">
+      <div className="shrink-0 flex items-center gap-1">
         {isUnread && (
           <Button
             variant="ghost"

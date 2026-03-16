@@ -35,7 +35,7 @@ export default function MailPage() {
     <>
       <AuthenticatedLayout title="Mails">
         <Main>
-          <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
+          <div className="rounded-xl border bg-card text-card-foreground shadow-xs">
 
             <div className="md:hidden">
               <img

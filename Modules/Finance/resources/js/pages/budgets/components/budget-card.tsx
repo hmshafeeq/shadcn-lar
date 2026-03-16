@@ -57,7 +57,7 @@ export function BudgetCard({
           <div className="flex items-center gap-2 mb-1">
             <span className="font-medium truncate">{budget.name}</span>
             {isOverBudget && (
-              <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+              <AlertCircle className="h-4 w-4 text-red-600 shrink-0" />
             )}
           </div>
           <Progress

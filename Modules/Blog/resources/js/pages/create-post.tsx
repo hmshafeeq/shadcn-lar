@@ -247,7 +247,7 @@ export default function CreateBlogPost({ categories, tags }: CreateBlogPostPageP
                             placeholder={t('page.blog.posts.form.content_placeholder')}
                             autofocus={false}
                             editable={true}
-                            editorClassName="focus:outline-none min-h-[400px]"
+                            editorClassName="focus:outline-hidden min-h-[400px]"
                           />
                         </div>
                       </div>
@@ -397,7 +397,7 @@ export default function CreateBlogPost({ categories, tags }: CreateBlogPostPageP
                           {tags.map((tag) => (
                             <Button
                               key={tag.id}
-                              variant={data.tag_ids.includes(tag.id) ? "default" : "outline"}
+                              variant={data.tag_ids.includes(tag.id) ? "default" : "outline-solid"}
                               size="sm"
                               onClick={() => handleTagToggle(tag.id)}
                               className="justify-start"

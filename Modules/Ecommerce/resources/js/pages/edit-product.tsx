@@ -200,7 +200,7 @@ export default function EditProduct({ product, categories = [], tags = [] }: Edi
                           <Label htmlFor="content">{t('page.ecommerce.products.form.content')}</Label>
                           <MinimalTiptapEditor value={content} onChange={handleContentChange} className="w-full"
                             editorContentClassName="p-5" output="html" placeholder={t('page.ecommerce.products.form.content_placeholder')}
-                            autofocus={false} editable={true} editorClassName="focus:outline-none min-h-[400px]" />
+                            autofocus={false} editable={true} editorClassName="focus:outline-hidden min-h-[400px]" />
                         </div>
                       </div>
                     </CardContent>
@@ -314,7 +314,7 @@ export default function EditProduct({ product, categories = [], tags = [] }: Edi
                       <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-2">
                           {tags.map((tag) => (
-                            <Button key={tag.id} variant={data.tag_ids.includes(tag.id) ? "default" : "outline"}
+                            <Button key={tag.id} variant={data.tag_ids.includes(tag.id) ? "default" : "outline-solid"}
                               size="sm" onClick={() => handleTagToggle(tag.id)} className="justify-start">
                               {data.tag_ids.includes(tag.id) && <X className="mr-1 h-3 w-3" />}
                               {tag.name}

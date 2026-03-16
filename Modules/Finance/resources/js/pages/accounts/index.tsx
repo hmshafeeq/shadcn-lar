@@ -130,7 +130,7 @@ export default function AccountsIndex({ accounts, summary, currencies }: Props) 
           {filterTypes.map((type) => (
             <Button
               key={type.value}
-              variant={filterType === type.value ? 'default' : 'outline'}
+              variant={filterType === type.value ? 'default' : 'outline-solid'}
               size="sm"
               onClick={() => setFilterType(type.value)}
             >

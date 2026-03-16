@@ -14,7 +14,7 @@ interface Props {
 }
 
 function getStatusBadge(status: string) {
-  const variants: Record<string, { variant: 'default' | 'secondary' | 'outline'; label: string }> = {
+  const variants: Record<string, { variant: 'default' | 'secondary' | 'outline-solid'; label: string }> = {
     draft: { variant: 'secondary', label: 'Draft' },
     active: { variant: 'default', label: 'Active' },
     archived: { variant: 'outline', label: 'Archived' },

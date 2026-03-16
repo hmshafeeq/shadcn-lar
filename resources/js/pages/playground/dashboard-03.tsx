@@ -48,7 +48,7 @@ export default function Orders() {
                     <Select>
                       <SelectTrigger
                         id="model"
-                        className="items-start [&_[data-description]]:hidden"
+                        className="items-start **:data-description:hidden"
                       >
                         <SelectValue placeholder="Select a model" />
                       </SelectTrigger>
@@ -142,7 +142,7 @@ export default function Orders() {
                     <Textarea
                       id="content"
                       placeholder="You are a..."
-                      className="min-h-[9.5rem]"
+                      className="min-h-38"
                     />
                   </div>
                 </fieldset>

@@ -95,7 +95,7 @@ export function Hero() {
       />
 
       {/* Gradient overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/30 to-black/60" />
 
       {/* Content */}
       <div className="relative z-10 flex h-full items-center justify-center">
@@ -116,4 +116,4 @@ export function Hero() {
 - Add CSS gradient overlay (see above)
 - Regenerate with "clean composition for text overlay" in prompt
 - Use darker/lighter areas strategically
-- Add text shadows or backdrop-blur
+- Add text shadows or backdrop-blur-sm

@@ -106,7 +106,7 @@ export function ChatTransactionCard({
   const typeBgColor = type === 'income' ? 'bg-green-50 dark:bg-green-950' : type === 'transfer' ? 'bg-blue-50 dark:bg-blue-950' : 'bg-red-50 dark:bg-red-950'
 
   return (
-    <div className="w-full max-w-[98%] rounded-lg border bg-card shadow-sm">
+    <div className="w-full max-w-[98%] rounded-lg border bg-card shadow-xs">
       {/* Summary */}
       <div className="p-3">
         <div className="flex items-start justify-between gap-2">

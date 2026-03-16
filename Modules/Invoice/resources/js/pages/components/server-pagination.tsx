@@ -170,7 +170,7 @@ export function ServerPagination({ meta, filters = {} }: ServerPaginationProps) 
             ) : (
               <Button
                 key={page}
-                variant={page === meta.current_page ? 'default' : 'outline'}
+                variant={page === meta.current_page ? 'default' : 'outline-solid'}
                 size='sm'
                 className='h-8 w-8'
                 onClick={() => goToPage(page as number)}

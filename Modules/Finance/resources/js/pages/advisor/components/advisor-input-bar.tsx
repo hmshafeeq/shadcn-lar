@@ -44,7 +44,7 @@ export function AdvisorInputBar({ onSend, isProcessing }: AdvisorInputBarProps) 
   return (
     <div className="bg-background px-3 sm:px-4 pb-3 pt-2 sm:pb-4">
       <div className="max-w-2xl mx-auto">
-        <div className="relative rounded-2xl border bg-muted/30 shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1 transition-shadow">
+        <div className="relative rounded-2xl border bg-muted/30 shadow-xs focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1 transition-shadow">
           <Textarea
             ref={textareaRef}
             value={text}

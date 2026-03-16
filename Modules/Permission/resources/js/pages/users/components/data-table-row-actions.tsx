@@ -57,7 +57,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                   setCurrentRow(user)
                   setOpen('delete')
                 }}
-                className="!text-red-500"
+                className="text-red-500!"
               >
                 Delete
                 <DropdownMenuShortcut>

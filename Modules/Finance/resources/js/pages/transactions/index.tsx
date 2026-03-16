@@ -765,7 +765,7 @@ export default function TransactionsIndex({
                       ) : (
                         <Button
                           key={page}
-                          variant={page === current ? 'default' : 'outline'}
+                          variant={page === current ? 'default' : 'outline-solid'}
                           size="sm"
                           className="h-8 w-8"
                           onClick={() => router.get(route('dashboard.finance.transactions.index'), { ...filters, page })}

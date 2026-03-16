@@ -146,10 +146,10 @@ export function AdvisorMessageBubble({ message }: AdvisorMessageBubbleProps) {
         ) : message.error ? (
           <p className="text-destructive text-sm">{message.error}</p>
         ) : isUser ? (
-          <div className="whitespace-pre-wrap break-words">{message.content}</div>
+          <div className="whitespace-pre-wrap wrap-break-word">{message.content}</div>
         ) : (
           <div
-            className="break-words advisor-markdown"
+            className="wrap-break-word advisor-markdown"
             dangerouslySetInnerHTML={{ __html: renderedContent ?? '' }}
           />
         )}

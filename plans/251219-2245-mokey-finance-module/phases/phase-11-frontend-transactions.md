@@ -144,7 +144,7 @@ export function TransactionForm({ transaction, accounts, categories }: Transacti
           <Button
             key={type}
             type="button"
-            variant={transactionType === type ? 'default' : 'outline'}
+            variant={transactionType === type ? 'default' : 'outline-solid'}
             onClick={() => setValue('transaction_type', type as any)}
             className={cn(
               type === 'income' && transactionType === type && 'bg-green-600',

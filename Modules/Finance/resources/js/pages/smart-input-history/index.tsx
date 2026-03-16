@@ -172,7 +172,7 @@ export default function SmartInputHistoryIndex({ histories, filters }: Props) {
                         </TableCell>
                         <TableCell>
                           {entry.confidence != null ? (
-                            <Badge variant={entry.confidence >= 0.8 ? 'default' : entry.confidence >= 0.5 ? 'secondary' : 'outline'}>
+                            <Badge variant={entry.confidence >= 0.8 ? 'default' : entry.confidence >= 0.5 ? 'secondary' : 'outline-solid'}>
                               {Math.round(entry.confidence * 100)}%
                             </Badge>
                           ) : '-'}
@@ -220,7 +220,7 @@ export default function SmartInputHistoryIndex({ histories, filters }: Props) {
                   {Array.from({ length: histories.last_page }, (_, i) => i + 1).map((page) => (
                     <Button
                       key={page}
-                      variant={page === histories.current_page ? 'default' : 'outline'}
+                      variant={page === histories.current_page ? 'default' : 'outline-solid'}
                       size="sm"
                       onClick={() => goToPage(page)}
                     >
