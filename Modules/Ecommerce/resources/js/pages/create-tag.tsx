@@ -13,7 +13,7 @@ import { AuthenticatedLayout } from "@/layouts";
 import type { PageProps } from "@/types";
 import type { ProductTagFormData } from "@/types/ecommerce";
 
-export default function CreateTag({}: PageProps) {
+export default function CreateTag(_props: PageProps) {
   const { t } = useTranslation();
   const [data, setData] = useState<ProductTagFormData>({
     name: "",

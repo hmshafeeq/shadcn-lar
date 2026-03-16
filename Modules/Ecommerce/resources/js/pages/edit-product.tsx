@@ -34,19 +34,6 @@ interface EditProductPageProps extends PageProps {
 export default function EditProduct({ product, categories = [], tags = [] }: EditProductPageProps) {
   const { t } = useTranslation();
 
-  // Guard clause - show error if product is not passed
-  if (!product) {
-    return (
-      <AuthenticatedLayout title={t("common.messages.error")}>
-        <Main>
-          <div className="flex items-center justify-center h-64">
-            <p className="text-destructive">{t("page.ecommerce.products.edit.not_found")}</p>
-          </div>
-        </Main>
-      </AuthenticatedLayout>
-    );
-  }
-
   const [data, setData] = useState<ProductFormData>({
     name: product?.name || "",
     slug: product?.slug || "",
@@ -73,6 +60,23 @@ export default function EditProduct({ product, categories = [], tags = [] }: Edi
   const [processing, setProcessing] = useState(false);
   const { toast } = useToast();
 
+  useEffect(() => {
+    setContent(product?.content || "");
+  }, [product?.content]);
+
+  // Guard clause - show error if product is not passed
+  if (!product) {
+    return (
+      <AuthenticatedLayout title={t("common.messages.error")}>
+        <Main>
+          <div className="flex items-center justify-center h-64">
+            <p className="text-destructive">{t("page.ecommerce.products.edit.not_found")}</p>
+          </div>
+        </Main>
+      </AuthenticatedLayout>
+    );
+  }
+
   const initialMedia = product?.featured_image_url
     ? [
         {
@@ -85,10 +89,6 @@ export default function EditProduct({ product, categories = [], tags = [] }: Edi
         },
       ]
     : [];
-
-  useEffect(() => {
-    setContent(product?.content || "");
-  }, [product?.content]);
 
   const handleFeaturedImageChange = (files: File[]) => {
     setFeaturedImageFiles(files);
@@ -131,7 +131,9 @@ export default function EditProduct({ product, categories = [], tags = [] }: Edi
     formData.append("is_featured", data.is_featured ? "1" : "0");
 
     if (data.category_id) formData.append("category_id", data.category_id.toString());
-    data.tag_ids.forEach((tagId, index) => formData.append(`tag_ids[${index}]`, tagId.toString()));
+    data.tag_ids.forEach((tagId, index) => {
+      formData.append(`tag_ids[${index}]`, tagId.toString());
+    });
     if (data.meta_title) formData.append("meta_title", data.meta_title);
     if (data.meta_description) formData.append("meta_description", data.meta_description);
     if (featuredImageFiles.length > 0) {

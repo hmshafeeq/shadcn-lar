@@ -185,7 +185,9 @@ export function ChatInputBar({
 
       recorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: mimeType });
-        stream.getTracks().forEach((track) => track.stop());
+        stream.getTracks().forEach((track) => {
+          track.stop();
+        });
         onSendVoice(blob);
       };
 

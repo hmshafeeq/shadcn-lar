@@ -14,10 +14,10 @@ interface AdvisorMessageBubbleProps {
  */
 function renderMarkdown(text: string): string {
   // Escape HTML entities to prevent XSS
-  const escape = (s: string) =>
+  const escapeHtml = (s: string) =>
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-  const escaped = escape(text);
+  const escaped = escapeHtml(text);
 
   // Extract fenced code blocks before processing other rules
   const codeBlocks: string[] = [];

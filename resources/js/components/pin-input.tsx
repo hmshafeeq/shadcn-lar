@@ -420,8 +420,9 @@ const getValidChildren = (children: React.ReactNode) =>
 const getInputFieldCount = (children: React.ReactNode) =>
   React.Children.toArray(children).filter((child) => {
     if (React.isValidElement(child) && child.type === PinInputField) {
-      return React.isValidElement(child);
+      return true;
     }
+    return false;
   }).length;
 
 export { PinInput, PinInputField };

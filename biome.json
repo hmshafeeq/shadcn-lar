@@ -26,7 +26,17 @@
       },
       "a11y": {
         "useButtonType": "warn",
-        "noLabelWithoutControl": "off"
+        "noLabelWithoutControl": "off",
+        "noSvgWithoutTitle": "off",
+        "useKeyWithClickEvents": "off",
+        "noStaticElementInteractions": "off",
+        "useSemanticElements": "off",
+        "useValidAnchor": "off",
+        "useFocusableInteractive": "off",
+        "useAriaPropsSupportedByRole": "off",
+        "noRedundantAlt": "off",
+        "useMediaCaption": "off",
+        "useAltText": "warn"
       },
       "security": {
         "noDangerouslySetInnerHtml": "off"

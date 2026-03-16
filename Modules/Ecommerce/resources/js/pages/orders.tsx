@@ -40,7 +40,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
 import { AuthenticatedLayout } from "@/layouts";
 import type { PageProps } from "@/types";
 import type { Order, OrderFilters } from "@/types/ecommerce";
@@ -63,7 +62,6 @@ export default function Orders({
   const { t } = useTranslation();
   const [filters, setFilters] = useState<OrderFilters>(initialFilters);
   const [searchTerm, setSearchTerm] = useState(initialFilters?.search || "");
-  const { toast } = useToast();
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);

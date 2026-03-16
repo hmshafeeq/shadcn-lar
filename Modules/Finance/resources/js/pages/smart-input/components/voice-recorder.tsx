@@ -62,7 +62,9 @@ export function VoiceRecorder({
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(chunksRef.current, { type: "audio/webm" });
         onRecordingComplete(audioBlob);
-        stream.getTracks().forEach((track) => track.stop());
+        stream.getTracks().forEach((track) => {
+          track.stop();
+        });
       };
 
       mediaRecorderRef.current = mediaRecorder;

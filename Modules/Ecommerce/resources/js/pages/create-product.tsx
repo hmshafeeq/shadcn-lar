@@ -91,7 +91,9 @@ export default function CreateProduct({ categories = [], tags = [] }: CreateProd
     formData.append("is_featured", data.is_featured ? "1" : "0");
 
     if (data.category_id) formData.append("category_id", data.category_id.toString());
-    data.tag_ids.forEach((tagId, index) => formData.append(`tag_ids[${index}]`, tagId.toString()));
+    data.tag_ids.forEach((tagId, index) => {
+      formData.append(`tag_ids[${index}]`, tagId.toString());
+    });
     if (data.meta_title) formData.append("meta_title", data.meta_title);
     if (data.meta_description) formData.append("meta_description", data.meta_description);
     if (featuredImageFiles.length > 0) formData.append("featured_image", featuredImageFiles[0]);

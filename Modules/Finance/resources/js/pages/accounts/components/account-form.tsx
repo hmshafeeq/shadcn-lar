@@ -74,7 +74,7 @@ export function AccountForm({
 
   const defaultCurrency = currencies.find((c) => c.is_default)?.code || "VND";
 
-  const MAX_BALANCE = 999999999999999999;
+  const MAX_BALANCE = Number.MAX_SAFE_INTEGER;
 
   const { data, setData, post, put, processing, errors, reset, setError, clearErrors } = useForm({
     name: "",
