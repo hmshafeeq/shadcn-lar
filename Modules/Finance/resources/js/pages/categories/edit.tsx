@@ -50,7 +50,7 @@ export default function EditCategory({ category, parentCategories }: Props) {
 
   transform((formData) => ({
     ...formData,
-    parent_id: formData.parent_id ? parseInt(formData.parent_id) : null,
+    parent_id: formData.parent_id ? parseInt(formData.parent_id, 10) : null,
   }));
 
   const handleSubmit = (e: React.FormEvent) => {

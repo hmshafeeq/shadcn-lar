@@ -16,7 +16,7 @@ export default function MailPage() {
     if (layout) {
       try {
         setDefaultLayout(JSON.parse(layout));
-      } catch (e) {
+      } catch (_e) {
         console.error("Invalid layout cookie:", layout);
       }
     }
@@ -24,45 +24,43 @@ export default function MailPage() {
     if (collapsed) {
       try {
         setDefaultCollapsed(JSON.parse(collapsed));
-      } catch (e) {
+      } catch (_e) {
         console.error("Invalid collapsed cookie:", collapsed);
       }
     }
   }, []);
 
   return (
-    <>
-      <AuthenticatedLayout title="Mails">
-        <Main>
-          <div className="rounded-xl border bg-card text-card-foreground shadow-xs">
-            <div className="md:hidden">
-              <img
-                src="/examples/mail-dark.png"
-                width={1280}
-                height={727}
-                alt="Mail"
-                className="hidden dark:block"
-              />
-              <img
-                src="/examples/mail-light.png"
-                width={1280}
-                height={727}
-                alt="Mail"
-                className="block dark:hidden"
-              />
-            </div>
-            <div className="hidden flex-col md:flex">
-              <Mail
-                accounts={accounts}
-                mails={mails}
-                defaultLayout={defaultLayout}
-                defaultCollapsed={defaultCollapsed}
-                navCollapsedSize={4}
-              />
-            </div>
+    <AuthenticatedLayout title="Mails">
+      <Main>
+        <div className="rounded-xl border bg-card text-card-foreground shadow-xs">
+          <div className="md:hidden">
+            <img
+              src="/examples/mail-dark.png"
+              width={1280}
+              height={727}
+              alt="Mail"
+              className="hidden dark:block"
+            />
+            <img
+              src="/examples/mail-light.png"
+              width={1280}
+              height={727}
+              alt="Mail"
+              className="block dark:hidden"
+            />
           </div>
-        </Main>
-      </AuthenticatedLayout>
-    </>
+          <div className="hidden flex-col md:flex">
+            <Mail
+              accounts={accounts}
+              mails={mails}
+              defaultLayout={defaultLayout}
+              defaultCollapsed={defaultCollapsed}
+              navCollapsedSize={4}
+            />
+          </div>
+        </div>
+      </Main>
+    </AuthenticatedLayout>
   );
 }

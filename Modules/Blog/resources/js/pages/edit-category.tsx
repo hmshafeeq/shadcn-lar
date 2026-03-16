@@ -73,7 +73,7 @@ export default function EditCategory({ category, categories = [] }: EditCategory
 
     formData.append("name", data.name);
     formData.append("_method", "PUT");
-    if (data.slug && data.slug.trim()) formData.append("slug", data.slug);
+    if (data.slug?.trim()) formData.append("slug", data.slug);
     if (data.description) formData.append("description", data.description);
     if (data.color) formData.append("color", data.color);
     if (data.icon) formData.append("icon", data.icon);
@@ -320,7 +320,7 @@ export default function EditCategory({ category, categories = [] }: EditCategory
                       onValueChange={(value) =>
                         setData((prev) => ({
                           ...prev,
-                          parent_id: value ? parseInt(value) : undefined,
+                          parent_id: value ? parseInt(value, 10) : undefined,
                         }))
                       }
                     >

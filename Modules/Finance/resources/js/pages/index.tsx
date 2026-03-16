@@ -2,7 +2,6 @@ import { Link } from "@inertiajs/react";
 import type {
   AccountSummary,
   Budget,
-  FinanceDashboardData,
   MonthlyProjection,
   Transaction,
 } from "@modules/Finance/types/finance";

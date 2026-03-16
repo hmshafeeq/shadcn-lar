@@ -43,7 +43,7 @@ function renderMarkdown(text: string): string {
         inList = false;
       }
       result.push(
-        `<pre class="my-2 p-2.5 rounded-lg bg-background/50 overflow-x-auto text-xs"><code>${codeBlocks[parseInt(codeMatch[1])]}</code></pre>`,
+        `<pre class="my-2 p-2.5 rounded-lg bg-background/50 overflow-x-auto text-xs"><code>${codeBlocks[parseInt(codeMatch[1], 10)]}</code></pre>`,
       );
       continue;
     }

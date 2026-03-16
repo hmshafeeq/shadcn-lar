@@ -53,7 +53,7 @@ export default function EditSavingsGoal({ goal, currencies, accounts }: Props) {
   transform((formData) => ({
     ...formData,
     target_amount: Math.round(parseFloat(formData.target_amount || "0")),
-    target_account_id: formData.target_account_id ? parseInt(formData.target_account_id) : null,
+    target_account_id: formData.target_account_id ? parseInt(formData.target_account_id, 10) : null,
     target_date: formData.target_date || null,
   }));
 

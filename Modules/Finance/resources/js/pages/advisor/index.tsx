@@ -1,4 +1,3 @@
-import { router } from "@inertiajs/react";
 import type { AdvisorConversationSummary, AdvisorMessage } from "@modules/Finance/types/finance";
 import { Bot, PanelLeft, PanelLeftClose, Settings } from "lucide-react";
 import { useCallback, useState } from "react";

@@ -8,7 +8,6 @@ import { format } from "date-fns";
 import {
   ArrowLeftRight,
   Check,
-  ChevronDown,
   ChevronUp,
   Pencil,
   Save,
@@ -90,8 +89,8 @@ export function ChatTransactionCard({
       type,
       amount,
       description,
-      account_id: parseInt(accountId),
-      category_id: categoryId ? parseInt(categoryId) : null,
+      account_id: parseInt(accountId, 10),
+      category_id: categoryId ? parseInt(categoryId, 10) : null,
       transaction_date: transactionDate,
       notes: notes || null,
     });

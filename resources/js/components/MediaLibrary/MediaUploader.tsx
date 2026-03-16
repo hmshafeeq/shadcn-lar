@@ -44,7 +44,7 @@ export default function MediaUploader({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>(initialMedia);
   const [dragActive, setDragActive] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+  const [_uploadProgress, _setUploadProgress] = useState<{ [key: string]: number }>({});
   const [errors, setErrors] = useState<string[]>([]);
 
   const validateFile = (file: File): string | null => {

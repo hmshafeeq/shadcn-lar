@@ -1,6 +1,5 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import * as React from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster as SonnerToaster } from "sonner";
 import { CommandMenu } from "@/components/command-menu";

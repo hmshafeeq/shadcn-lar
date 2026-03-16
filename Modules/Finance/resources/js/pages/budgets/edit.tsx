@@ -82,7 +82,7 @@ export default function EditBudget({ budget, categories, currencies }: Props) {
   transform((formData) => ({
     ...formData,
     amount: Math.round(parseFloat(formData.amount || "0")),
-    category_id: formData.category_id ? parseInt(formData.category_id) : null,
+    category_id: formData.category_id ? parseInt(formData.category_id, 10) : null,
   }));
 
   // Only update dates when user changes period type, not on initial load

@@ -38,7 +38,7 @@ function formatFullCurrency(value: number, code: string): string {
 function formatPeriod(period: string): string {
   if (period.length === 7) {
     const [year, month] = period.split("-");
-    const date = new Date(parseInt(year), parseInt(month) - 1);
+    const date = new Date(parseInt(year, 10), parseInt(month, 10) - 1);
     return date.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
   }
   const date = new Date(period);

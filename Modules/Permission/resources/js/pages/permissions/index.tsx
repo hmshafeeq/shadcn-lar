@@ -321,20 +321,16 @@ export default function Permissions({
             </CardContent>
             <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-xs text-muted-foreground">
-                {permissions?.current_page && permissions?.per_page && permissions?.total ? (
-                  <>
-                    {t("page.permissions.showing", {
+                {permissions?.current_page && permissions?.per_page && permissions?.total
+                  ? t("page.permissions.showing", {
                       from: (permissions.current_page - 1) * permissions.per_page + 1,
                       to: Math.min(
                         permissions.current_page * permissions.per_page,
                         permissions.total,
                       ),
                       total: permissions.total,
-                    })}
-                  </>
-                ) : (
-                  <>{t("page.permissions.showing_zero")}</>
-                )}
+                    })
+                  : t("page.permissions.showing_zero")}
               </div>
 
               {permissions.last_page > 1 && (

@@ -92,7 +92,7 @@ export function SavingsGoalForm({
     const formData = {
       ...data,
       target_amount: Math.round(parseFloat(data.target_amount || "0")),
-      target_account_id: data.target_account_id ? parseInt(data.target_account_id) : null,
+      target_account_id: data.target_account_id ? parseInt(data.target_account_id, 10) : null,
       target_date: data.target_date || null,
     };
 

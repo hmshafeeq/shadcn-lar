@@ -33,7 +33,7 @@ export function DatePicker({
     if (!value) return undefined;
     if (value instanceof Date) return value;
     const parsed = new Date(value);
-    return isNaN(parsed.getTime()) ? undefined : parsed;
+    return Number.isNaN(parsed.getTime()) ? undefined : parsed;
   }, [value]);
 
   const handleSelect = (selectedDate: Date | undefined) => {

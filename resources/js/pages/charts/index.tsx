@@ -28,38 +28,36 @@ export const description = "A collection of health charts.";
 
 export default function Charts() {
   return (
-    <>
-      <AuthenticatedLayout title={"Chart example"}>
-        <Main>
-          <div className="grid flex-1 scroll-mt-20 items-start gap-10 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
-            <TimeInBed />
-            <Resting />
-            <RadialChartLabel />
-            <AreaChartDemo />
-            <BarChartHorizontal />
-            <BarChartMultiple />
-            <BarChartSingle />
-            <LineChartMultiple />
-            <BarChartActive />
-            <PieChartInteractive />
-            <RadialChartShape />
-            <PieChartDonut />
-            <PieChartDemo />
-            <RadialChartText />
-            <div className="flex gap-4 flex-wrap">
-              <ActiveEnergy />
-              <Move />
-            </div>
-            <MoveRadial />
-            <AverageSteps />
-            <div className="flex gap-5 flex-wrap">
-              <WalkingDistance />
-              <Progress />
-            </div>
-            <div className="flex gap-5 flex-wrap"></div>
+    <AuthenticatedLayout title={"Chart example"}>
+      <Main>
+        <div className="grid flex-1 scroll-mt-20 items-start gap-10 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
+          <TimeInBed />
+          <Resting />
+          <RadialChartLabel />
+          <AreaChartDemo />
+          <BarChartHorizontal />
+          <BarChartMultiple />
+          <BarChartSingle />
+          <LineChartMultiple />
+          <BarChartActive />
+          <PieChartInteractive />
+          <RadialChartShape />
+          <PieChartDonut />
+          <PieChartDemo />
+          <RadialChartText />
+          <div className="flex gap-4 flex-wrap">
+            <ActiveEnergy />
+            <Move />
           </div>
-        </Main>
-      </AuthenticatedLayout>
-    </>
+          <MoveRadial />
+          <AverageSteps />
+          <div className="flex gap-5 flex-wrap">
+            <WalkingDistance />
+            <Progress />
+          </div>
+          <div className="flex gap-5 flex-wrap"></div>
+        </div>
+      </Main>
+    </AuthenticatedLayout>
   );
 }

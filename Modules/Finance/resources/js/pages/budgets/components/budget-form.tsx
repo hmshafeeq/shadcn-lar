@@ -149,7 +149,7 @@ export function BudgetForm({
     const formData = {
       ...data,
       amount: Math.round(parseFloat(data.amount || "0")),
-      category_id: data.category_id ? parseInt(data.category_id) : null,
+      category_id: data.category_id ? parseInt(data.category_id, 10) : null,
     };
 
     if (isEditing && budget) {

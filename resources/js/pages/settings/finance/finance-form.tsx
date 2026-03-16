@@ -156,7 +156,7 @@ export function FinanceForm({ settings, currencies, accounts }: Props) {
                       "w-[200px] appearance-none font-normal",
                     )}
                     value={field.value}
-                    onChange={(e) => field.onChange(parseInt(e.target.value))}
+                    onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
                   >
                     {months.map((month) => (
                       <option key={month.value} value={month.value}>
@@ -224,7 +224,7 @@ export function FinanceForm({ settings, currencies, accounts }: Props) {
                       )}
                       value={field.value ?? ""}
                       onChange={(e) =>
-                        field.onChange(e.target.value ? parseInt(e.target.value) : null)
+                        field.onChange(e.target.value ? parseInt(e.target.value, 10) : null)
                       }
                     >
                       <option value="">{t("settings.finance.no_default_account")}</option>

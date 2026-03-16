@@ -41,7 +41,7 @@ export function InvoiceForm({ invoice, defaults }: Props) {
   const parseDate = (dateStr: string | undefined): Date | undefined => {
     if (!dateStr) return undefined;
     const d = new Date(dateStr);
-    return isNaN(d.getTime()) ? undefined : d;
+    return Number.isNaN(d.getTime()) ? undefined : d;
   };
 
   const calculateDueDate = (invoiceDate: Date, terms: number): Date => {

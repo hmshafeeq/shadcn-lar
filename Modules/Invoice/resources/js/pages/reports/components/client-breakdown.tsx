@@ -47,7 +47,7 @@ export function ClientBreakdown({ data, currency }: ClientBreakdownProps) {
 
   const chartData = data.map((item) => ({
     ...item,
-    shortName: item.name.length > 15 ? item.name.substring(0, 15) + "..." : item.name,
+    shortName: item.name.length > 15 ? `${item.name.substring(0, 15)}...` : item.name,
   }));
 
   if (data.length === 0) {

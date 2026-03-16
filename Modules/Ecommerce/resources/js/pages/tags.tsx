@@ -3,7 +3,6 @@ import { Edit, File, MoreHorizontal, PlusCircle, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Main } from "@/components/layout";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -64,7 +63,7 @@ export default function Tags({
   filters: initialFilters = {},
 }: TagsPageProps) {
   const { t } = useTranslation();
-  const [filters, setFilters] = useState<TagFilters>(initialFilters);
+  const [filters, _setFilters] = useState<TagFilters>(initialFilters);
   const [searchTerm, setSearchTerm] = useState(initialFilters?.search || "");
   const { toast } = useToast();
 
@@ -235,135 +234,133 @@ export default function Tags({
   );
 
   return (
-    <>
-      <AuthenticatedLayout title={t("page.ecommerce.tags.title")}>
-        <Main>
-          <div className="grid flex-1 items-start gap-4 md:gap-8">
-            <Tabs defaultValue="all">
-              <div className="flex items-center">
-                <TabsList>
-                  <TabsTrigger value="all">{t("common.filters.all")}</TabsTrigger>
-                </TabsList>
-                <div className="ml-auto flex items-center gap-2">
-                  <div className="relative">
-                    <Input
-                      placeholder={t("page.ecommerce.tags.search_placeholder")}
-                      value={searchTerm}
-                      onChange={(e) => handleSearch(e.target.value)}
-                      className="w-64"
-                    />
-                  </div>
-                  <Button size="sm" variant="outline" className="h-7 gap-1">
-                    <File className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      {t("common.actions.export")}
-                    </span>
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="h-7 gap-1"
-                    onClick={() => router.get(route("dashboard.ecommerce.product-tags.create"))}
-                  >
-                    <PlusCircle className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      {t("page.ecommerce.tags.add_tag")}
-                    </span>
-                  </Button>
+    <AuthenticatedLayout title={t("page.ecommerce.tags.title")}>
+      <Main>
+        <div className="grid flex-1 items-start gap-4 md:gap-8">
+          <Tabs defaultValue="all">
+            <div className="flex items-center">
+              <TabsList>
+                <TabsTrigger value="all">{t("common.filters.all")}</TabsTrigger>
+              </TabsList>
+              <div className="ml-auto flex items-center gap-2">
+                <div className="relative">
+                  <Input
+                    placeholder={t("page.ecommerce.tags.search_placeholder")}
+                    value={searchTerm}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="w-64"
+                  />
                 </div>
+                <Button size="sm" variant="outline" className="h-7 gap-1">
+                  <File className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    {t("common.actions.export")}
+                  </span>
+                </Button>
+                <Button
+                  size="sm"
+                  className="h-7 gap-1"
+                  onClick={() => router.get(route("dashboard.ecommerce.product-tags.create"))}
+                >
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    {t("page.ecommerce.tags.add_tag")}
+                  </span>
+                </Button>
               </div>
+            </div>
 
-              <TabsContent value="all">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t("page.ecommerce.tags.title")}</CardTitle>
-                    <CardDescription>{t("page.ecommerce.tags.description")}</CardDescription>
-                  </CardHeader>
-                  <CardContent>{renderTagTable()}</CardContent>
-                  <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div className="text-xs text-muted-foreground">
-                      {tags?.current_page && tags?.per_page && tags?.total ? (
-                        <>
-                          {t("common.pagination.showing")}{" "}
-                          <strong>
-                            {(tags.current_page - 1) * tags.per_page + 1}-
-                            {Math.min(tags.current_page * tags.per_page, tags.total)}
-                          </strong>{" "}
-                          {t("common.pagination.of")} <strong>{tags.total}</strong>{" "}
-                          {t("page.ecommerce.tags.tags")}
-                        </>
-                      ) : (
-                        <>
-                          {t("common.pagination.showing")} <strong>0</strong>{" "}
-                          {t("page.ecommerce.tags.tags")}
-                        </>
-                      )}
-                    </div>
-
-                    {tags.last_page > 1 && (
-                      <Pagination>
-                        <PaginationContent>
-                          <PaginationItem>
-                            <PaginationPrevious
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                if (tags.current_page > 1) {
-                                  handlePageChange(tags.current_page - 1);
-                                }
-                              }}
-                              className={
-                                tags.current_page === 1 ? "pointer-events-none opacity-50" : ""
-                              }
-                            />
-                          </PaginationItem>
-
-                          {generatePageNumbers().map((page, index) => (
-                            <PaginationItem key={index}>
-                              {page === "..." ? (
-                                <span className="flex h-9 w-9 items-center justify-center text-sm">
-                                  ...
-                                </span>
-                              ) : (
-                                <PaginationLink
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    handlePageChange(page as number);
-                                  }}
-                                  isActive={page === tags.current_page}
-                                >
-                                  {page}
-                                </PaginationLink>
-                              )}
-                            </PaginationItem>
-                          ))}
-
-                          <PaginationItem>
-                            <PaginationNext
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                if (tags.current_page < tags.last_page) {
-                                  handlePageChange(tags.current_page + 1);
-                                }
-                              }}
-                              className={
-                                tags.current_page === tags.last_page
-                                  ? "pointer-events-none opacity-50"
-                                  : ""
-                              }
-                            />
-                          </PaginationItem>
-                        </PaginationContent>
-                      </Pagination>
+            <TabsContent value="all">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("page.ecommerce.tags.title")}</CardTitle>
+                  <CardDescription>{t("page.ecommerce.tags.description")}</CardDescription>
+                </CardHeader>
+                <CardContent>{renderTagTable()}</CardContent>
+                <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="text-xs text-muted-foreground">
+                    {tags?.current_page && tags?.per_page && tags?.total ? (
+                      <>
+                        {t("common.pagination.showing")}{" "}
+                        <strong>
+                          {(tags.current_page - 1) * tags.per_page + 1}-
+                          {Math.min(tags.current_page * tags.per_page, tags.total)}
+                        </strong>{" "}
+                        {t("common.pagination.of")} <strong>{tags.total}</strong>{" "}
+                        {t("page.ecommerce.tags.tags")}
+                      </>
+                    ) : (
+                      <>
+                        {t("common.pagination.showing")} <strong>0</strong>{" "}
+                        {t("page.ecommerce.tags.tags")}
+                      </>
                     )}
-                  </CardFooter>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </Main>
-      </AuthenticatedLayout>
-    </>
+                  </div>
+
+                  {tags.last_page > 1 && (
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (tags.current_page > 1) {
+                                handlePageChange(tags.current_page - 1);
+                              }
+                            }}
+                            className={
+                              tags.current_page === 1 ? "pointer-events-none opacity-50" : ""
+                            }
+                          />
+                        </PaginationItem>
+
+                        {generatePageNumbers().map((page, index) => (
+                          <PaginationItem key={index}>
+                            {page === "..." ? (
+                              <span className="flex h-9 w-9 items-center justify-center text-sm">
+                                ...
+                              </span>
+                            ) : (
+                              <PaginationLink
+                                href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handlePageChange(page as number);
+                                }}
+                                isActive={page === tags.current_page}
+                              >
+                                {page}
+                              </PaginationLink>
+                            )}
+                          </PaginationItem>
+                        ))}
+
+                        <PaginationItem>
+                          <PaginationNext
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (tags.current_page < tags.last_page) {
+                                handlePageChange(tags.current_page + 1);
+                              }
+                            }}
+                            className={
+                              tags.current_page === tags.last_page
+                                ? "pointer-events-none opacity-50"
+                                : ""
+                            }
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  )}
+                </CardFooter>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </Main>
+    </AuthenticatedLayout>
   );
 }

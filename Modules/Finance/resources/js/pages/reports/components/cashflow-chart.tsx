@@ -1,17 +1,7 @@
 import type { CashflowAnalysis } from "@modules/Finance/types/finance";
 import { Target, TrendingUp, Wallet } from "lucide-react";
-import * as React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ComposedChart,
-  Line,
-  ReferenceLine,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   type ChartConfig,
@@ -216,9 +206,9 @@ export function CashflowChart({ data, currencyCode }: CashflowChartProps) {
                       );
                     }
                     const labels: Record<string, string> = {
-                      passiveIncome: t("page.reports.passive") + ":",
-                      essentialExpense: t("page.reports.essential") + ":",
-                      expense: t("common.total") + ":",
+                      passiveIncome: `${t("page.reports.passive")}:`,
+                      essentialExpense: `${t("page.reports.essential")}:`,
+                      expense: `${t("common.total")}:`,
                     };
                     return (
                       <div className="flex items-center gap-2">

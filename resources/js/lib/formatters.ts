@@ -1,7 +1,7 @@
 import { dayjs, isValidDate, safeParseDate } from "./date-utils";
 
 let dateFormatter: Intl.DateTimeFormat;
-let dateTimeFormatter: Intl.DateTimeFormat;
+let _dateTimeFormatter: Intl.DateTimeFormat;
 let decimalFormatter: Intl.NumberFormat;
 let numberFormatter: Intl.NumberFormat;
 
@@ -22,7 +22,7 @@ export function toIntlDateString(date: any) {
 
 export function toIntlDateTimeString(date: any) {
   if (!isValidDate(date)) return undefined;
-  const localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const _localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   // return moment.tz(date, localTimeZone).format("MM/DD/YYYY, HH:mm z")
 }
 
@@ -38,7 +38,7 @@ export function toIntlTimeString(date: any, time: any) {
   const dateTime = `${currentDateStr}T${paddedTime}Z`;
   if (!isValidDate(dateTime)) return undefined;
 
-  const localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const _localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   // return moment.tz(dateTime, localTimeZone).format('MM/DD/YYYY, HH:mm z');
 }
 

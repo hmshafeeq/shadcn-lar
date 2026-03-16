@@ -52,10 +52,10 @@ export default function EditTransaction({ transaction, accounts, categories }: P
   transform((formData) => ({
     ...formData,
     amount: parseFloat(formData.amount || "0"),
-    account_id: formData.account_id ? parseInt(formData.account_id) : null,
-    category_id: formData.category_id ? parseInt(formData.category_id) : null,
+    account_id: formData.account_id ? parseInt(formData.account_id, 10) : null,
+    category_id: formData.category_id ? parseInt(formData.category_id, 10) : null,
     transfer_account_id: formData.transfer_account_id
-      ? parseInt(formData.transfer_account_id)
+      ? parseInt(formData.transfer_account_id, 10)
       : null,
   }));
 

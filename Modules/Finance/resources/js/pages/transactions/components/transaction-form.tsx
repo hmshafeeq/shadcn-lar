@@ -27,7 +27,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
 interface TransactionFormProps {
@@ -115,8 +115,8 @@ export function TransactionForm({
         route("dashboard.finance.transactions.update", transaction.id),
         {
           transaction_type: data.type,
-          account_id: parseInt(data.account_id),
-          category_id: data.category_id ? parseInt(data.category_id) : null,
+          account_id: parseInt(data.account_id, 10),
+          category_id: data.category_id ? parseInt(data.category_id, 10) : null,
           amount: parseFloat(data.amount || "0"),
           description: data.description,
           notes: data.notes,
@@ -133,9 +133,11 @@ export function TransactionForm({
       const formData = {
         ...data,
         amount: parseFloat(data.amount || "0"),
-        account_id: parseInt(data.account_id),
-        category_id: data.category_id ? parseInt(data.category_id) : null,
-        transfer_account_id: data.transfer_account_id ? parseInt(data.transfer_account_id) : null,
+        account_id: parseInt(data.account_id, 10),
+        category_id: data.category_id ? parseInt(data.category_id, 10) : null,
+        transfer_account_id: data.transfer_account_id
+          ? parseInt(data.transfer_account_id, 10)
+          : null,
       };
 
       post(route("dashboard.finance.transactions.store"), {

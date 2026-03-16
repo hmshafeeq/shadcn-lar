@@ -1,7 +1,7 @@
 ---
 title: "chore: Adopt TimeBox tooling and modernize dev infrastructure"
 type: chore
-status: active
+status: completed
 date: 2026-03-16
 ---
 

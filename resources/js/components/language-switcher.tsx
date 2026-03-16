@@ -44,7 +44,7 @@ export function LanguageSwitcher() {
     );
   };
 
-  const currentLanguage = languages.find((l) => l.code === currentLocale) || languages[0];
+  const _currentLanguage = languages.find((l) => l.code === currentLocale) || languages[0];
 
   return (
     <DropdownMenu modal={false}>

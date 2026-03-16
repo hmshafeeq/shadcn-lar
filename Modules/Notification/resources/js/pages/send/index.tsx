@@ -158,7 +158,7 @@ export default function SendNotification({
           description: result.message || t("common.messages.something_went_wrong"),
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         variant: "destructive",
         title: t("common.messages.error"),
@@ -342,7 +342,7 @@ export default function SendNotification({
                         <FormItem>
                           <FormLabel>{t("page.notifications.send.template")}</FormLabel>
                           <Select
-                            onValueChange={(value) => field.onChange(parseInt(value))}
+                            onValueChange={(value) => field.onChange(parseInt(value, 10))}
                             defaultValue={field.value?.toString()}
                           >
                             <FormControl>

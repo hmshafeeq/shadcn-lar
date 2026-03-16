@@ -125,7 +125,7 @@ export function ChatInputBar({
       dragCounterRef.current = 0;
 
       const file = e.dataTransfer.files?.[0];
-      if (file && file.type.startsWith("image/")) {
+      if (file?.type.startsWith("image/")) {
         handleFileSelect(file);
       }
     },

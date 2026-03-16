@@ -1,5 +1,4 @@
 import { Head, Link } from "@inertiajs/react";
-import * as React from "react";
 import PrimaryButton from "@/components/PrimaryButton";
 import type { PageProps } from "@/types";
 

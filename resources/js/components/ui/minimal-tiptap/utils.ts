@@ -175,7 +175,7 @@ const base64MimeType = (encoded: string): string => {
 const isBase64 = (str: string): boolean => {
   if (str.startsWith("data:")) {
     const matches = str.match(/^data:[^;]+;base64,(.+)$/);
-    if (matches && matches[1]) {
+    if (matches?.[1]) {
       str = matches[1];
     } else {
       return false;

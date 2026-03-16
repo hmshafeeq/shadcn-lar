@@ -61,7 +61,7 @@ export function UserAuthForm({
                 <Link
                   href={route("password.request")}
                   className="text-sm font-medium text-muted-foreground hover:opacity-75"
-                  tabIndex={1}
+                  tabIndex="0"
                 >
                   Forgot password?
                 </Link>

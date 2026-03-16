@@ -43,7 +43,7 @@ export default function CreateRole({ permissions, groupedPermissions }: CreateRo
     );
   };
 
-  const handleGroupToggle = (group: string, permissions: { name: string }[]) => {
+  const handleGroupToggle = (_group: string, permissions: { name: string }[]) => {
     const groupPermissionNames = permissions.map((p) => p.name);
     const allSelected = groupPermissionNames.every((p) => selectedPermissions.includes(p));
 

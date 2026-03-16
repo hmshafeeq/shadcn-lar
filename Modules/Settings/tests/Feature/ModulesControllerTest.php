@@ -8,6 +8,11 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
+    $this->originalModuleStatuses = file_get_contents(base_path('modules_statuses.json'));
+});
+
+afterEach(function () {
+    file_put_contents(base_path('modules_statuses.json'), $this->originalModuleStatuses);
 });
 
 test('super admin can view modules page', function () {

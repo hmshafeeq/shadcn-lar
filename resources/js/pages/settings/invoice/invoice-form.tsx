@@ -148,7 +148,7 @@ export function InvoiceForm({ settings, currencies }: Props) {
                       "w-[200px] appearance-none font-normal",
                     )}
                     value={field.value}
-                    onChange={(e) => field.onChange(parseInt(e.target.value))}
+                    onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
                   >
                     {paymentTermsOptions.map((option) => (
                       <option key={option.value} value={option.value}>

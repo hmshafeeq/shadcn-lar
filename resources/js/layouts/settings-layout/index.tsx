@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { usePermission } from "@/hooks/use-permission";
 import SidebarNav from "@/pages/settings/components/sidebar-nav";
-import { type SettingsNavItem, settingsNavItems } from "@/pages/settings/data/nav-items";
+import { settingsNavItems } from "@/pages/settings/data/nav-items";
 import type { PageProps } from "@/types";
 
 export function SettingLayout({ children, title }: { children: React.ReactNode; title?: string }) {

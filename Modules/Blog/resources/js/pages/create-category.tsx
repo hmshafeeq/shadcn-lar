@@ -65,7 +65,7 @@ export default function CreateCategory({ categories = [] }: CreateCategoryPagePr
     const formData = new FormData();
 
     formData.append("name", data.name);
-    if (data.slug && data.slug.trim()) formData.append("slug", data.slug);
+    if (data.slug?.trim()) formData.append("slug", data.slug);
     if (data.description) formData.append("description", data.description);
     if (data.color) formData.append("color", data.color);
     if (data.icon) formData.append("icon", data.icon);
@@ -293,7 +293,7 @@ export default function CreateCategory({ categories = [] }: CreateCategoryPagePr
                       onValueChange={(value) =>
                         setData((prev) => ({
                           ...prev,
-                          parent_id: value ? parseInt(value) : undefined,
+                          parent_id: value ? parseInt(value, 10) : undefined,
                         }))
                       }
                     >

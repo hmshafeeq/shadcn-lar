@@ -1,5 +1,5 @@
 import { router } from "@inertiajs/react";
-import { Edit, File, ListFilter, MoreHorizontal, PlusCircle, Shield, Trash2 } from "lucide-react";
+import { Edit, MoreHorizontal, PlusCircle, Shield, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Main } from "@/components/layout";
@@ -298,17 +298,13 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
             </CardContent>
             <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-xs text-muted-foreground">
-                {roles?.current_page && roles?.per_page && roles?.total ? (
-                  <>
-                    {t("page.roles.showing", {
+                {roles?.current_page && roles?.per_page && roles?.total
+                  ? t("page.roles.showing", {
                       from: (roles.current_page - 1) * roles.per_page + 1,
                       to: Math.min(roles.current_page * roles.per_page, roles.total),
                       total: roles.total,
-                    })}
-                  </>
-                ) : (
-                  <>{t("page.roles.showing_zero")}</>
-                )}
+                    })
+                  : t("page.roles.showing_zero")}
               </div>
 
               {roles.last_page > 1 && (

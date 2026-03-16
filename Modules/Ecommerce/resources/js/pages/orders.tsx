@@ -246,196 +246,194 @@ export default function Orders({
   );
 
   return (
-    <>
-      <AuthenticatedLayout title={t("page.ecommerce.orders.title")}>
-        <Main>
-          <div className="grid flex-1 items-start gap-4 md:gap-8">
-            <Tabs defaultValue={filters.status || "all"} onValueChange={handleTabChange}>
-              <div className="flex items-center">
-                <TabsList>
-                  <TabsTrigger value="all">{t("common.filters.all")}</TabsTrigger>
-                  <TabsTrigger value="pending">
-                    {t("page.ecommerce.orders.status.pending")}
-                  </TabsTrigger>
-                  <TabsTrigger value="processing">
-                    {t("page.ecommerce.orders.status.processing")}
-                  </TabsTrigger>
-                  <TabsTrigger value="completed">
-                    {t("page.ecommerce.orders.status.completed")}
-                  </TabsTrigger>
-                  <TabsTrigger value="cancelled" className="hidden sm:flex">
-                    {t("page.ecommerce.orders.status.cancelled")}
-                  </TabsTrigger>
-                  <TabsTrigger value="refunded" className="hidden sm:flex">
-                    {t("page.ecommerce.orders.status.refunded")}
-                  </TabsTrigger>
-                </TabsList>
-                <div className="ml-auto flex items-center gap-2">
-                  <div className="relative">
-                    <Input
-                      placeholder={t("page.ecommerce.orders.search_placeholder")}
-                      value={searchTerm}
-                      onChange={(e) => handleSearch(e.target.value)}
-                      className="w-64"
-                    />
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-7 gap-1">
-                        <ListFilter className="h-3.5 w-3.5" />
-                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                          {t("common.actions.filter")}
-                        </span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>
-                        {t("page.ecommerce.orders.filter_payment_status")}
-                      </DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuCheckboxItem
-                        checked={!filters.payment_status}
-                        onCheckedChange={(checked) => {
-                          if (checked) handleFilterChange({ payment_status: undefined });
-                        }}
-                      >
-                        {t("page.ecommerce.orders.all_payment_status")}
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem
-                        checked={filters.payment_status === "paid"}
-                        onCheckedChange={(checked) =>
-                          handleFilterChange({ payment_status: checked ? "paid" : undefined })
-                        }
-                      >
-                        {t("page.ecommerce.orders.payment_status.paid")}
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem
-                        checked={filters.payment_status === "unpaid"}
-                        onCheckedChange={(checked) =>
-                          handleFilterChange({ payment_status: checked ? "unpaid" : undefined })
-                        }
-                      >
-                        {t("page.ecommerce.orders.payment_status.unpaid")}
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem
-                        checked={filters.payment_status === "refunded"}
-                        onCheckedChange={(checked) =>
-                          handleFilterChange({ payment_status: checked ? "refunded" : undefined })
-                        }
-                      >
-                        {t("page.ecommerce.orders.payment_status.refunded")}
-                      </DropdownMenuCheckboxItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <Button size="sm" variant="outline" className="h-7 gap-1">
-                    <File className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      {t("common.actions.export")}
-                    </span>
-                  </Button>
+    <AuthenticatedLayout title={t("page.ecommerce.orders.title")}>
+      <Main>
+        <div className="grid flex-1 items-start gap-4 md:gap-8">
+          <Tabs defaultValue={filters.status || "all"} onValueChange={handleTabChange}>
+            <div className="flex items-center">
+              <TabsList>
+                <TabsTrigger value="all">{t("common.filters.all")}</TabsTrigger>
+                <TabsTrigger value="pending">
+                  {t("page.ecommerce.orders.status.pending")}
+                </TabsTrigger>
+                <TabsTrigger value="processing">
+                  {t("page.ecommerce.orders.status.processing")}
+                </TabsTrigger>
+                <TabsTrigger value="completed">
+                  {t("page.ecommerce.orders.status.completed")}
+                </TabsTrigger>
+                <TabsTrigger value="cancelled" className="hidden sm:flex">
+                  {t("page.ecommerce.orders.status.cancelled")}
+                </TabsTrigger>
+                <TabsTrigger value="refunded" className="hidden sm:flex">
+                  {t("page.ecommerce.orders.status.refunded")}
+                </TabsTrigger>
+              </TabsList>
+              <div className="ml-auto flex items-center gap-2">
+                <div className="relative">
+                  <Input
+                    placeholder={t("page.ecommerce.orders.search_placeholder")}
+                    value={searchTerm}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="w-64"
+                  />
                 </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-7 gap-1">
+                      <ListFilter className="h-3.5 w-3.5" />
+                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                        {t("common.actions.filter")}
+                      </span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>
+                      {t("page.ecommerce.orders.filter_payment_status")}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuCheckboxItem
+                      checked={!filters.payment_status}
+                      onCheckedChange={(checked) => {
+                        if (checked) handleFilterChange({ payment_status: undefined });
+                      }}
+                    >
+                      {t("page.ecommerce.orders.all_payment_status")}
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                      checked={filters.payment_status === "paid"}
+                      onCheckedChange={(checked) =>
+                        handleFilterChange({ payment_status: checked ? "paid" : undefined })
+                      }
+                    >
+                      {t("page.ecommerce.orders.payment_status.paid")}
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                      checked={filters.payment_status === "unpaid"}
+                      onCheckedChange={(checked) =>
+                        handleFilterChange({ payment_status: checked ? "unpaid" : undefined })
+                      }
+                    >
+                      {t("page.ecommerce.orders.payment_status.unpaid")}
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                      checked={filters.payment_status === "refunded"}
+                      onCheckedChange={(checked) =>
+                        handleFilterChange({ payment_status: checked ? "refunded" : undefined })
+                      }
+                    >
+                      {t("page.ecommerce.orders.payment_status.refunded")}
+                    </DropdownMenuCheckboxItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button size="sm" variant="outline" className="h-7 gap-1">
+                  <File className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    {t("common.actions.export")}
+                  </span>
+                </Button>
               </div>
+            </div>
 
-              <TabsContent value="all">
+            <TabsContent value="all">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("page.ecommerce.orders.title")}</CardTitle>
+                  <CardDescription>{t("page.ecommerce.orders.description")}</CardDescription>
+                </CardHeader>
+                <CardContent>{renderOrdersTable()}</CardContent>
+                <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="text-xs text-muted-foreground">
+                    {orders?.current_page && orders?.per_page && orders?.total ? (
+                      <>
+                        {t("page.ecommerce.orders.pagination.showing")}{" "}
+                        <strong>
+                          {(orders.current_page - 1) * orders.per_page + 1}-
+                          {Math.min(orders.current_page * orders.per_page, orders.total)}
+                        </strong>{" "}
+                        {t("page.ecommerce.orders.pagination.of")} <strong>{orders.total}</strong>{" "}
+                        {t("page.ecommerce.orders.pagination.orders")}
+                      </>
+                    ) : (
+                      <>
+                        {t("page.ecommerce.orders.pagination.showing")} <strong>0</strong>{" "}
+                        {t("page.ecommerce.orders.pagination.orders")}
+                      </>
+                    )}
+                  </div>
+
+                  {orders.last_page > 1 && (
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (orders.current_page > 1)
+                                handlePageChange(orders.current_page - 1);
+                            }}
+                            className={
+                              orders.current_page === 1 ? "pointer-events-none opacity-50" : ""
+                            }
+                          />
+                        </PaginationItem>
+                        {generatePageNumbers().map((page, index) => (
+                          <PaginationItem key={index}>
+                            {page === "..." ? (
+                              <span className="flex h-9 w-9 items-center justify-center text-sm">
+                                ...
+                              </span>
+                            ) : (
+                              <PaginationLink
+                                href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handlePageChange(page as number);
+                                }}
+                                isActive={page === orders.current_page}
+                              >
+                                {page}
+                              </PaginationLink>
+                            )}
+                          </PaginationItem>
+                        ))}
+                        <PaginationItem>
+                          <PaginationNext
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (orders.current_page < orders.last_page)
+                                handlePageChange(orders.current_page + 1);
+                            }}
+                            className={
+                              orders.current_page === orders.last_page
+                                ? "pointer-events-none opacity-50"
+                                : ""
+                            }
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  )}
+                </CardFooter>
+              </Card>
+            </TabsContent>
+
+            {["pending", "processing", "completed", "cancelled", "refunded"].map((status) => (
+              <TabsContent key={status} value={status}>
                 <Card>
                   <CardHeader>
                     <CardTitle>{t("page.ecommerce.orders.title")}</CardTitle>
                     <CardDescription>{t("page.ecommerce.orders.description")}</CardDescription>
                   </CardHeader>
                   <CardContent>{renderOrdersTable()}</CardContent>
-                  <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div className="text-xs text-muted-foreground">
-                      {orders?.current_page && orders?.per_page && orders?.total ? (
-                        <>
-                          {t("page.ecommerce.orders.pagination.showing")}{" "}
-                          <strong>
-                            {(orders.current_page - 1) * orders.per_page + 1}-
-                            {Math.min(orders.current_page * orders.per_page, orders.total)}
-                          </strong>{" "}
-                          {t("page.ecommerce.orders.pagination.of")} <strong>{orders.total}</strong>{" "}
-                          {t("page.ecommerce.orders.pagination.orders")}
-                        </>
-                      ) : (
-                        <>
-                          {t("page.ecommerce.orders.pagination.showing")} <strong>0</strong>{" "}
-                          {t("page.ecommerce.orders.pagination.orders")}
-                        </>
-                      )}
-                    </div>
-
-                    {orders.last_page > 1 && (
-                      <Pagination>
-                        <PaginationContent>
-                          <PaginationItem>
-                            <PaginationPrevious
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                if (orders.current_page > 1)
-                                  handlePageChange(orders.current_page - 1);
-                              }}
-                              className={
-                                orders.current_page === 1 ? "pointer-events-none opacity-50" : ""
-                              }
-                            />
-                          </PaginationItem>
-                          {generatePageNumbers().map((page, index) => (
-                            <PaginationItem key={index}>
-                              {page === "..." ? (
-                                <span className="flex h-9 w-9 items-center justify-center text-sm">
-                                  ...
-                                </span>
-                              ) : (
-                                <PaginationLink
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    handlePageChange(page as number);
-                                  }}
-                                  isActive={page === orders.current_page}
-                                >
-                                  {page}
-                                </PaginationLink>
-                              )}
-                            </PaginationItem>
-                          ))}
-                          <PaginationItem>
-                            <PaginationNext
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                if (orders.current_page < orders.last_page)
-                                  handlePageChange(orders.current_page + 1);
-                              }}
-                              className={
-                                orders.current_page === orders.last_page
-                                  ? "pointer-events-none opacity-50"
-                                  : ""
-                              }
-                            />
-                          </PaginationItem>
-                        </PaginationContent>
-                      </Pagination>
-                    )}
-                  </CardFooter>
                 </Card>
               </TabsContent>
-
-              {["pending", "processing", "completed", "cancelled", "refunded"].map((status) => (
-                <TabsContent key={status} value={status}>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>{t("page.ecommerce.orders.title")}</CardTitle>
-                      <CardDescription>{t("page.ecommerce.orders.description")}</CardDescription>
-                    </CardHeader>
-                    <CardContent>{renderOrdersTable()}</CardContent>
-                  </Card>
-                </TabsContent>
-              ))}
-            </Tabs>
-          </div>
-        </Main>
-      </AuthenticatedLayout>
-    </>
+            ))}
+          </Tabs>
+        </div>
+      </Main>
+    </AuthenticatedLayout>
   );
 }

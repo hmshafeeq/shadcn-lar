@@ -1,5 +1,5 @@
 import type { Category, CategoryTrendAnalysis } from "@modules/Finance/types/finance";
-import { BarChart3, Calendar, Hash, TrendingDown, TrendingUp } from "lucide-react";
+import { BarChart3, TrendingDown, TrendingUp } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Bar, BarChart, CartesianGrid, Legend, XAxis, YAxis } from "recharts";
@@ -84,7 +84,7 @@ function CategorySelector({
     if (value === "" || value === "none") {
       onChange(null);
     } else {
-      onChange(parseInt(value));
+      onChange(parseInt(value, 10));
     }
   };
 
@@ -129,7 +129,7 @@ interface StatCardProps {
   isIncome?: boolean;
 }
 
-function StatCard({ label, value, icon, color, subValue, trend, isIncome }: StatCardProps) {
+function _StatCard({ label, value, icon, color, subValue, trend, isIncome }: StatCardProps) {
   return (
     <div className="text-center">
       <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">

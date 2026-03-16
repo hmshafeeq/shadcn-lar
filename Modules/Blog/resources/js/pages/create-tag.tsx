@@ -38,7 +38,7 @@ export default function CreateTag() {
     const formData = new FormData();
 
     formData.append("name", data.name);
-    if (data.slug && data.slug.trim()) formData.append("slug", data.slug);
+    if (data.slug?.trim()) formData.append("slug", data.slug);
     if (data.description) formData.append("description", data.description);
     if (data.color) formData.append("color", data.color);
     formData.append("is_active", data.is_active ? "1" : "0");

@@ -57,11 +57,11 @@ export default function CreateTransaction({ accounts, categories }: Props) {
   const expenseCategories = categories.filter((c) => c.type === "expense" || c.type === "both");
   const currentCategories = data.type === "income" ? incomeCategories : expenseCategories;
 
-  const fromAccount = useMemo(
+  const _fromAccount = useMemo(
     () => accounts.find((a) => String(a.id) === data.account_id),
     [accounts, data.account_id],
   );
-  const toAccount = useMemo(
+  const _toAccount = useMemo(
     () => accounts.find((a) => String(a.id) === data.transfer_account_id),
     [accounts, data.transfer_account_id],
   );
@@ -89,8 +89,8 @@ export default function CreateTransaction({ accounts, categories }: Props) {
           "X-CSRF-TOKEN": csrfToken || "",
         },
         body: JSON.stringify({
-          from_account_id: parseInt(data.account_id),
-          to_account_id: parseInt(data.transfer_account_id),
+          from_account_id: parseInt(data.account_id, 10),
+          to_account_id: parseInt(data.transfer_account_id, 10),
           amount: parseFloat(data.amount),
         }),
       });
@@ -115,10 +115,10 @@ export default function CreateTransaction({ accounts, categories }: Props) {
   transform((formData) => ({
     ...formData,
     amount: parseFloat(formData.amount || "0"),
-    account_id: formData.account_id ? parseInt(formData.account_id) : null,
-    category_id: formData.category_id ? parseInt(formData.category_id) : null,
+    account_id: formData.account_id ? parseInt(formData.account_id, 10) : null,
+    category_id: formData.category_id ? parseInt(formData.category_id, 10) : null,
     transfer_account_id: formData.transfer_account_id
-      ? parseInt(formData.transfer_account_id)
+      ? parseInt(formData.transfer_account_id, 10)
       : null,
   }));
 

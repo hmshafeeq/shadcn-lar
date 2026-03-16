@@ -1,5 +1,5 @@
 import { useForm } from "@inertiajs/react";
-import type { Account, AccountType, Currency, RateSource } from "@modules/Finance/types/finance";
+import type { Account, AccountType, Currency } from "@modules/Finance/types/finance";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -126,11 +126,11 @@ export function AccountForm({
     // Validate based on account type and mode
     if (hasCreditLimit) {
       // Credit accounts: validate both fields
-      if (isNaN(initialBalanceValue) || initialBalanceValue < 0) {
+      if (Number.isNaN(initialBalanceValue) || initialBalanceValue < 0) {
         setError("initial_balance", "Credit limit must be 0 or greater");
         return;
       }
-      if (isNaN(currentBalanceValue) || currentBalanceValue < 0) {
+      if (Number.isNaN(currentBalanceValue) || currentBalanceValue < 0) {
         setError("current_balance", "Available credit must be 0 or greater");
         return;
       }
@@ -141,7 +141,7 @@ export function AccountForm({
     } else {
       // Regular accounts: validate single balance field
       const balanceToValidate = isEditing ? currentBalanceValue : initialBalanceValue;
-      if (isNaN(balanceToValidate) || Math.abs(balanceToValidate) > MAX_BALANCE) {
+      if (Number.isNaN(balanceToValidate) || Math.abs(balanceToValidate) > MAX_BALANCE) {
         const errorField = isEditing ? "current_balance" : "initial_balance";
         setError(
           errorField,

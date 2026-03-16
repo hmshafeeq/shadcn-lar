@@ -13,7 +13,7 @@ import { ArrowDownLeft, ArrowLeft, ArrowUpRight, TrendingDown, TrendingUp } from
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Main } from "@/components/layout/main";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { AuthenticatedLayout } from "@/layouts";
 import { AccountDistribution } from "./components/account-distribution";
 import { CashflowChart } from "./components/cashflow-chart";

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
   "assist": {
     "actions": {
       "source": {
@@ -20,11 +20,22 @@
       "correctness": {
         "noUnusedImports": "warn",
         "noUnusedVariables": "warn",
-        "useExhaustiveDependencies": "off"
+        "noUnusedFunctionParameters": "off",
+        "useExhaustiveDependencies": "off",
+        "useHookAtTopLevel": "warn"
+      },
+      "a11y": {
+        "useButtonType": "warn",
+        "noLabelWithoutControl": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
       },
       "suspicious": {
         "noExplicitAny": "off",
-        "noArrayIndexKey": "off"
+        "noArrayIndexKey": "off",
+        "noDocumentCookie": "off",
+        "noRedeclare": "off"
       },
       "style": {
         "noNonNullAssertion": "off",
@@ -36,10 +47,20 @@
       }
     }
   },
+  "css": {
+    "linter": {
+      "enabled": false
+    },
+    "formatter": {
+      "enabled": false
+    }
+  },
   "files": {
     "includes": [
-      "resources/**",
-      "Modules/*/resources/js/**",
+      "resources/js/**/*.ts",
+      "resources/js/**/*.tsx",
+      "Modules/*/resources/js/**/*.ts",
+      "Modules/*/resources/js/**/*.tsx",
       "vite.config.js",
       "vitest.config.ts",
       "tsconfig.json"

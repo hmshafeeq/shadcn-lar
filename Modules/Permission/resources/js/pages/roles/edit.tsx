@@ -61,7 +61,7 @@ export default function EditRole({
     );
   };
 
-  const handleGroupToggle = (group: string, permissions: { name: string }[]) => {
+  const handleGroupToggle = (_group: string, permissions: { name: string }[]) => {
     if (isSuperAdmin) return;
     const groupPermissionNames = permissions.map((p) => p.name);
     const allSelected = groupPermissionNames.every((p) => selectedPermissions.includes(p));

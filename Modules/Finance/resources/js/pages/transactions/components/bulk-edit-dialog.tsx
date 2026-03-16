@@ -66,10 +66,10 @@ export function BulkEditDialog({
       data.transaction_type = transactionType;
     }
     if (accountId && accountId !== "none") {
-      data.account_id = parseInt(accountId);
+      data.account_id = parseInt(accountId, 10);
     }
     if (categoryId && categoryId !== "none") {
-      data.category_id = parseInt(categoryId);
+      data.category_id = parseInt(categoryId, 10);
     }
     if (transactionDate) {
       data.transaction_date = transactionDate;

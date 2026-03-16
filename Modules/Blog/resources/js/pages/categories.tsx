@@ -219,458 +219,446 @@ export default function BlogCategories({ categories }: BlogCategoriesPageProps) 
   };
 
   return (
-    <>
-      <AuthenticatedLayout title={t("page.blog.categories.title")}>
-        <Main>
-          <div className="grid flex-1 items-start gap-4 md:gap-8">
-            <div className="flex items-center">
-              <div className="ml-auto flex items-center gap-2">
-                <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                  <DialogTrigger asChild>
-                    <Button size="sm" className="h-7 gap-1">
-                      <PlusCircle className="h-3.5 w-3.5" />
-                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        {t("page.blog.categories.add_category")}
-                      </span>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>{t("page.blog.categories.create.title")}</DialogTitle>
-                      <DialogDescription>
-                        {t("page.blog.categories.create.description")}
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid gap-2">
-                        <Label htmlFor="create-name">{t("page.blog.categories.form.name")} *</Label>
-                        <Input
-                          id="create-name"
-                          value={formData.name}
-                          onChange={(e) =>
-                            setFormData((prev) => ({ ...prev, name: e.target.value }))
-                          }
-                          placeholder={t("page.blog.categories.form.name_placeholder")}
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor="create-slug">{t("page.blog.categories.form.slug")}</Label>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                slug: generateSlug(formData.name),
-                              }))
-                            }
-                            className="h-7 text-xs"
-                          >
-                            {t("page.blog.categories.form.auto_generate")}
-                          </Button>
-                        </div>
-                        <Input
-                          id="create-slug"
-                          type="text"
-                          className="w-full font-mono text-sm"
-                          placeholder={t("page.blog.categories.form.slug_placeholder")}
-                          value={formData.slug}
-                          onChange={(e) =>
-                            setFormData((prev) => ({ ...prev, slug: e.target.value }))
-                          }
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          {t("page.blog.categories.form.url_preview", {
-                            slug: formData.slug || "your-category-slug",
-                          })}
-                        </p>
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="create-description">{t("common.fields.description")}</Label>
-                        <Textarea
-                          id="create-description"
-                          value={formData.description}
-                          onChange={(e) =>
-                            setFormData((prev) => ({ ...prev, description: e.target.value }))
-                          }
-                          placeholder={t("page.blog.categories.form.description_placeholder")}
-                          rows={3}
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                          <Label htmlFor="create-color">{t("common.fields.color")}</Label>
-                          <Input
-                            id="create-color"
-                            type="color"
-                            value={formData.color}
-                            onChange={(e) =>
-                              setFormData((prev) => ({ ...prev, color: e.target.value }))
-                            }
-                          />
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="create-icon">{t("page.blog.categories.form.icon")}</Label>
-                          <Input
-                            id="create-icon"
-                            value={formData.icon}
-                            onChange={(e) =>
-                              setFormData((prev) => ({ ...prev, icon: e.target.value }))
-                            }
-                            placeholder={t("page.blog.categories.form.icon_placeholder")}
-                          />
-                        </div>
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="create-parent">
-                          {t("page.blog.categories.form.parent_category")}
-                        </Label>
-                        <Select
-                          value={formData.parent_id?.toString() || "none"}
-                          onValueChange={(value) =>
+    <AuthenticatedLayout title={t("page.blog.categories.title")}>
+      <Main>
+        <div className="grid flex-1 items-start gap-4 md:gap-8">
+          <div className="flex items-center">
+            <div className="ml-auto flex items-center gap-2">
+              <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="h-7 gap-1">
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      {t("page.blog.categories.add_category")}
+                    </span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>{t("page.blog.categories.create.title")}</DialogTitle>
+                    <DialogDescription>
+                      {t("page.blog.categories.create.description")}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="create-name">{t("page.blog.categories.form.name")} *</Label>
+                      <Input
+                        id="create-name"
+                        value={formData.name}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                        placeholder={t("page.blog.categories.form.name_placeholder")}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="create-slug">{t("page.blog.categories.form.slug")}</Label>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
                             setFormData((prev) => ({
                               ...prev,
-                              parent_id: value === "none" ? undefined : parseInt(value),
+                              slug: generateSlug(formData.name),
                             }))
                           }
+                          className="h-7 text-xs"
                         >
-                          <SelectTrigger id="create-parent">
-                            <SelectValue
-                              placeholder={t("page.blog.categories.form.select_parent")}
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="none">
-                              {t("page.blog.categories.form.none_top_level")}
-                            </SelectItem>
-                            {getAvailableParentCategories().map((cat) => (
-                              <SelectItem key={cat.id} value={cat.id.toString()}>
-                                {cat.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          {t("page.blog.categories.form.auto_generate")}
+                        </Button>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="create-active">{t("common.fields.active")}</Label>
-                        <Switch
-                          id="create-active"
-                          checked={formData.is_active}
-                          onCheckedChange={(checked) =>
-                            setFormData((prev) => ({ ...prev, is_active: checked }))
-                          }
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="create-meta-title">
-                          {t("page.blog.categories.form.meta_title")}
-                        </Label>
-                        <Input
-                          id="create-meta-title"
-                          value={formData.meta_title}
-                          onChange={(e) =>
-                            setFormData((prev) => ({ ...prev, meta_title: e.target.value }))
-                          }
-                          placeholder={t("page.blog.categories.form.meta_title_placeholder")}
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="create-meta-description">
-                          {t("page.blog.categories.form.meta_description")}
-                        </Label>
-                        <Textarea
-                          id="create-meta-description"
-                          value={formData.meta_description}
-                          onChange={(e) =>
-                            setFormData((prev) => ({ ...prev, meta_description: e.target.value }))
-                          }
-                          placeholder={t("page.blog.categories.form.meta_description_placeholder")}
-                          rows={2}
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => {
-                          setIsCreateOpen(false);
-                          setFormData(initialFormData);
-                        }}
-                        disabled={isLoading}
-                      >
-                        {t("common.actions.cancel")}
-                      </Button>
-                      <Button
-                        type="submit"
-                        onClick={handleCreateCategory}
-                        disabled={!formData.name.trim() || isLoading}
-                      >
-                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {t("page.blog.categories.create.submit")}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("page.blog.categories.title")}</CardTitle>
-                <CardDescription>{t("page.blog.categories.description")}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t("common.fields.name")}</TableHead>
-                      <TableHead>{t("common.fields.slug")}</TableHead>
-                      <TableHead>{t("common.fields.description")}</TableHead>
-                      <TableHead>{t("common.fields.status")}</TableHead>
-                      <TableHead className="hidden md:table-cell">
-                        {t("page.blog.categories.table.created")}
-                      </TableHead>
-                      <TableHead>
-                        <span className="sr-only">{t("common.actions.actions")}</span>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {categories.map((category) => (
-                      <TableRow key={category.id}>
-                        <TableCell className="font-medium">{category.name}</TableCell>
-                        <TableCell className="text-muted-foreground">{category.slug}</TableCell>
-                        <TableCell>
-                          {category.description || t("page.blog.categories.table.no_description")}
-                        </TableCell>
-                        <TableCell>
-                          {category.is_active ? (
-                            <Badge variant="default">{t("common.statuses.active")}</Badge>
-                          ) : (
-                            <Badge variant="secondary">{t("common.statuses.inactive")}</Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          {formatDate(category.created_at)}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button aria-haspopup="true" size="icon" variant="ghost">
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">
-                                  {t("page.blog.categories.table.toggle_menu")}
-                                </span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>{t("common.actions.actions")}</DropdownMenuLabel>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem onClick={() => handleEditCategory(category)}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                {t("common.actions.edit")}
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                className="text-red-600"
-                                onClick={() => handleDeleteCategory(category)}
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                {t("common.actions.delete")}
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-              <CardFooter>
-                <div className="text-xs text-muted-foreground">
-                  {t("page.blog.categories.table.showing")} <strong>{categories.length}</strong>{" "}
-                  {t("page.blog.categories.table.categories")}
-                </div>
-              </CardFooter>
-            </Card>
-
-            <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-              <DialogContent className="max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>{t("page.blog.categories.edit.title")}</DialogTitle>
-                  <DialogDescription>
-                    {t("page.blog.categories.edit.description")}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="edit-name">{t("page.blog.categories.form.name")} *</Label>
-                    <Input
-                      id="edit-name"
-                      value={formData.name}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-                      placeholder={t("page.blog.categories.form.name_placeholder")}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="edit-slug">{t("page.blog.categories.form.slug")}</Label>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          setFormData((prev) => ({ ...prev, slug: generateSlug(formData.name) }))
-                        }
-                        className="h-7 text-xs"
-                      >
-                        {t("page.blog.categories.form.auto_generate")}
-                      </Button>
-                    </div>
-                    <Input
-                      id="edit-slug"
-                      type="text"
-                      className="w-full font-mono text-sm"
-                      placeholder={t("page.blog.categories.form.slug_placeholder")}
-                      value={formData.slug}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      {t("page.blog.categories.form.url_preview", {
-                        slug: formData.slug || "your-category-slug",
-                      })}
-                    </p>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="edit-description">{t("common.fields.description")}</Label>
-                    <Textarea
-                      id="edit-description"
-                      value={formData.description}
-                      onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, description: e.target.value }))
-                      }
-                      placeholder={t("page.blog.categories.form.description_placeholder")}
-                      rows={3}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="edit-color">{t("common.fields.color")}</Label>
                       <Input
-                        id="edit-color"
-                        type="color"
-                        value={formData.color}
+                        id="create-slug"
+                        type="text"
+                        className="w-full font-mono text-sm"
+                        placeholder={t("page.blog.categories.form.slug_placeholder")}
+                        value={formData.slug}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {t("page.blog.categories.form.url_preview", {
+                          slug: formData.slug || "your-category-slug",
+                        })}
+                      </p>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="create-description">{t("common.fields.description")}</Label>
+                      <Textarea
+                        id="create-description"
+                        value={formData.description}
                         onChange={(e) =>
-                          setFormData((prev) => ({ ...prev, color: e.target.value }))
+                          setFormData((prev) => ({ ...prev, description: e.target.value }))
+                        }
+                        placeholder={t("page.blog.categories.form.description_placeholder")}
+                        rows={3}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="create-color">{t("common.fields.color")}</Label>
+                        <Input
+                          id="create-color"
+                          type="color"
+                          value={formData.color}
+                          onChange={(e) =>
+                            setFormData((prev) => ({ ...prev, color: e.target.value }))
+                          }
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="create-icon">{t("page.blog.categories.form.icon")}</Label>
+                        <Input
+                          id="create-icon"
+                          value={formData.icon}
+                          onChange={(e) =>
+                            setFormData((prev) => ({ ...prev, icon: e.target.value }))
+                          }
+                          placeholder={t("page.blog.categories.form.icon_placeholder")}
+                        />
+                      </div>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="create-parent">
+                        {t("page.blog.categories.form.parent_category")}
+                      </Label>
+                      <Select
+                        value={formData.parent_id?.toString() || "none"}
+                        onValueChange={(value) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            parent_id: value === "none" ? undefined : parseInt(value, 10),
+                          }))
+                        }
+                      >
+                        <SelectTrigger id="create-parent">
+                          <SelectValue placeholder={t("page.blog.categories.form.select_parent")} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">
+                            {t("page.blog.categories.form.none_top_level")}
+                          </SelectItem>
+                          {getAvailableParentCategories().map((cat) => (
+                            <SelectItem key={cat.id} value={cat.id.toString()}>
+                              {cat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="create-active">{t("common.fields.active")}</Label>
+                      <Switch
+                        id="create-active"
+                        checked={formData.is_active}
+                        onCheckedChange={(checked) =>
+                          setFormData((prev) => ({ ...prev, is_active: checked }))
                         }
                       />
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="edit-icon">{t("page.blog.categories.form.icon")}</Label>
+                      <Label htmlFor="create-meta-title">
+                        {t("page.blog.categories.form.meta_title")}
+                      </Label>
                       <Input
-                        id="edit-icon"
-                        value={formData.icon}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, icon: e.target.value }))}
-                        placeholder={t("page.blog.categories.form.icon_placeholder")}
+                        id="create-meta-title"
+                        value={formData.meta_title}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, meta_title: e.target.value }))
+                        }
+                        placeholder={t("page.blog.categories.form.meta_title_placeholder")}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="create-meta-description">
+                        {t("page.blog.categories.form.meta_description")}
+                      </Label>
+                      <Textarea
+                        id="create-meta-description"
+                        value={formData.meta_description}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, meta_description: e.target.value }))
+                        }
+                        placeholder={t("page.blog.categories.form.meta_description_placeholder")}
+                        rows={2}
                       />
                     </div>
                   </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="edit-parent">
-                      {t("page.blog.categories.form.parent_category")}
-                    </Label>
-                    <Select
-                      value={formData.parent_id?.toString() || "none"}
-                      onValueChange={(value) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          parent_id: value === "none" ? undefined : parseInt(value),
-                        }))
-                      }
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setIsCreateOpen(false);
+                        setFormData(initialFormData);
+                      }}
+                      disabled={isLoading}
                     >
-                      <SelectTrigger id="edit-parent">
-                        <SelectValue placeholder={t("page.blog.categories.form.select_parent")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">
-                          {t("page.blog.categories.form.none_top_level")}
-                        </SelectItem>
-                        {getAvailableParentCategories().map((cat) => (
-                          <SelectItem key={cat.id} value={cat.id.toString()}>
-                            {cat.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      {t("common.actions.cancel")}
+                    </Button>
+                    <Button
+                      type="submit"
+                      onClick={handleCreateCategory}
+                      disabled={!formData.name.trim() || isLoading}
+                    >
+                      {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      {t("page.blog.categories.create.submit")}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("page.blog.categories.title")}</CardTitle>
+              <CardDescription>{t("page.blog.categories.description")}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("common.fields.name")}</TableHead>
+                    <TableHead>{t("common.fields.slug")}</TableHead>
+                    <TableHead>{t("common.fields.description")}</TableHead>
+                    <TableHead>{t("common.fields.status")}</TableHead>
+                    <TableHead className="hidden md:table-cell">
+                      {t("page.blog.categories.table.created")}
+                    </TableHead>
+                    <TableHead>
+                      <span className="sr-only">{t("common.actions.actions")}</span>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {categories.map((category) => (
+                    <TableRow key={category.id}>
+                      <TableCell className="font-medium">{category.name}</TableCell>
+                      <TableCell className="text-muted-foreground">{category.slug}</TableCell>
+                      <TableCell>
+                        {category.description || t("page.blog.categories.table.no_description")}
+                      </TableCell>
+                      <TableCell>
+                        {category.is_active ? (
+                          <Badge variant="default">{t("common.statuses.active")}</Badge>
+                        ) : (
+                          <Badge variant="secondary">{t("common.statuses.inactive")}</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {formatDate(category.created_at)}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button aria-haspopup="true" size="icon" variant="ghost">
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">
+                                {t("page.blog.categories.table.toggle_menu")}
+                              </span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>{t("common.actions.actions")}</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => handleEditCategory(category)}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              {t("common.actions.edit")}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={() => handleDeleteCategory(category)}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              {t("common.actions.delete")}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+            <CardFooter>
+              <div className="text-xs text-muted-foreground">
+                {t("page.blog.categories.table.showing")} <strong>{categories.length}</strong>{" "}
+                {t("page.blog.categories.table.categories")}
+              </div>
+            </CardFooter>
+          </Card>
+
+          <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>{t("page.blog.categories.edit.title")}</DialogTitle>
+                <DialogDescription>{t("page.blog.categories.edit.description")}</DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-name">{t("page.blog.categories.form.name")} *</Label>
+                  <Input
+                    id="edit-name"
+                    value={formData.name}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                    placeholder={t("page.blog.categories.form.name_placeholder")}
+                  />
+                </div>
+                <div className="grid gap-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="edit-active">{t("common.fields.active")}</Label>
-                    <Switch
-                      id="edit-active"
-                      checked={formData.is_active}
-                      onCheckedChange={(checked) =>
-                        setFormData((prev) => ({ ...prev, is_active: checked }))
+                    <Label htmlFor="edit-slug">{t("page.blog.categories.form.slug")}</Label>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setFormData((prev) => ({ ...prev, slug: generateSlug(formData.name) }))
                       }
-                    />
+                      className="h-7 text-xs"
+                    >
+                      {t("page.blog.categories.form.auto_generate")}
+                    </Button>
                   </div>
+                  <Input
+                    id="edit-slug"
+                    type="text"
+                    className="w-full font-mono text-sm"
+                    placeholder={t("page.blog.categories.form.slug_placeholder")}
+                    value={formData.slug}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {t("page.blog.categories.form.url_preview", {
+                      slug: formData.slug || "your-category-slug",
+                    })}
+                  </p>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-description">{t("common.fields.description")}</Label>
+                  <Textarea
+                    id="edit-description"
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, description: e.target.value }))
+                    }
+                    placeholder={t("page.blog.categories.form.description_placeholder")}
+                    rows={3}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="edit-meta-title">
-                      {t("page.blog.categories.form.meta_title")}
-                    </Label>
+                    <Label htmlFor="edit-color">{t("common.fields.color")}</Label>
                     <Input
-                      id="edit-meta-title"
-                      value={formData.meta_title}
-                      onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, meta_title: e.target.value }))
-                      }
-                      placeholder={t("page.blog.categories.form.meta_title_placeholder")}
+                      id="edit-color"
+                      type="color"
+                      value={formData.color}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, color: e.target.value }))}
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="edit-meta-description">
-                      {t("page.blog.categories.form.meta_description")}
-                    </Label>
-                    <Textarea
-                      id="edit-meta-description"
-                      value={formData.meta_description}
-                      onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, meta_description: e.target.value }))
-                      }
-                      placeholder={t("page.blog.categories.form.meta_description_placeholder")}
-                      rows={2}
+                    <Label htmlFor="edit-icon">{t("page.blog.categories.form.icon")}</Label>
+                    <Input
+                      id="edit-icon"
+                      value={formData.icon}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, icon: e.target.value }))}
+                      placeholder={t("page.blog.categories.form.icon_placeholder")}
                     />
                   </div>
                 </div>
-                <DialogFooter>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setIsEditOpen(false);
-                      setEditingCategory(null);
-                      setFormData(initialFormData);
-                    }}
-                    disabled={isLoading}
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-parent">
+                    {t("page.blog.categories.form.parent_category")}
+                  </Label>
+                  <Select
+                    value={formData.parent_id?.toString() || "none"}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        parent_id: value === "none" ? undefined : parseInt(value, 10),
+                      }))
+                    }
                   >
-                    {t("common.actions.cancel")}
-                  </Button>
-                  <Button
-                    type="submit"
-                    onClick={handleUpdateCategory}
-                    disabled={!formData.name.trim() || isLoading}
-                  >
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {t("page.blog.categories.edit.submit")}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </Main>
-      </AuthenticatedLayout>
-    </>
+                    <SelectTrigger id="edit-parent">
+                      <SelectValue placeholder={t("page.blog.categories.form.select_parent")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">
+                        {t("page.blog.categories.form.none_top_level")}
+                      </SelectItem>
+                      {getAvailableParentCategories().map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id.toString()}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="edit-active">{t("common.fields.active")}</Label>
+                  <Switch
+                    id="edit-active"
+                    checked={formData.is_active}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({ ...prev, is_active: checked }))
+                    }
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-meta-title">
+                    {t("page.blog.categories.form.meta_title")}
+                  </Label>
+                  <Input
+                    id="edit-meta-title"
+                    value={formData.meta_title}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, meta_title: e.target.value }))
+                    }
+                    placeholder={t("page.blog.categories.form.meta_title_placeholder")}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-meta-description">
+                    {t("page.blog.categories.form.meta_description")}
+                  </Label>
+                  <Textarea
+                    id="edit-meta-description"
+                    value={formData.meta_description}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, meta_description: e.target.value }))
+                    }
+                    placeholder={t("page.blog.categories.form.meta_description_placeholder")}
+                    rows={2}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsEditOpen(false);
+                    setEditingCategory(null);
+                    setFormData(initialFormData);
+                  }}
+                  disabled={isLoading}
+                >
+                  {t("common.actions.cancel")}
+                </Button>
+                <Button
+                  type="submit"
+                  onClick={handleUpdateCategory}
+                  disabled={!formData.name.trim() || isLoading}
+                >
+                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {t("page.blog.categories.edit.submit")}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </Main>
+    </AuthenticatedLayout>
   );
 }

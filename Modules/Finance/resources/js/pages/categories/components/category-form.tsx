@@ -113,7 +113,7 @@ export function CategoryForm({
 
     const formData = {
       ...data,
-      parent_id: data.parent_id ? parseInt(data.parent_id) : null,
+      parent_id: data.parent_id ? parseInt(data.parent_id, 10) : null,
       expense_type: data.type === "expense" && data.expense_type ? data.expense_type : null,
       is_passive: data.type === "income" ? data.is_passive : false,
     };

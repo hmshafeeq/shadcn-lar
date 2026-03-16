@@ -1,6 +1,6 @@
 import { router } from "@inertiajs/react";
 import type { Account, Category } from "@modules/Finance/types/finance";
-import { AlertCircle, ArrowLeft, CheckCircle, FileText, Upload } from "lucide-react";
+import { AlertCircle, ArrowLeft, FileText, Upload } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Main } from "@/components/layout/main";

@@ -52,7 +52,7 @@ const statusOptions: { value: PlanStatus; label: string }[] = [
 ];
 
 function formatMoney(amount: number, currencyCode = "VND"): string {
-  if (isNaN(amount) || !isFinite(amount)) {
+  if (Number.isNaN(amount) || !Number.isFinite(amount)) {
     amount = 0;
   }
   return new Intl.NumberFormat("vi-VN", {
@@ -73,8 +73,6 @@ function getYearlyAmount(amount: number, recurrence: PlanItemRecurrence): number
       return safeAmount * 12;
     case "quarterly":
       return safeAmount * 4;
-    case "yearly":
-    case "one_time":
     default:
       return safeAmount;
   }
@@ -402,7 +400,7 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
 
                       <TabsContent value="income" className="space-y-3">
                         {incomeItems.map((item, idx) => {
-                          const itemIndex = period.items.findIndex((i) => i === item);
+                          const itemIndex = period.items.indexOf(item);
                           return (
                             <ItemRow
                               key={idx}
@@ -432,7 +430,7 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
 
                       <TabsContent value="expense" className="space-y-3">
                         {expenseItems.map((item, idx) => {
-                          const itemIndex = period.items.findIndex((i) => i === item);
+                          const itemIndex = period.items.indexOf(item);
                           return (
                             <ItemRow
                               key={idx}

@@ -72,7 +72,7 @@ export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
     }
 
     try {
-      const url = route("dashboard.finance.transactions.export") + "?" + params.toString();
+      const url = `${route("dashboard.finance.transactions.export")}?${params.toString()}`;
       window.location.href = url;
       onOpenChange(false);
     } finally {

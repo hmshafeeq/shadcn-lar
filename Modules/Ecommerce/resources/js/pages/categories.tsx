@@ -282,212 +282,201 @@ export default function Categories({
   );
 
   return (
-    <>
-      <AuthenticatedLayout title={t("page.ecommerce.categories.title")}>
-        <Main>
-          <div className="grid flex-1 items-start gap-4 md:gap-8">
-            <Tabs defaultValue="all">
-              <div className="flex items-center">
-                <TabsList>
-                  <TabsTrigger value="all">{t("common.filters.all")}</TabsTrigger>
-                </TabsList>
-                <div className="ml-auto flex items-center gap-2">
-                  <div className="relative">
-                    <Input
-                      placeholder={t("page.ecommerce.categories.search_placeholder")}
-                      value={searchTerm}
-                      onChange={(e) => handleSearch(e.target.value)}
-                      className="w-64"
-                    />
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-7 gap-1">
-                        <ListFilter className="h-3.5 w-3.5" />
-                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                          {t("common.actions.filter")}
-                        </span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>{t("common.filters.filter_by")}</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-
-                      <DropdownMenuCheckboxItem
-                        checked={filters.is_active === true}
-                        onCheckedChange={(checked) =>
-                          handleFilterChange({ is_active: checked ? true : undefined })
-                        }
-                      >
-                        {t("page.ecommerce.categories.filters.active_only")}
-                      </DropdownMenuCheckboxItem>
-
-                      <DropdownMenuCheckboxItem
-                        checked={filters.is_active === false}
-                        onCheckedChange={(checked) =>
-                          handleFilterChange({ is_active: checked ? false : undefined })
-                        }
-                      >
-                        {t("page.ecommerce.categories.filters.inactive_only")}
-                      </DropdownMenuCheckboxItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <Button size="sm" variant="outline" className="h-7 gap-1">
-                    <File className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      {t("common.actions.export")}
-                    </span>
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="h-7 gap-1"
-                    onClick={() =>
-                      router.get(route("dashboard.ecommerce.product-categories.create"))
-                    }
-                  >
-                    <PlusCircle className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      {t("page.ecommerce.categories.add_category")}
-                    </span>
-                  </Button>
+    <AuthenticatedLayout title={t("page.ecommerce.categories.title")}>
+      <Main>
+        <div className="grid flex-1 items-start gap-4 md:gap-8">
+          <Tabs defaultValue="all">
+            <div className="flex items-center">
+              <TabsList>
+                <TabsTrigger value="all">{t("common.filters.all")}</TabsTrigger>
+              </TabsList>
+              <div className="ml-auto flex items-center gap-2">
+                <div className="relative">
+                  <Input
+                    placeholder={t("page.ecommerce.categories.search_placeholder")}
+                    value={searchTerm}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="w-64"
+                  />
                 </div>
-              </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-7 gap-1">
+                      <ListFilter className="h-3.5 w-3.5" />
+                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                        {t("common.actions.filter")}
+                      </span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>{t("common.filters.filter_by")}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
 
-              {hasActiveFilters() && (
-                <div className="flex items-center gap-2 pt-2">
-                  <span className="text-sm text-muted-foreground">
-                    {t("common.filters.active_filters")}:
+                    <DropdownMenuCheckboxItem
+                      checked={filters.is_active === true}
+                      onCheckedChange={(checked) =>
+                        handleFilterChange({ is_active: checked ? true : undefined })
+                      }
+                    >
+                      {t("page.ecommerce.categories.filters.active_only")}
+                    </DropdownMenuCheckboxItem>
+
+                    <DropdownMenuCheckboxItem
+                      checked={filters.is_active === false}
+                      onCheckedChange={(checked) =>
+                        handleFilterChange({ is_active: checked ? false : undefined })
+                      }
+                    >
+                      {t("page.ecommerce.categories.filters.inactive_only")}
+                    </DropdownMenuCheckboxItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button size="sm" variant="outline" className="h-7 gap-1">
+                  <File className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    {t("common.actions.export")}
                   </span>
-                  {filters.is_active === true && (
-                    <Badge variant="secondary" className="gap-1">
-                      {t("common.statuses.active")}
-                      <button
-                        onClick={() => handleFilterChange({ is_active: undefined })}
-                        className="ml-1 hover:bg-secondary-foreground/20 rounded-full"
-                      >
-                        ×
-                      </button>
-                    </Badge>
-                  )}
-                  {filters.is_active === false && (
-                    <Badge variant="secondary" className="gap-1">
-                      {t("common.statuses.inactive")}
-                      <button
-                        onClick={() => handleFilterChange({ is_active: undefined })}
-                        className="ml-1 hover:bg-secondary-foreground/20 rounded-full"
-                      >
-                        ×
-                      </button>
-                    </Badge>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearAllFilters}
-                    className="h-6 text-xs"
-                  >
-                    {t("common.filters.clear_all")}
-                  </Button>
-                </div>
-              )}
+                </Button>
+                <Button
+                  size="sm"
+                  className="h-7 gap-1"
+                  onClick={() => router.get(route("dashboard.ecommerce.product-categories.create"))}
+                >
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    {t("page.ecommerce.categories.add_category")}
+                  </span>
+                </Button>
+              </div>
+            </div>
 
-              <TabsContent value="all">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t("page.ecommerce.categories.title")}</CardTitle>
-                    <CardDescription>{t("page.ecommerce.categories.description")}</CardDescription>
-                  </CardHeader>
-                  <CardContent>{renderCategoryTable()}</CardContent>
-                  <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div className="text-xs text-muted-foreground">
-                      {categories?.current_page && categories?.per_page && categories?.total ? (
-                        <>
-                          {t("common.pagination.showing")}{" "}
-                          <strong>
-                            {(categories.current_page - 1) * categories.per_page + 1}-
-                            {Math.min(
-                              categories.current_page * categories.per_page,
-                              categories.total,
-                            )}
-                          </strong>{" "}
-                          {t("common.pagination.of")} <strong>{categories.total}</strong>{" "}
-                          {t("page.ecommerce.categories.categories")}
-                        </>
-                      ) : (
-                        <>
-                          {t("common.pagination.showing")} <strong>0</strong>{" "}
-                          {t("page.ecommerce.categories.categories")}
-                        </>
-                      )}
-                    </div>
+            {hasActiveFilters() && (
+              <div className="flex items-center gap-2 pt-2">
+                <span className="text-sm text-muted-foreground">
+                  {t("common.filters.active_filters")}:
+                </span>
+                {filters.is_active === true && (
+                  <Badge variant="secondary" className="gap-1">
+                    {t("common.statuses.active")}
+                    <button
+                      onClick={() => handleFilterChange({ is_active: undefined })}
+                      className="ml-1 hover:bg-secondary-foreground/20 rounded-full"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
+                {filters.is_active === false && (
+                  <Badge variant="secondary" className="gap-1">
+                    {t("common.statuses.inactive")}
+                    <button
+                      onClick={() => handleFilterChange({ is_active: undefined })}
+                      className="ml-1 hover:bg-secondary-foreground/20 rounded-full"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
+                <Button variant="ghost" size="sm" onClick={clearAllFilters} className="h-6 text-xs">
+                  {t("common.filters.clear_all")}
+                </Button>
+              </div>
+            )}
 
-                    {categories.last_page > 1 && (
-                      <Pagination>
-                        <PaginationContent>
-                          <PaginationItem>
-                            <PaginationPrevious
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                if (categories.current_page > 1) {
-                                  handlePageChange(categories.current_page - 1);
-                                }
-                              }}
-                              className={
-                                categories.current_page === 1
-                                  ? "pointer-events-none opacity-50"
-                                  : ""
-                              }
-                            />
-                          </PaginationItem>
-
-                          {generatePageNumbers().map((page, index) => (
-                            <PaginationItem key={index}>
-                              {page === "..." ? (
-                                <span className="flex h-9 w-9 items-center justify-center text-sm">
-                                  ...
-                                </span>
-                              ) : (
-                                <PaginationLink
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    handlePageChange(page as number);
-                                  }}
-                                  isActive={page === categories.current_page}
-                                >
-                                  {page}
-                                </PaginationLink>
-                              )}
-                            </PaginationItem>
-                          ))}
-
-                          <PaginationItem>
-                            <PaginationNext
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                if (categories.current_page < categories.last_page) {
-                                  handlePageChange(categories.current_page + 1);
-                                }
-                              }}
-                              className={
-                                categories.current_page === categories.last_page
-                                  ? "pointer-events-none opacity-50"
-                                  : ""
-                              }
-                            />
-                          </PaginationItem>
-                        </PaginationContent>
-                      </Pagination>
+            <TabsContent value="all">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("page.ecommerce.categories.title")}</CardTitle>
+                  <CardDescription>{t("page.ecommerce.categories.description")}</CardDescription>
+                </CardHeader>
+                <CardContent>{renderCategoryTable()}</CardContent>
+                <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="text-xs text-muted-foreground">
+                    {categories?.current_page && categories?.per_page && categories?.total ? (
+                      <>
+                        {t("common.pagination.showing")}{" "}
+                        <strong>
+                          {(categories.current_page - 1) * categories.per_page + 1}-
+                          {Math.min(
+                            categories.current_page * categories.per_page,
+                            categories.total,
+                          )}
+                        </strong>{" "}
+                        {t("common.pagination.of")} <strong>{categories.total}</strong>{" "}
+                        {t("page.ecommerce.categories.categories")}
+                      </>
+                    ) : (
+                      <>
+                        {t("common.pagination.showing")} <strong>0</strong>{" "}
+                        {t("page.ecommerce.categories.categories")}
+                      </>
                     )}
-                  </CardFooter>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </Main>
-      </AuthenticatedLayout>
-    </>
+                  </div>
+
+                  {categories.last_page > 1 && (
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (categories.current_page > 1) {
+                                handlePageChange(categories.current_page - 1);
+                              }
+                            }}
+                            className={
+                              categories.current_page === 1 ? "pointer-events-none opacity-50" : ""
+                            }
+                          />
+                        </PaginationItem>
+
+                        {generatePageNumbers().map((page, index) => (
+                          <PaginationItem key={index}>
+                            {page === "..." ? (
+                              <span className="flex h-9 w-9 items-center justify-center text-sm">
+                                ...
+                              </span>
+                            ) : (
+                              <PaginationLink
+                                href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handlePageChange(page as number);
+                                }}
+                                isActive={page === categories.current_page}
+                              >
+                                {page}
+                              </PaginationLink>
+                            )}
+                          </PaginationItem>
+                        ))}
+
+                        <PaginationItem>
+                          <PaginationNext
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (categories.current_page < categories.last_page) {
+                                handlePageChange(categories.current_page + 1);
+                              }
+                            }}
+                            className={
+                              categories.current_page === categories.last_page
+                                ? "pointer-events-none opacity-50"
+                                : ""
+                            }
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  )}
+                </CardFooter>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </Main>
+    </AuthenticatedLayout>
   );
 }
