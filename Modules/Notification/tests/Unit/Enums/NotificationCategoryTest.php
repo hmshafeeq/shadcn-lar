@@ -1,69 +1,56 @@
 <?php
 
-namespace Modules\Notification\Tests\Unit\Enums;
-
 use Modules\Notification\Enums\NotificationCategory;
-use PHPUnit\Framework\TestCase;
 
-class NotificationCategoryTest extends TestCase
-{
-    public function test_has_expected_cases(): void
-    {
-        $cases = NotificationCategory::cases();
+uses(Tests\TestCase::class);
 
-        $this->assertCount(5, $cases);
-        $this->assertContains(NotificationCategory::COMMUNICATION, $cases);
-        $this->assertContains(NotificationCategory::MARKETING, $cases);
-        $this->assertContains(NotificationCategory::SECURITY, $cases);
-        $this->assertContains(NotificationCategory::SYSTEM, $cases);
-        $this->assertContains(NotificationCategory::TRANSACTIONAL, $cases);
+test('has expected cases', function () {
+    $cases = NotificationCategory::cases();
+
+    expect($cases)->toHaveCount(5);
+    expect($cases)->toContain(NotificationCategory::COMMUNICATION);
+    expect($cases)->toContain(NotificationCategory::MARKETING);
+    expect($cases)->toContain(NotificationCategory::SECURITY);
+    expect($cases)->toContain(NotificationCategory::SYSTEM);
+    expect($cases)->toContain(NotificationCategory::TRANSACTIONAL);
+});
+
+test('has correct values', function () {
+    expect(NotificationCategory::COMMUNICATION->value)->toBe('communication');
+    expect(NotificationCategory::MARKETING->value)->toBe('marketing');
+    expect(NotificationCategory::SECURITY->value)->toBe('security');
+    expect(NotificationCategory::SYSTEM->value)->toBe('system');
+    expect(NotificationCategory::TRANSACTIONAL->value)->toBe('transactional');
+});
+
+test('label returns human readable string', function () {
+    expect(NotificationCategory::COMMUNICATION->label())->toBe('Communication');
+    expect(NotificationCategory::MARKETING->label())->toBe('Marketing');
+    expect(NotificationCategory::SECURITY->label())->toBe('Security');
+    expect(NotificationCategory::SYSTEM->label())->toBe('System Alerts');
+    expect(NotificationCategory::TRANSACTIONAL->label())->toBe('Transactional');
+});
+
+test('description returns string', function () {
+    foreach (NotificationCategory::cases() as $category) {
+        expect($category->description())->toBeString()->not->toBeEmpty();
     }
+});
 
-    public function test_has_correct_values(): void
-    {
-        $this->assertEquals('communication', NotificationCategory::COMMUNICATION->value);
-        $this->assertEquals('marketing', NotificationCategory::MARKETING->value);
-        $this->assertEquals('security', NotificationCategory::SECURITY->value);
-        $this->assertEquals('system', NotificationCategory::SYSTEM->value);
-        $this->assertEquals('transactional', NotificationCategory::TRANSACTIONAL->value);
+test('icon returns string', function () {
+    foreach (NotificationCategory::cases() as $category) {
+        expect($category->icon())->toBeString()->not->toBeEmpty();
     }
+});
 
-    public function test_label_returns_human_readable_string(): void
-    {
-        $this->assertEquals('Communication', NotificationCategory::COMMUNICATION->label());
-        $this->assertEquals('Marketing', NotificationCategory::MARKETING->label());
-        $this->assertEquals('Security', NotificationCategory::SECURITY->label());
-        $this->assertEquals('System Alerts', NotificationCategory::SYSTEM->label());
-        $this->assertEquals('Transactional', NotificationCategory::TRANSACTIONAL->label());
-    }
+test('can be created from value', function () {
+    $category = NotificationCategory::from('security');
 
-    public function test_description_returns_string(): void
-    {
-        foreach (NotificationCategory::cases() as $category) {
-            $this->assertIsString($category->description());
-            $this->assertNotEmpty($category->description());
-        }
-    }
+    expect($category)->toBe(NotificationCategory::SECURITY);
+});
 
-    public function test_icon_returns_string(): void
-    {
-        foreach (NotificationCategory::cases() as $category) {
-            $this->assertIsString($category->icon());
-            $this->assertNotEmpty($category->icon());
-        }
-    }
+test('try from returns null for invalid value', function () {
+    $category = NotificationCategory::tryFrom('invalid');
 
-    public function test_can_be_created_from_value(): void
-    {
-        $category = NotificationCategory::from('security');
-
-        $this->assertEquals(NotificationCategory::SECURITY, $category);
-    }
-
-    public function test_try_from_returns_null_for_invalid_value(): void
-    {
-        $category = NotificationCategory::tryFrom('invalid');
-
-        $this->assertNull($category);
-    }
-}
+    expect($category)->toBeNull();
+});
