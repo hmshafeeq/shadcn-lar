@@ -207,7 +207,7 @@ test('it can show a post', function () {
         ->get("/dashboard/posts/{$post->slug}");
 
     $response->assertStatus(200)
-        ->assertInertia(fn ($page) => $page->component('Blog::post')
+        ->assertInertia(fn ($page) => $page->component('Blog::post', false)
             ->has('post', fn ($prop) => $prop->where('id', $post->id)
                 ->where('slug', $post->slug)
                 ->etc()
@@ -222,7 +222,7 @@ test('it can show edit post form', function () {
         ->get("/dashboard/posts/{$post->slug}/edit");
 
     $response->assertStatus(200)
-        ->assertInertia(fn ($page) => $page->component('Blog::edit-post')
+        ->assertInertia(fn ($page) => $page->component('Blog::edit-post', false)
             ->has('post')
             ->has('categories')
             ->has('tags')

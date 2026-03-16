@@ -17,7 +17,11 @@ export default defineConfig(({ mode }) => {
           "Modules/*/resources/js/**",
         ],
       }),
-      react(),
+      react({
+        babel: {
+          plugins: [["babel-plugin-react-compiler", {}]],
+        },
+      }),
       tailwindcss(),
     ],
     resolve: {

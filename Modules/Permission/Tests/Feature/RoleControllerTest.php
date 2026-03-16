@@ -21,6 +21,7 @@ beforeEach(function () {
 });
 
 test('it can list all roles', function () {
+    $existingCount = Role::count();
     Role::create(['name' => 'Admin', 'guard_name' => 'web']);
     Role::create(['name' => 'Editor', 'guard_name' => 'web']);
 
@@ -28,8 +29,8 @@ test('it can list all roles', function () {
         ->get('/dashboard/roles');
 
     $response->assertStatus(200)
-        ->assertInertia(fn ($page) => $page->component('Permission::roles/index')
-            ->has('roles.data', 2)
+        ->assertInertia(fn ($page) => $page->component('Permission::roles/index', false)
+            ->has('roles.data', $existingCount + 2)
         );
 });
 

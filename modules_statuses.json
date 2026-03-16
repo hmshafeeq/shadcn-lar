@@ -1,5 +1,5 @@
 {
-    "Blog": true,
+    "Blog": false,
     "Ecommerce": true,
     "Permission": true,
     "Notification": true,
