@@ -1,13 +1,7 @@
-import { AuthenticatedLayout } from "@/layouts";
-import {
-  Bird,
-  CornerDownLeft,
-  Mic,
-  Paperclip,
-  Rabbit,
-  Turtle,
-} from "lucide-react";
-
+import { Bird, CornerDownLeft, Mic, Paperclip, Rabbit, Turtle } from "lucide-react";
+import { Main } from "@/components/layout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -18,15 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Main } from "@/components/layout";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { AuthenticatedLayout } from "@/layouts";
 
 export default function Orders() {
   return (
@@ -40,16 +27,11 @@ export default function Orders() {
             >
               <form className="grid w-full items-start gap-6">
                 <fieldset className="grid gap-6 rounded-lg border p-4">
-                  <legend className="-ml-1 px-1 text-sm font-medium">
-                    Settings
-                  </legend>
+                  <legend className="-ml-1 px-1 text-sm font-medium">Settings</legend>
                   <div className="grid gap-3">
                     <Label htmlFor="model">Model</Label>
                     <Select>
-                      <SelectTrigger
-                        id="model"
-                        className="items-start **:data-description:hidden"
-                      >
+                      <SelectTrigger id="model" className="items-start **:data-description:hidden">
                         <SelectValue placeholder="Select a model" />
                       </SelectTrigger>
                       <SelectContent>
@@ -58,10 +40,7 @@ export default function Orders() {
                             <Rabbit className="size-5" />
                             <div className="grid gap-0.5">
                               <p>
-                                Neural{" "}
-                                <span className="font-medium text-foreground">
-                                  Genesis
-                                </span>
+                                Neural <span className="font-medium text-foreground">Genesis</span>
                               </p>
                               <p className="text-xs" data-description>
                                 Our fastest model for general use cases.
@@ -74,10 +53,7 @@ export default function Orders() {
                             <Bird className="size-5" />
                             <div className="grid gap-0.5">
                               <p>
-                                Neural{" "}
-                                <span className="font-medium text-foreground">
-                                  Explorer
-                                </span>
+                                Neural <span className="font-medium text-foreground">Explorer</span>
                               </p>
                               <p className="text-xs" data-description>
                                 Performance and speed for efficiency.
@@ -90,14 +66,10 @@ export default function Orders() {
                             <Turtle className="size-5" />
                             <div className="grid gap-0.5">
                               <p>
-                                Neural{" "}
-                                <span className="font-medium text-foreground">
-                                  Quantum
-                                </span>
+                                Neural <span className="font-medium text-foreground">Quantum</span>
                               </p>
                               <p className="text-xs" data-description>
-                                The most powerful model for complex
-                                computations.
+                                The most powerful model for complex computations.
                               </p>
                             </div>
                           </div>
@@ -121,9 +93,7 @@ export default function Orders() {
                   </div>
                 </fieldset>
                 <fieldset className="grid gap-6 rounded-lg border p-4">
-                  <legend className="-ml-1 px-1 text-sm font-medium">
-                    Messages
-                  </legend>
+                  <legend className="-ml-1 px-1 text-sm font-medium">Messages</legend>
                   <div className="grid gap-3">
                     <Label htmlFor="role">Role</Label>
                     <Select defaultValue="system">
@@ -139,11 +109,7 @@ export default function Orders() {
                   </div>
                   <div className="grid gap-3">
                     <Label htmlFor="content">Content</Label>
-                    <Textarea
-                      id="content"
-                      placeholder="You are a..."
-                      className="min-h-38"
-                    />
+                    <Textarea id="content" placeholder="You are a..." className="min-h-38" />
                   </div>
                 </fieldset>
               </form>

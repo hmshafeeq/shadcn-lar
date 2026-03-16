@@ -1,18 +1,18 @@
-import { AuthenticatedLayout } from '@/layouts'
-import { Main } from '@/components/layout/main'
-import { InvoiceForm } from './components/invoice-form'
+import { Main } from "@/components/layout/main";
+import { AuthenticatedLayout } from "@/layouts";
+import { InvoiceForm } from "./components/invoice-form";
 
 interface InvoiceDefaults {
-  from_name?: string
-  from_address?: string
-  from_email?: string
-  from_phone?: string
-  tax_rate?: number
-  payment_terms?: number
+  from_name?: string;
+  from_address?: string;
+  from_email?: string;
+  from_phone?: string;
+  tax_rate?: number;
+  payment_terms?: number;
 }
 
 interface Props {
-  defaults?: InvoiceDefaults
+  defaults?: InvoiceDefaults;
 }
 
 export default function CreateInvoice({ defaults }: Props) {
@@ -28,5 +28,5 @@ export default function CreateInvoice({ defaults }: Props) {
         <InvoiceForm defaults={defaults} />
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

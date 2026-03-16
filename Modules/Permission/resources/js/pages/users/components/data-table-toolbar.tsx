@@ -1,26 +1,26 @@
-import { useState } from 'react'
-import { Cross2Icon } from '@radix-ui/react-icons'
-import { Table } from '@tanstack/react-table'
-import { router } from '@inertiajs/react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { router } from "@inertiajs/react";
+import { Cross2Icon } from "@radix-ui/react-icons";
+import type { Table } from "@tanstack/react-table";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Role } from '@/types'
-import { DataTableViewOptions } from './data-table-view-options'
+} from "@/components/ui/select";
+import type { Role } from "@/types";
+import { DataTableViewOptions } from "./data-table-view-options";
 
 interface DataTableToolbarProps<TData> {
-  table: Table<TData>
-  roles: Role[]
+  table: Table<TData>;
+  roles: Role[];
   filters?: {
-    search?: string
-    role?: string
-  }
+    search?: string;
+    role?: string;
+  };
 }
 
 export function DataTableToolbar<TData>({
@@ -28,35 +28,35 @@ export function DataTableToolbar<TData>({
   roles,
   filters = {},
 }: DataTableToolbarProps<TData>) {
-  const [searchTerm, setSearchTerm] = useState(filters.search || '')
-  const [selectedRole, setSelectedRole] = useState(filters.role || '')
+  const [searchTerm, setSearchTerm] = useState(filters.search || "");
+  const [selectedRole, setSelectedRole] = useState(filters.role || "");
 
-  const isFiltered = filters.search || filters.role
+  const isFiltered = filters.search || filters.role;
 
   const handleSearch = (value: string) => {
-    setSearchTerm(value)
+    setSearchTerm(value);
     router.get(
-      route('dashboard.users'),
+      route("dashboard.users"),
       { search: value || undefined, role: selectedRole || undefined },
-      { preserveState: true, replace: true }
-    )
-  }
+      { preserveState: true, replace: true },
+    );
+  };
 
   const handleRoleFilter = (value: string) => {
-    const role = value === 'all' ? '' : value
-    setSelectedRole(role)
+    const role = value === "all" ? "" : value;
+    setSelectedRole(role);
     router.get(
-      route('dashboard.users'),
+      route("dashboard.users"),
       { search: searchTerm || undefined, role: role || undefined },
-      { preserveState: true, replace: true }
-    )
-  }
+      { preserveState: true, replace: true },
+    );
+  };
 
   const handleReset = () => {
-    setSearchTerm('')
-    setSelectedRole('')
-    router.get(route('dashboard.users'), {}, { preserveState: true, replace: true })
-  }
+    setSearchTerm("");
+    setSelectedRole("");
+    router.get(route("dashboard.users"), {}, { preserveState: true, replace: true });
+  };
 
   return (
     <div className="flex items-center justify-between">
@@ -68,7 +68,7 @@ export function DataTableToolbar<TData>({
           className="h-8 w-[150px] lg:w-[250px]"
         />
         <div className="flex gap-x-2">
-          <Select value={selectedRole || 'all'} onValueChange={handleRoleFilter}>
+          <Select value={selectedRole || "all"} onValueChange={handleRoleFilter}>
             <SelectTrigger className="h-8 w-[140px]">
               <SelectValue placeholder="Filter by role" />
             </SelectTrigger>
@@ -83,11 +83,7 @@ export function DataTableToolbar<TData>({
           </Select>
         </div>
         {isFiltered && (
-          <Button
-            variant="ghost"
-            onClick={handleReset}
-            className="h-8 px-2 lg:px-3"
-          >
+          <Button variant="ghost" onClick={handleReset} className="h-8 px-2 lg:px-3">
             Reset
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
@@ -95,5 +91,5 @@ export function DataTableToolbar<TData>({
       </div>
       <DataTableViewOptions table={table} />
     </div>
-  )
+  );
 }

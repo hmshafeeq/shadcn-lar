@@ -1,14 +1,14 @@
-import React from 'react';
+import React from "react";
 
 interface IconProps {
-    icon: string;
-    className?: string;
+  icon: string;
+  className?: string;
 }
 
-export default function Icon({ icon, className = '' }: IconProps) {
-    return (
-        <svg className={`media-library-icon ${className}`}>
-            <use xlinkHref={`#icon-${icon}`}></use>
-        </svg>
-    );
+export default function Icon({ icon, className = "" }: IconProps) {
+  return (
+    <svg className={`media-library-icon ${className}`}>
+      <use xlinkHref={`#icon-${icon}`}></use>
+    </svg>
+  );
 }

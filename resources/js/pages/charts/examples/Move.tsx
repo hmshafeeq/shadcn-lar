@@ -1,13 +1,11 @@
-import {Card, CardContent, CardFooter} from "@/components/ui/card";
-import {ChartContainer} from "@/components/ui/chart";
-import {Bar, BarChart, LabelList, XAxis, YAxis} from "recharts";
-import {Separator} from "@/components/ui/separator";
+import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { ChartContainer } from "@/components/ui/chart";
+import { Separator } from "@/components/ui/separator";
 
 export function Move() {
   return (
-    <Card
-      className="w-full" x-chunk="charts-01-chunk-4"
-    >
+    <Card className="w-full" x-chunk="charts-01-chunk-4">
       <CardContent className="flex gap-4 p-4 pb-2">
         <ChartContainer
           config={{
@@ -84,9 +82,7 @@ export function Move() {
             <div className="text-xs text-muted-foreground">Move</div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
               562
-              <span className="text-sm font-normal text-muted-foreground">
-                          kcal
-                        </span>
+              <span className="text-sm font-normal text-muted-foreground">kcal</span>
             </div>
           </div>
           <Separator orientation="vertical" className="mx-2 h-10 w-px" />
@@ -94,9 +90,7 @@ export function Move() {
             <div className="text-xs text-muted-foreground">Exercise</div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
               73
-              <span className="text-sm font-normal text-muted-foreground">
-                          min
-                        </span>
+              <span className="text-sm font-normal text-muted-foreground">min</span>
             </div>
           </div>
           <Separator orientation="vertical" className="mx-2 h-10 w-px" />
@@ -104,13 +98,11 @@ export function Move() {
             <div className="text-xs text-muted-foreground">Stand</div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
               14
-              <span className="text-sm font-normal text-muted-foreground">
-                          hr
-                        </span>
+              <span className="text-sm font-normal text-muted-foreground">hr</span>
             </div>
           </div>
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }

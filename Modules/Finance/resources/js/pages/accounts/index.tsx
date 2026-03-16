@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react'
-import { router } from '@inertiajs/react'
-import { useTranslation } from 'react-i18next'
-import { AuthenticatedLayout } from '@/layouts'
-import { Main } from '@/components/layout/main'
-import { Button } from '@/components/ui/button'
+import { router } from "@inertiajs/react";
+import type { Account, AccountSummary, Currency } from "@modules/Finance/types/finance";
+import { Plus, Wallet } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Main } from "@/components/layout/main";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,112 +13,110 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Plus, Wallet } from 'lucide-react'
-import { AccountCard } from './components/account-card'
-import { AccountForm } from './components/account-form'
-import type { Account, AccountSummary, Currency } from '@modules/Finance/types/finance'
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { AuthenticatedLayout } from "@/layouts";
+import { AccountCard } from "./components/account-card";
+import { AccountForm } from "./components/account-form";
 
 interface Props {
-  accounts: Account[]
-  summary: AccountSummary
-  currencies: Currency[]
+  accounts: Account[];
+  summary: AccountSummary;
+  currencies: Currency[];
 }
 
-function formatMoney(amount: number, currencyCode = 'VND'): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+function formatMoney(amount: number, currencyCode = "VND"): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency: currencyCode,
-  }).format(amount)
+  }).format(amount);
 }
 
 export default function AccountsIndex({ accounts, summary, currencies }: Props) {
-  const { t } = useTranslation()
-  const [showForm, setShowForm] = useState(false)
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null)
-  const [filterType, setFilterType] = useState('all')
+  const { t } = useTranslation();
+  const [showForm, setShowForm] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
+  const [filterType, setFilterType] = useState("all");
 
   const filterTypes = [
-    { value: 'all', label: t('filter.all') },
-    { value: 'bank', label: t('filter.bank') },
-    { value: 'credit_card', label: t('filter.credit_card') },
-    { value: 'investment', label: t('filter.investment') },
-    { value: 'cash', label: t('filter.cash') },
-  ]
+    { value: "all", label: t("filter.all") },
+    { value: "bank", label: t("filter.bank") },
+    { value: "credit_card", label: t("filter.credit_card") },
+    { value: "investment", label: t("filter.investment") },
+    { value: "cash", label: t("filter.cash") },
+  ];
 
   const filteredAccounts = useMemo(() => {
-    if (filterType === 'all') {
-      return accounts
+    if (filterType === "all") {
+      return accounts;
     }
-    return accounts.filter((account) => account.account_type === filterType)
-  }, [accounts, filterType])
+    return accounts.filter((account) => account.account_type === filterType);
+  }, [accounts, filterType]);
 
-  const activeAccounts = filteredAccounts.filter((a) => a.is_active)
-  const inactiveAccounts = filteredAccounts.filter((a) => !a.is_active)
+  const activeAccounts = filteredAccounts.filter((a) => a.is_active);
+  const inactiveAccounts = filteredAccounts.filter((a) => !a.is_active);
 
   const handleEdit = (account: Account) => {
-    setSelectedAccount(account)
-    setShowForm(true)
-  }
+    setSelectedAccount(account);
+    setShowForm(true);
+  };
 
   const handleDelete = (account: Account) => {
-    setSelectedAccount(account)
-    setShowDeleteDialog(true)
-  }
+    setSelectedAccount(account);
+    setShowDeleteDialog(true);
+  };
 
   const confirmDelete = () => {
     if (selectedAccount) {
-      router.delete(route('dashboard.finance.accounts.destroy', selectedAccount.id), {
+      router.delete(route("dashboard.finance.accounts.destroy", selectedAccount.id), {
         onSuccess: () => {
-          setShowDeleteDialog(false)
-          setSelectedAccount(null)
+          setShowDeleteDialog(false);
+          setSelectedAccount(null);
         },
-      })
+      });
     }
-  }
+  };
 
   const handleFormClose = () => {
-    setShowForm(false)
-    setSelectedAccount(null)
-  }
+    setShowForm(false);
+    setSelectedAccount(null);
+  };
 
   const handleSuccess = () => {
-    router.reload({ only: ['accounts', 'summary'] })
-  }
+    router.reload({ only: ["accounts", "summary"] });
+  };
 
   return (
-    <AuthenticatedLayout title={t('page.accounts.title')}>
+    <AuthenticatedLayout title={t("page.accounts.title")}>
       <Main>
         <div className="mb-4 md:flex items-center justify-between">
           <div className="mb-4">
-            <h1 className="text-2xl font-bold tracking-tight">{t('page.accounts.title')}</h1>
-            <p className="text-muted-foreground">
-              {t('page.accounts.description')}
-            </p>
+            <h1 className="text-2xl font-bold tracking-tight">{t("page.accounts.title")}</h1>
+            <p className="text-muted-foreground">{t("page.accounts.description")}</p>
           </div>
           <Button onClick={() => setShowForm(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            {t('page.accounts.new')}
+            {t("page.accounts.new")}
           </Button>
         </div>
 
         {/* Summary */}
         <div className="mb-6 grid md:grid-cols-3 gap-4">
           <div className="rounded-lg border bg-card p-4">
-            <p className="text-sm text-muted-foreground">{t('page.accounts.total_assets')}</p>
+            <p className="text-sm text-muted-foreground">{t("page.accounts.total_assets")}</p>
             <p className="text-2xl font-bold text-green-600">
               {formatMoney(summary.total_assets, summary.currency_code)}
             </p>
           </div>
           <div className="rounded-lg border bg-card p-4">
-            <p className="text-sm text-muted-foreground">{t('page.accounts.total_liabilities')}</p>
+            <p className="text-sm text-muted-foreground">{t("page.accounts.total_liabilities")}</p>
             <p className="text-2xl font-bold text-red-600">
               {formatMoney(summary.total_liabilities, summary.currency_code)}
             </p>
           </div>
           <div className="rounded-lg border bg-card p-4">
-            <p className="text-sm text-muted-foreground">{t('page.accounts.net_worth')}</p>
+            <p className="text-sm text-muted-foreground">{t("page.accounts.net_worth")}</p>
             <p className="text-2xl font-bold">
               {formatMoney(summary.net_worth, summary.currency_code)}
             </p>
@@ -130,7 +128,7 @@ export default function AccountsIndex({ accounts, summary, currencies }: Props) 
           {filterTypes.map((type) => (
             <Button
               key={type.value}
-              variant={filterType === type.value ? 'default' : 'outline-solid'}
+              variant={filterType === type.value ? "default" : "outline-solid"}
               size="sm"
               onClick={() => setFilterType(type.value)}
             >
@@ -142,7 +140,7 @@ export default function AccountsIndex({ accounts, summary, currencies }: Props) 
         {/* Active Accounts */}
         {activeAccounts.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-lg font-medium mb-4">{t('page.accounts.active_accounts')}</h3>
+            <h3 className="text-lg font-medium mb-4">{t("page.accounts.active_accounts")}</h3>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {activeAccounts.map((account) => (
                 <AccountCard
@@ -160,7 +158,7 @@ export default function AccountsIndex({ accounts, summary, currencies }: Props) 
         {inactiveAccounts.length > 0 && (
           <div>
             <h3 className="text-lg font-medium text-muted-foreground mb-4">
-              {t('page.accounts.inactive_accounts')}
+              {t("page.accounts.inactive_accounts")}
             </h3>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {inactiveAccounts.map((account) => (
@@ -179,13 +177,11 @@ export default function AccountsIndex({ accounts, summary, currencies }: Props) 
         {activeAccounts.length === 0 && inactiveAccounts.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <Wallet className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">{t('page.accounts.no_accounts')}</h3>
-            <p className="text-muted-foreground mb-4">
-              {t('page.accounts.get_started')}
-            </p>
+            <h3 className="text-xl font-semibold mb-2">{t("page.accounts.no_accounts")}</h3>
+            <p className="text-muted-foreground mb-4">{t("page.accounts.get_started")}</p>
             <Button onClick={() => setShowForm(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              {t('page.accounts.create')}
+              {t("page.accounts.create")}
             </Button>
           </div>
         )}
@@ -203,23 +199,20 @@ export default function AccountsIndex({ accounts, summary, currencies }: Props) 
         <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{t('page.accounts.delete_title')}</AlertDialogTitle>
+              <AlertDialogTitle>{t("page.accounts.delete_title")}</AlertDialogTitle>
               <AlertDialogDescription>
-                {t('page.accounts.delete_description', { name: selectedAccount?.name || '' })}
+                {t("page.accounts.delete_description", { name: selectedAccount?.name || "" })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={confirmDelete}
-                className="bg-red-600 hover:bg-red-700"
-              >
-                {t('common.delete')}
+              <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+                {t("common.delete")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

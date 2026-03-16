@@ -1,75 +1,75 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
-import { Play, Pause } from 'lucide-react'
+import { Pause, Play } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface ChatAudioAttachmentProps {
-  url: string
+  url: string;
 }
 
 export function ChatAudioAttachment({ url }: ChatAudioAttachmentProps) {
-  const audioRef = useRef<HTMLAudioElement>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState(0)
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   const formatTime = useCallback((seconds: number): string => {
-    const mins = Math.floor(seconds / 60)
-    const secs = Math.floor(seconds % 60)
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
 
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }, [])
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  }, []);
 
   useEffect(() => {
-    const audio = audioRef.current
+    const audio = audioRef.current;
 
     if (!audio) {
-      return
+      return;
     }
 
-    const onLoadedMetadata = () => setDuration(audio.duration)
-    const onTimeUpdate = () => setCurrentTime(audio.currentTime)
-    const onEnded = () => setIsPlaying(false)
+    const onLoadedMetadata = () => setDuration(audio.duration);
+    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const onEnded = () => setIsPlaying(false);
 
-    audio.addEventListener('loadedmetadata', onLoadedMetadata)
-    audio.addEventListener('timeupdate', onTimeUpdate)
-    audio.addEventListener('ended', onEnded)
+    audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    audio.addEventListener("ended", onEnded);
 
     return () => {
-      audio.removeEventListener('loadedmetadata', onLoadedMetadata)
-      audio.removeEventListener('timeupdate', onTimeUpdate)
-      audio.removeEventListener('ended', onEnded)
-    }
-  }, [])
+      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+      audio.removeEventListener("ended", onEnded);
+    };
+  }, []);
 
   const togglePlay = () => {
-    const audio = audioRef.current
+    const audio = audioRef.current;
 
     if (!audio) {
-      return
+      return;
     }
 
     if (isPlaying) {
-      audio.pause()
+      audio.pause();
     } else {
-      audio.play()
+      audio.play();
     }
 
-    setIsPlaying(!isPlaying)
-  }
+    setIsPlaying(!isPlaying);
+  };
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    const audio = audioRef.current
+    const audio = audioRef.current;
 
     if (!audio || !duration) {
-      return
+      return;
     }
 
-    const rect = e.currentTarget.getBoundingClientRect()
-    const ratio = (e.clientX - rect.left) / rect.width
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
 
-    audio.currentTime = ratio * duration
-  }
+    audio.currentTime = ratio * duration;
+  };
 
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <div className="flex items-center gap-2 min-w-[180px]">
@@ -103,5 +103,5 @@ export function ChatAudioAttachment({ url }: ChatAudioAttachmentProps) {
         </span>
       </div>
     </div>
-  )
+  );
 }

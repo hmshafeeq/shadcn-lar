@@ -1,11 +1,11 @@
-import { AuthenticatedLayout } from '@/layouts'
-import { Main } from '@/components/layout/main'
-import { PageProps } from '@/types'
-import { InvoiceForm } from './components/invoice-form'
-import { Invoice } from './data/schema'
+import { Main } from "@/components/layout/main";
+import { AuthenticatedLayout } from "@/layouts";
+import type { PageProps } from "@/types";
+import { InvoiceForm } from "./components/invoice-form";
+import type { Invoice } from "./data/schema";
 
 interface EditInvoiceProps extends PageProps {
-  invoice: Invoice
+  invoice: Invoice;
 }
 
 export default function EditInvoice({ invoice }: EditInvoiceProps) {
@@ -16,12 +16,10 @@ export default function EditInvoice({ invoice }: EditInvoiceProps) {
           <h2 className="text-2xl font-bold tracking-tight">
             Edit Invoice #{invoice.invoice_number}
           </h2>
-          <p className="text-muted-foreground">
-            Update the invoice details below.
-          </p>
+          <p className="text-muted-foreground">Update the invoice details below.</p>
         </div>
         <InvoiceForm invoice={invoice} />
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

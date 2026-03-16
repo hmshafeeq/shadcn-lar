@@ -1,17 +1,13 @@
-import { useEffect, useRef } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { ChatMessageBubble } from './chat-message-bubble'
-import type {
-  Account,
-  Category,
-  ChatMessage,
-} from '@modules/Finance/types/finance'
+import type { Account, Category, ChatMessage } from "@modules/Finance/types/finance";
+import { useEffect, useRef } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ChatMessageBubble } from "./chat-message-bubble";
 
 interface ChatMessageListProps {
-  messages: ChatMessage[]
-  accounts: Account[]
-  categories: Category[]
-  onSaveTransaction: (messageId: string, data: Record<string, unknown>) => void
+  messages: ChatMessage[];
+  accounts: Account[];
+  categories: Category[];
+  onSaveTransaction: (messageId: string, data: Record<string, unknown>) => void;
 }
 
 export function ChatMessageList({
@@ -20,11 +16,11 @@ export function ChatMessageList({
   categories,
   onSaveTransaction,
 }: ChatMessageListProps) {
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <ScrollArea className="flex-1 px-3 sm:px-4">
@@ -41,5 +37,5 @@ export function ChatMessageList({
         <div ref={bottomRef} />
       </div>
     </ScrollArea>
-  )
+  );
 }

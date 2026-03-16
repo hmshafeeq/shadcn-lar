@@ -7,67 +7,67 @@ import {
   IconPalette,
   IconTool,
   IconUser,
-} from '@tabler/icons-react'
+} from "@tabler/icons-react";
 
 export interface SettingsNavItem {
-  title: string
-  titleKey?: string
-  icon: React.ReactNode
-  href: string
-  superAdminOnly?: boolean
-  requiresModule?: string
+  title: string;
+  titleKey?: string;
+  icon: React.ReactNode;
+  href: string;
+  superAdminOnly?: boolean;
+  requiresModule?: string;
 }
 
 export const settingsNavItems: SettingsNavItem[] = [
   {
-    title: 'Profile',
-    titleKey: 'settings.nav.profile',
+    title: "Profile",
+    titleKey: "settings.nav.profile",
     icon: <IconUser size={18} />,
-    href: '/dashboard/settings',
+    href: "/dashboard/settings",
   },
   {
-    title: 'Account',
-    titleKey: 'settings.nav.account',
+    title: "Account",
+    titleKey: "settings.nav.account",
     icon: <IconTool size={18} />,
-    href: '/dashboard/settings/account',
+    href: "/dashboard/settings/account",
   },
   {
-    title: 'Appearance',
-    titleKey: 'settings.nav.appearance',
+    title: "Appearance",
+    titleKey: "settings.nav.appearance",
     icon: <IconPalette size={18} />,
-    href: '/dashboard/settings/appearance',
+    href: "/dashboard/settings/appearance",
   },
   {
-    title: 'Notifications',
-    titleKey: 'settings.nav.notifications',
+    title: "Notifications",
+    titleKey: "settings.nav.notifications",
     icon: <IconNotification size={18} />,
-    href: '/dashboard/settings/notifications',
+    href: "/dashboard/settings/notifications",
   },
   {
-    title: 'Display',
-    titleKey: 'settings.nav.display',
+    title: "Display",
+    titleKey: "settings.nav.display",
     icon: <IconBrowserCheck size={18} />,
-    href: '/dashboard/settings/display',
+    href: "/dashboard/settings/display",
   },
   {
-    title: 'Finance',
-    titleKey: 'settings.nav.finance',
+    title: "Finance",
+    titleKey: "settings.nav.finance",
     icon: <IconCurrencyDollar size={18} />,
-    href: '/dashboard/settings/finance',
-    requiresModule: 'Finance',
+    href: "/dashboard/settings/finance",
+    requiresModule: "Finance",
   },
   {
-    title: 'Invoice',
-    titleKey: 'settings.nav.invoice',
+    title: "Invoice",
+    titleKey: "settings.nav.invoice",
     icon: <IconFileInvoice size={18} />,
-    href: '/dashboard/settings/invoice',
-    requiresModule: 'Invoice',
+    href: "/dashboard/settings/invoice",
+    requiresModule: "Invoice",
   },
   {
-    title: 'Modules',
-    titleKey: 'settings.nav.modules',
+    title: "Modules",
+    titleKey: "settings.nav.modules",
     icon: <IconPackages size={18} />,
-    href: '/dashboard/settings/modules',
+    href: "/dashboard/settings/modules",
     superAdminOnly: true,
   },
-]
+];

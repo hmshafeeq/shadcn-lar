@@ -1,81 +1,86 @@
-import { AuthenticatedLayout } from "@/layouts"
-import { ChevronLeft } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Main } from "@/components/layout"
-import { useState } from "react"
-import { router } from "@inertiajs/react"
-import { PageProps } from "@/types"
-import { useToast } from "@/hooks/use-toast"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Badge } from "@/components/ui/badge"
+import { router } from "@inertiajs/react";
+import { ChevronLeft } from "lucide-react";
+import { useState } from "react";
+import { Main } from "@/components/layout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
+import { AuthenticatedLayout } from "@/layouts";
+import type { PageProps } from "@/types";
 
 interface Permission {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
 interface Role {
-  id: number
-  name: string
-  guard_name: string
-  permissions: Permission[]
+  id: number;
+  name: string;
+  guard_name: string;
+  permissions: Permission[];
 }
 
 interface GroupedPermissions {
   [key: string]: {
-    name: string
-    action: string
-  }[]
+    name: string;
+    action: string;
+  }[];
 }
 
 interface EditRolePageProps extends PageProps {
-  role: Role
-  permissions: Permission[]
-  groupedPermissions: GroupedPermissions
-  rolePermissions: string[]
+  role: Role;
+  permissions: Permission[];
+  groupedPermissions: GroupedPermissions;
+  rolePermissions: string[];
 }
 
-export default function EditRole({ role, permissions, groupedPermissions, rolePermissions }: EditRolePageProps) {
-  const [name, setName] = useState(role.name)
-  const [selectedPermissions, setSelectedPermissions] = useState<string[]>(rolePermissions)
-  const [processing, setProcessing] = useState(false)
-  const { toast } = useToast()
+export default function EditRole({
+  role,
+  permissions,
+  groupedPermissions,
+  rolePermissions,
+}: EditRolePageProps) {
+  const [name, setName] = useState(role.name);
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>(rolePermissions);
+  const [processing, setProcessing] = useState(false);
+  const { toast } = useToast();
 
-  const isSuperAdmin = role.name === 'Super Admin'
+  const isSuperAdmin = role.name === "Super Admin";
 
   const handlePermissionToggle = (permissionName: string) => {
-    if (isSuperAdmin) return
-    setSelectedPermissions(prev =>
+    if (isSuperAdmin) return;
+    setSelectedPermissions((prev) =>
       prev.includes(permissionName)
-        ? prev.filter(p => p !== permissionName)
-        : [...prev, permissionName]
-    )
-  }
+        ? prev.filter((p) => p !== permissionName)
+        : [...prev, permissionName],
+    );
+  };
 
   const handleGroupToggle = (group: string, permissions: { name: string }[]) => {
-    if (isSuperAdmin) return
-    const groupPermissionNames = permissions.map(p => p.name)
-    const allSelected = groupPermissionNames.every(p => selectedPermissions.includes(p))
+    if (isSuperAdmin) return;
+    const groupPermissionNames = permissions.map((p) => p.name);
+    const allSelected = groupPermissionNames.every((p) => selectedPermissions.includes(p));
 
     if (allSelected) {
-      setSelectedPermissions(prev => prev.filter(p => !groupPermissionNames.includes(p)))
+      setSelectedPermissions((prev) => prev.filter((p) => !groupPermissionNames.includes(p)));
     } else {
-      setSelectedPermissions(prev => [...new Set([...prev, ...groupPermissionNames])])
+      setSelectedPermissions((prev) => [...new Set([...prev, ...groupPermissionNames])]);
     }
-  }
+  };
 
   const handleSelectAll = () => {
-    if (isSuperAdmin) return
+    if (isSuperAdmin) return;
     if (selectedPermissions.length === permissions.length) {
-      setSelectedPermissions([])
+      setSelectedPermissions([]);
     } else {
-      setSelectedPermissions(permissions.map(p => p.name))
+      setSelectedPermissions(permissions.map((p) => p.name));
     }
-  }
+  };
 
   const handleSubmit = () => {
     if (!name.trim()) {
@@ -83,40 +88,48 @@ export default function EditRole({ role, permissions, groupedPermissions, rolePe
         variant: "destructive",
         title: "Validation Error",
         description: "Role name is required.",
-      })
-      return
+      });
+      return;
     }
 
-    setProcessing(true)
-    router.put(route('dashboard.roles.update', role.id), {
-      name: name,
-      permissions: selectedPermissions,
-    }, {
-      onSuccess: () => {
-        setProcessing(false)
-        toast({
-          title: "Role updated!",
-          description: "The role has been updated successfully.",
-        })
+    setProcessing(true);
+    router.put(
+      route("dashboard.roles.update", role.id),
+      {
+        name: name,
+        permissions: selectedPermissions,
       },
-      onError: (errors) => {
-        setProcessing(false)
-        toast({
-          variant: "destructive",
-          title: "Error updating role",
-          description: Object.values(errors)[0] as string || "Please check your form and try again.",
-        })
-      }
-    })
-  }
+      {
+        onSuccess: () => {
+          setProcessing(false);
+          toast({
+            title: "Role updated!",
+            description: "The role has been updated successfully.",
+          });
+        },
+        onError: (errors) => {
+          setProcessing(false);
+          toast({
+            variant: "destructive",
+            title: "Error updating role",
+            description:
+              (Object.values(errors)[0] as string) || "Please check your form and try again.",
+          });
+        },
+      },
+    );
+  };
 
   const isGroupFullySelected = (permissions: { name: string }[]) => {
-    return permissions.every(p => selectedPermissions.includes(p.name))
-  }
+    return permissions.every((p) => selectedPermissions.includes(p.name));
+  };
 
   const isGroupPartiallySelected = (permissions: { name: string }[]) => {
-    return permissions.some(p => selectedPermissions.includes(p.name)) && !isGroupFullySelected(permissions)
-  }
+    return (
+      permissions.some((p) => selectedPermissions.includes(p.name)) &&
+      !isGroupFullySelected(permissions)
+    );
+  };
 
   return (
     <AuthenticatedLayout title="Edit Role">
@@ -124,22 +137,28 @@ export default function EditRole({ role, permissions, groupedPermissions, rolePe
         <div className="grid flex-1 items-start gap-4 md:gap-8">
           <div className="grid flex-1 auto-rows-max gap-4">
             <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => window.history.back()}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => window.history.back()}
+              >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Back</span>
               </Button>
               <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
                 Edit Role
               </h1>
-              {isSuperAdmin && (
-                <Badge variant="secondary">System Role</Badge>
-              )}
+              {isSuperAdmin && <Badge variant="secondary">System Role</Badge>}
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                <Button variant="outline" onClick={() => router.get(route('dashboard.roles.index'))}>
+                <Button
+                  variant="outline"
+                  onClick={() => router.get(route("dashboard.roles.index"))}
+                >
                   Cancel
                 </Button>
                 <Button size="sm" onClick={handleSubmit} disabled={processing}>
-                  {processing ? 'Saving...' : 'Save Changes'}
+                  {processing ? "Saving..." : "Save Changes"}
                 </Button>
               </div>
             </div>
@@ -179,13 +198,15 @@ export default function EditRole({ role, permissions, groupedPermissions, rolePe
                         <CardTitle>Permissions</CardTitle>
                         <CardDescription>
                           {isSuperAdmin
-                            ? 'Super Admin has all permissions by default'
-                            : 'Select permissions for this role'}
+                            ? "Super Admin has all permissions by default"
+                            : "Select permissions for this role"}
                         </CardDescription>
                       </div>
                       {!isSuperAdmin && (
                         <Button variant="outline" size="sm" onClick={handleSelectAll}>
-                          {selectedPermissions.length === permissions.length ? 'Deselect All' : 'Select All'}
+                          {selectedPermissions.length === permissions.length
+                            ? "Deselect All"
+                            : "Select All"}
                         </Button>
                       )}
                     </div>
@@ -201,7 +222,9 @@ export default function EditRole({ role, permissions, groupedPermissions, rolePe
                                 checked={isSuperAdmin || isGroupFullySelected(perms)}
                                 ref={(ref) => {
                                   if (ref && !isSuperAdmin) {
-                                    (ref as HTMLButtonElement & { indeterminate: boolean }).indeterminate = isGroupPartiallySelected(perms)
+                                    (
+                                      ref as HTMLButtonElement & { indeterminate: boolean }
+                                    ).indeterminate = isGroupPartiallySelected(perms);
                                   }
                                 }}
                                 onCheckedChange={() => handleGroupToggle(group, perms)}
@@ -214,7 +237,12 @@ export default function EditRole({ role, permissions, groupedPermissions, rolePe
                                 {group}
                               </Label>
                               <span className="text-xs text-muted-foreground">
-                                ({isSuperAdmin ? perms.length : perms.filter(p => selectedPermissions.includes(p.name)).length}/{perms.length})
+                                (
+                                {isSuperAdmin
+                                  ? perms.length
+                                  : perms.filter((p) => selectedPermissions.includes(p.name))
+                                      .length}
+                                /{perms.length})
                               </span>
                             </div>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pl-6">
@@ -222,7 +250,9 @@ export default function EditRole({ role, permissions, groupedPermissions, rolePe
                                 <div key={permission.name} className="flex items-center space-x-2">
                                   <Checkbox
                                     id={permission.name}
-                                    checked={isSuperAdmin || selectedPermissions.includes(permission.name)}
+                                    checked={
+                                      isSuperAdmin || selectedPermissions.includes(permission.name)
+                                    }
                                     onCheckedChange={() => handlePermissionToggle(permission.name)}
                                     disabled={isSuperAdmin}
                                   />
@@ -251,12 +281,14 @@ export default function EditRole({ role, permissions, groupedPermissions, rolePe
                   <CardContent className="space-y-4">
                     <div>
                       <p className="text-sm text-muted-foreground">Role Name</p>
-                      <p className="font-medium">{name || '-'}</p>
+                      <p className="font-medium">{name || "-"}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Selected Permissions</p>
                       <p className="font-medium">
-                        {isSuperAdmin ? 'All permissions' : `${selectedPermissions.length} of ${permissions.length}`}
+                        {isSuperAdmin
+                          ? "All permissions"
+                          : `${selectedPermissions.length} of ${permissions.length}`}
                       </p>
                     </div>
                   </CardContent>
@@ -265,16 +297,16 @@ export default function EditRole({ role, permissions, groupedPermissions, rolePe
             </div>
 
             <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button variant="outline" onClick={() => router.get(route('dashboard.roles.index'))}>
+              <Button variant="outline" onClick={() => router.get(route("dashboard.roles.index"))}>
                 Cancel
               </Button>
               <Button size="sm" onClick={handleSubmit} disabled={processing}>
-                {processing ? 'Saving...' : 'Save Changes'}
+                {processing ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </div>
         </div>
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

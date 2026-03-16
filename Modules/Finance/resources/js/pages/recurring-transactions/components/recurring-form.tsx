@@ -1,70 +1,75 @@
-import { useForm, router } from '@inertiajs/react'
-import { format } from 'date-fns'
-import { useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { DatePicker } from '@/components/ui/date-picker'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
+import { router, useForm } from "@inertiajs/react";
+import type {
+  Account,
+  Category,
+  RecurringFrequency,
+  RecurringTransaction,
+} from "@modules/Finance/types/finance";
+import { format } from "date-fns";
+import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetFooter,
-} from '@/components/ui/sheet'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import type { Account, Category, RecurringTransaction, RecurringFrequency } from '@modules/Finance/types/finance'
+} from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 
 interface RecurringFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  recurring?: RecurringTransaction | null
-  accounts: Account[]
-  categories: Category[]
-  onSuccess?: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  recurring?: RecurringTransaction | null;
+  accounts: Account[];
+  categories: Category[];
+  onSuccess?: () => void;
 }
 
 const frequencies: { value: RecurringFrequency; label: string }[] = [
-  { value: 'daily', label: 'Daily' },
-  { value: 'weekly', label: 'Weekly' },
-  { value: 'monthly', label: 'Monthly' },
-  { value: 'yearly', label: 'Yearly' },
-]
+  { value: "daily", label: "Daily" },
+  { value: "weekly", label: "Weekly" },
+  { value: "monthly", label: "Monthly" },
+  { value: "yearly", label: "Yearly" },
+];
 
 const daysOfWeek = [
-  { value: 0, label: 'Sunday' },
-  { value: 1, label: 'Monday' },
-  { value: 2, label: 'Tuesday' },
-  { value: 3, label: 'Wednesday' },
-  { value: 4, label: 'Thursday' },
-  { value: 5, label: 'Friday' },
-  { value: 6, label: 'Saturday' },
-]
+  { value: 0, label: "Sunday" },
+  { value: 1, label: "Monday" },
+  { value: 2, label: "Tuesday" },
+  { value: 3, label: "Wednesday" },
+  { value: 4, label: "Thursday" },
+  { value: 5, label: "Friday" },
+  { value: 6, label: "Saturday" },
+];
 
 const months = [
-  { value: 1, label: 'January' },
-  { value: 2, label: 'February' },
-  { value: 3, label: 'March' },
-  { value: 4, label: 'April' },
-  { value: 5, label: 'May' },
-  { value: 6, label: 'June' },
-  { value: 7, label: 'July' },
-  { value: 8, label: 'August' },
-  { value: 9, label: 'September' },
-  { value: 10, label: 'October' },
-  { value: 11, label: 'November' },
-  { value: 12, label: 'December' },
-]
+  { value: 1, label: "January" },
+  { value: 2, label: "February" },
+  { value: 3, label: "March" },
+  { value: 4, label: "April" },
+  { value: 5, label: "May" },
+  { value: 6, label: "June" },
+  { value: 7, label: "July" },
+  { value: 8, label: "August" },
+  { value: 9, label: "September" },
+  { value: 10, label: "October" },
+  { value: 11, label: "November" },
+  { value: 12, label: "December" },
+];
 
 export function RecurringForm({
   open,
@@ -74,55 +79,56 @@ export function RecurringForm({
   categories,
   onSuccess,
 }: RecurringFormProps) {
-  const isEditing = !!recurring
+  const isEditing = !!recurring;
 
   const { data, setData, processing, errors, reset } = useForm({
-    name: '',
-    description: '',
-    account_id: '',
-    category_id: '',
-    transaction_type: 'expense' as 'income' | 'expense',
-    amount: '',
-    frequency: 'monthly' as RecurringFrequency,
-    day_of_week: '',
-    day_of_month: '',
-    month_of_year: '',
-    start_date: new Date().toISOString().split('T')[0],
-    end_date: '',
+    name: "",
+    description: "",
+    account_id: "",
+    category_id: "",
+    transaction_type: "expense" as "income" | "expense",
+    amount: "",
+    frequency: "monthly" as RecurringFrequency,
+    day_of_week: "",
+    day_of_month: "",
+    month_of_year: "",
+    start_date: new Date().toISOString().split("T")[0],
+    end_date: "",
     is_active: true as boolean,
     auto_create: true as boolean,
-  })
+  });
 
   useEffect(() => {
     if (recurring) {
       setData((prev) => ({
         ...prev,
-        name: recurring.name || '',
-        description: recurring.description || '',
+        name: recurring.name || "",
+        description: recurring.description || "",
         account_id: String(recurring.account_id),
-        category_id: recurring.category_id ? String(recurring.category_id) : '',
+        category_id: recurring.category_id ? String(recurring.category_id) : "",
         transaction_type: recurring.transaction_type,
         amount: String(recurring.amount),
         frequency: recurring.frequency,
-        day_of_week: recurring.day_of_week !== null ? String(recurring.day_of_week) : '',
-        day_of_month: recurring.day_of_month !== null ? String(recurring.day_of_month) : '',
-        month_of_year: recurring.month_of_year !== null ? String(recurring.month_of_year) : '',
+        day_of_week: recurring.day_of_week !== null ? String(recurring.day_of_week) : "",
+        day_of_month: recurring.day_of_month !== null ? String(recurring.day_of_month) : "",
+        month_of_year: recurring.month_of_year !== null ? String(recurring.month_of_year) : "",
         start_date: recurring.start_date,
-        end_date: recurring.end_date || '',
+        end_date: recurring.end_date || "",
         is_active: recurring.is_active,
         auto_create: recurring.auto_create,
-      }))
+      }));
     } else {
-      reset()
+      reset();
     }
-  }, [recurring, open])
+  }, [recurring, open]);
 
-  const incomeCategories = categories.filter((c) => c.type === 'income' || c.type === 'both')
-  const expenseCategories = categories.filter((c) => c.type === 'expense' || c.type === 'both')
-  const currentCategories = data.transaction_type === 'income' ? incomeCategories : expenseCategories
+  const incomeCategories = categories.filter((c) => c.type === "income" || c.type === "both");
+  const expenseCategories = categories.filter((c) => c.type === "expense" || c.type === "both");
+  const currentCategories =
+    data.transaction_type === "income" ? incomeCategories : expenseCategories;
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // Transform data for submission
     const submitData = {
@@ -131,7 +137,7 @@ export function RecurringForm({
       account_id: data.account_id ? parseInt(data.account_id) : null,
       category_id: data.category_id ? parseInt(data.category_id) : null,
       transaction_type: data.transaction_type,
-      amount: Math.round(parseFloat(data.amount || '0')),
+      amount: Math.round(parseFloat(data.amount || "0")),
       frequency: data.frequency,
       day_of_week: data.day_of_week ? parseInt(data.day_of_week) : null,
       day_of_month: data.day_of_month ? parseInt(data.day_of_month) : null,
@@ -140,40 +146,44 @@ export function RecurringForm({
       end_date: data.end_date || null,
       is_active: data.is_active,
       auto_create: data.auto_create,
-    }
+    };
 
     const options = {
       preserveScroll: true,
       onSuccess: () => {
-        reset()
-        onOpenChange(false)
-        onSuccess?.()
+        reset();
+        onOpenChange(false);
+        onSuccess?.();
       },
-    }
+    };
 
     if (isEditing && recurring) {
-      router.put(route('dashboard.finance.recurring-transactions.update', recurring.id), submitData, options)
+      router.put(
+        route("dashboard.finance.recurring-transactions.update", recurring.id),
+        submitData,
+        options,
+      );
     } else {
-      router.post(route('dashboard.finance.recurring-transactions.store'), submitData, options)
+      router.post(route("dashboard.finance.recurring-transactions.store"), submitData, options);
     }
-  }
+  };
 
   const handleClose = () => {
-    reset()
-    onOpenChange(false)
-  }
+    reset();
+    onOpenChange(false);
+  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="overflow-y-auto sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>
-            {isEditing ? 'Edit Recurring Transaction' : 'New Recurring Transaction'}
+            {isEditing ? "Edit Recurring Transaction" : "New Recurring Transaction"}
           </SheetTitle>
           <SheetDescription>
             {isEditing
-              ? 'Update your recurring transaction settings'
-              : 'Set up a recurring transaction that automatically creates transactions on schedule'}
+              ? "Update your recurring transaction settings"
+              : "Set up a recurring transaction that automatically creates transactions on schedule"}
           </SheetDescription>
         </SheetHeader>
 
@@ -181,8 +191,8 @@ export function RecurringForm({
           <Tabs
             value={data.transaction_type}
             onValueChange={(v) => {
-              setData('transaction_type', v as 'income' | 'expense')
-              setData('category_id', '')
+              setData("transaction_type", v as "income" | "expense");
+              setData("category_id", "");
             }}
           >
             <TabsList className="grid w-full grid-cols-2">
@@ -206,7 +216,7 @@ export function RecurringForm({
             <Input
               id="name"
               value={data.name}
-              onChange={(e) => setData('name', e.target.value)}
+              onChange={(e) => setData("name", e.target.value)}
               placeholder="e.g., Monthly Rent, Salary"
             />
             {errors.name && <p className="text-sm text-red-600">{errors.name}</p>}
@@ -219,7 +229,7 @@ export function RecurringForm({
               type="number"
               min="0"
               value={data.amount}
-              onChange={(e) => setData('amount', e.target.value)}
+              onChange={(e) => setData("amount", e.target.value)}
               placeholder="0"
               className="text-xl font-bold"
             />
@@ -228,10 +238,7 @@ export function RecurringForm({
 
           <div className="space-y-2">
             <Label htmlFor="account_id">Account</Label>
-            <Select
-              value={data.account_id}
-              onValueChange={(value) => setData('account_id', value)}
-            >
+            <Select value={data.account_id} onValueChange={(value) => setData("account_id", value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select account" />
               </SelectTrigger>
@@ -249,8 +256,8 @@ export function RecurringForm({
           <div className="space-y-2">
             <Label htmlFor="category_id">Category</Label>
             <Select
-              value={data.category_id || '__none__'}
-              onValueChange={(value) => setData('category_id', value === '__none__' ? '' : value)}
+              value={data.category_id || "__none__"}
+              onValueChange={(value) => setData("category_id", value === "__none__" ? "" : value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
@@ -270,7 +277,7 @@ export function RecurringForm({
             <Label htmlFor="frequency">Frequency</Label>
             <Select
               value={data.frequency}
-              onValueChange={(value) => setData('frequency', value as RecurringFrequency)}
+              onValueChange={(value) => setData("frequency", value as RecurringFrequency)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select frequency" />
@@ -285,12 +292,12 @@ export function RecurringForm({
             </Select>
           </div>
 
-          {data.frequency === 'weekly' && (
+          {data.frequency === "weekly" && (
             <div className="space-y-2">
               <Label>Day of Week</Label>
               <Select
                 value={data.day_of_week}
-                onValueChange={(value) => setData('day_of_week', value)}
+                onValueChange={(value) => setData("day_of_week", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select day" />
@@ -306,12 +313,12 @@ export function RecurringForm({
             </div>
           )}
 
-          {(data.frequency === 'monthly' || data.frequency === 'yearly') && (
+          {(data.frequency === "monthly" || data.frequency === "yearly") && (
             <div className="space-y-2">
               <Label>Day of Month</Label>
               <Select
                 value={data.day_of_month}
-                onValueChange={(value) => setData('day_of_month', value)}
+                onValueChange={(value) => setData("day_of_month", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select day" />
@@ -327,12 +334,12 @@ export function RecurringForm({
             </div>
           )}
 
-          {data.frequency === 'yearly' && (
+          {data.frequency === "yearly" && (
             <div className="space-y-2">
               <Label>Month</Label>
               <Select
                 value={data.month_of_year}
-                onValueChange={(value) => setData('month_of_year', value)}
+                onValueChange={(value) => setData("month_of_year", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select month" />
@@ -353,7 +360,7 @@ export function RecurringForm({
               <Label>Start Date</Label>
               <DatePicker
                 value={data.start_date}
-                onChange={(date) => setData('start_date', date ? format(date, 'yyyy-MM-dd') : '')}
+                onChange={(date) => setData("start_date", date ? format(date, "yyyy-MM-dd") : "")}
                 placeholder="Select date"
               />
             </div>
@@ -361,7 +368,7 @@ export function RecurringForm({
               <Label>End Date (Optional)</Label>
               <DatePicker
                 value={data.end_date}
-                onChange={(date) => setData('end_date', date ? format(date, 'yyyy-MM-dd') : '')}
+                onChange={(date) => setData("end_date", date ? format(date, "yyyy-MM-dd") : "")}
                 placeholder="No end date"
               />
             </div>
@@ -372,7 +379,7 @@ export function RecurringForm({
             <Textarea
               id="description"
               value={data.description}
-              onChange={(e) => setData('description', e.target.value)}
+              onChange={(e) => setData("description", e.target.value)}
               placeholder="Additional notes..."
               rows={2}
             />
@@ -389,7 +396,7 @@ export function RecurringForm({
               <Switch
                 id="is_active"
                 checked={data.is_active}
-                onCheckedChange={(checked) => setData('is_active', checked)}
+                onCheckedChange={(checked) => setData("is_active", checked)}
               />
             </div>
 
@@ -403,26 +410,21 @@ export function RecurringForm({
               <Switch
                 id="auto_create"
                 checked={data.auto_create}
-                onCheckedChange={(checked) => setData('auto_create', checked)}
+                onCheckedChange={(checked) => setData("auto_create", checked)}
               />
             </div>
           </div>
 
           <SheetFooter className="gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={processing}
-            >
+            <Button type="button" variant="outline" onClick={handleClose} disabled={processing}>
               Cancel
             </Button>
             <Button type="submit" disabled={processing}>
-              {processing ? 'Saving...' : isEditing ? 'Update' : 'Create'}
+              {processing ? "Saving..." : isEditing ? "Update" : "Create"}
             </Button>
           </SheetFooter>
         </form>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

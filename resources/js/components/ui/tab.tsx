@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
+import { cn } from "@/lib/utils";
 import { Badge } from "./badge";
 
 interface TabProps {
@@ -9,12 +9,7 @@ interface TabProps {
   discount?: boolean;
 }
 
-export const Tab = ({
-  text,
-  selected,
-  setSelected,
-  discount = false,
-}: TabProps) => {
+export const Tab = ({ text, selected, setSelected, discount = false }: TabProps) => {
   return (
     <button
       onClick={() => setSelected(text)}
@@ -35,9 +30,7 @@ export const Tab = ({
         <Badge
           className={cn(
             "relative z-10 whitespace-nowrap bg-gray-100 text-xs text-black shadow-none hover:bg-gray-100",
-            selected
-              ? "bg-[#F3F4F6] hover:bg-[#F3F4F6]"
-              : "bg-gray-300 hover:bg-gray-300",
+            selected ? "bg-[#F3F4F6] hover:bg-[#F3F4F6]" : "bg-gray-300 hover:bg-gray-300",
           )}
         >
           Save 35%

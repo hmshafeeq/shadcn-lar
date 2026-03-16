@@ -1,6 +1,6 @@
-import axios from "axios"
-import { env } from "@/config"
-import { tokenStorage } from "@/lib/storage"
+import axios from "axios";
+import { env } from "@/config";
+import { tokenStorage } from "@/lib/storage";
 
 const axiosInstance = axios.create({
   baseURL: env?.PUBLIC_API_URL ?? "",
@@ -8,16 +8,16 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-})
+});
 
 axiosInstance.interceptors.request.use((config) => {
-  const token = tokenStorage.getToken()
+  const token = tokenStorage.getToken();
 
   if (token) {
-    config.headers.authorization = `Bearer ${token}`
+    config.headers.authorization = `Bearer ${token}`;
   }
 
-  return config
-})
+  return config;
+});
 
-export { axiosInstance as axios }
+export { axiosInstance as axios };

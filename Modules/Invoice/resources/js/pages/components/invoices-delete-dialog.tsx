@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react'
+import { useForm } from "@inertiajs/react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,25 +8,25 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Invoice } from '../data/schema'
+} from "@/components/ui/alert-dialog";
+import type { Invoice } from "../data/schema";
 
 interface Props {
-  invoice: Invoice
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  invoice: Invoice;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function InvoicesDeleteDialog({ invoice, open, onOpenChange }: Props) {
-  const { delete: destroy, processing } = useForm()
+  const { delete: destroy, processing } = useForm();
 
   const handleDelete = () => {
-    destroy(route('dashboard.invoices.destroy', invoice.id), {
+    destroy(route("dashboard.invoices.destroy", invoice.id), {
       onSuccess: () => {
-        onOpenChange(false)
+        onOpenChange(false);
       },
-    })
-  }
+    });
+  };
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -34,9 +34,8 @@ export function InvoicesDeleteDialog({ invoice, open, onOpenChange }: Props) {
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Invoice</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete invoice{' '}
-            <strong>{invoice.invoice_number}</strong>? This action cannot be
-            undone.
+            Are you sure you want to delete invoice <strong>{invoice.invoice_number}</strong>? This
+            action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -44,12 +43,12 @@ export function InvoicesDeleteDialog({ invoice, open, onOpenChange }: Props) {
           <AlertDialogAction
             onClick={handleDelete}
             disabled={processing}
-            className='bg-red-600 hover:bg-red-700'
+            className="bg-red-600 hover:bg-red-700"
           >
-            {processing ? 'Deleting...' : 'Delete'}
+            {processing ? "Deleting..." : "Delete"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

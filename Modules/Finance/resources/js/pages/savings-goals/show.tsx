@@ -1,39 +1,26 @@
-import { useState } from 'react'
-import { Link, router, useForm } from '@inertiajs/react'
-import { format } from 'date-fns'
-import { formatDateDisplay } from '@/lib/date-utils'
-import { AuthenticatedLayout } from '@/layouts'
-import { Main } from '@/components/layout/main'
-import { Button } from '@/components/ui/button'
-import { DatePicker } from '@/components/ui/date-picker'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
+import { Link, router, useForm } from "@inertiajs/react";
+import type {
+  Account,
+  SavingsContribution,
+  SavingsGoal,
+  Transaction,
+} from "@modules/Finance/types/finance";
+import { format } from "date-fns";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
+  ArrowLeft,
+  ArrowRightLeft,
+  Calendar,
+  CheckCircle,
+  Link as LinkIcon,
+  Minus,
+  Pause,
+  Plus,
+  RefreshCw,
+  Target,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
+import { Main } from "@/components/layout/main";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,123 +30,139 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DatePicker } from "@/components/ui/date-picker";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select";
 import {
-  ArrowLeft,
-  Target,
-  Plus,
-  Minus,
-  Trash2,
-  Calendar,
-  CheckCircle,
-  Pause,
-  Link as LinkIcon,
-  ArrowRightLeft,
-  RefreshCw,
-} from 'lucide-react'
-import type { SavingsGoal, SavingsContribution, Transaction, Account } from '@modules/Finance/types/finance'
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import { AuthenticatedLayout } from "@/layouts";
+import { formatDateDisplay } from "@/lib/date-utils";
 
 interface Props {
-  goal: SavingsGoal
-  availableTransactions: Transaction[]
-  accounts: Account[]
+  goal: SavingsGoal;
+  availableTransactions: Transaction[];
+  accounts: Account[];
 }
 
-function formatMoney(amount: number, currencyCode = 'VND'): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+function formatMoney(amount: number, currencyCode = "VND"): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency: currencyCode,
-  }).format(amount)
+  }).format(amount);
 }
-
 
 export default function ShowSavingsGoal({ goal, availableTransactions, accounts }: Props) {
-  const [showContributeDialog, setShowContributeDialog] = useState(false)
-  const [showWithdrawDialog, setShowWithdrawDialog] = useState(false)
-  const [showTransferDialog, setShowTransferDialog] = useState(false)
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [selectedContribution, setSelectedContribution] = useState<SavingsContribution | null>(null)
+  const [showContributeDialog, setShowContributeDialog] = useState(false);
+  const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
+  const [showTransferDialog, setShowTransferDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedContribution, setSelectedContribution] = useState<SavingsContribution | null>(
+    null,
+  );
 
   const contributeForm = useForm({
-    amount: '',
-    contribution_date: new Date().toISOString().split('T')[0],
-    notes: '',
-  })
+    amount: "",
+    contribution_date: new Date().toISOString().split("T")[0],
+    notes: "",
+  });
 
   const withdrawForm = useForm({
-    amount: '',
-    contribution_date: new Date().toISOString().split('T')[0],
-    notes: '',
-  })
+    amount: "",
+    contribution_date: new Date().toISOString().split("T")[0],
+    notes: "",
+  });
 
   const transferForm = useForm({
-    from_account_id: '',
-    amount: '',
-    transfer_date: new Date().toISOString().split('T')[0],
-    notes: '',
-  })
+    from_account_id: "",
+    amount: "",
+    transfer_date: new Date().toISOString().split("T")[0],
+    notes: "",
+  });
 
   const handleContribute = (e: React.FormEvent) => {
-    e.preventDefault()
-    contributeForm.post(route('dashboard.finance.savings-goals.contribute', goal.id), {
+    e.preventDefault();
+    contributeForm.post(route("dashboard.finance.savings-goals.contribute", goal.id), {
       onSuccess: () => {
-        contributeForm.reset()
-        setShowContributeDialog(false)
+        contributeForm.reset();
+        setShowContributeDialog(false);
       },
-    })
-  }
+    });
+  };
 
   const handleWithdraw = (e: React.FormEvent) => {
-    e.preventDefault()
-    withdrawForm.post(route('dashboard.finance.savings-goals.withdraw', goal.id), {
+    e.preventDefault();
+    withdrawForm.post(route("dashboard.finance.savings-goals.withdraw", goal.id), {
       onSuccess: () => {
-        withdrawForm.reset()
-        setShowWithdrawDialog(false)
+        withdrawForm.reset();
+        setShowWithdrawDialog(false);
       },
-    })
-  }
+    });
+  };
 
   const handleTransfer = (e: React.FormEvent) => {
-    e.preventDefault()
-    transferForm.post(route('dashboard.finance.savings-goals.transfer', goal.id), {
+    e.preventDefault();
+    transferForm.post(route("dashboard.finance.savings-goals.transfer", goal.id), {
       onSuccess: () => {
-        transferForm.reset()
-        setShowTransferDialog(false)
+        transferForm.reset();
+        setShowTransferDialog(false);
       },
-    })
-  }
+    });
+  };
 
   const handleDeleteContribution = () => {
     if (selectedContribution) {
       router.delete(
-        route('dashboard.finance.savings-goals.unlink-contribution', [goal.id, selectedContribution.id]),
+        route("dashboard.finance.savings-goals.unlink-contribution", [
+          goal.id,
+          selectedContribution.id,
+        ]),
         {
           onSuccess: () => {
-            setShowDeleteDialog(false)
-            setSelectedContribution(null)
+            setShowDeleteDialog(false);
+            setSelectedContribution(null);
           },
-        }
-      )
+        },
+      );
     }
-  }
+  };
 
-  const progress = Math.min(goal.progress_percent, 100)
-  const isCompleted = goal.status === 'completed'
-  const isPaused = goal.status === 'paused'
+  const progress = Math.min(goal.progress_percent, 100);
+  const isCompleted = goal.status === "completed";
+  const isPaused = goal.status === "paused";
 
   return (
     <AuthenticatedLayout title={goal.name}>
       <Main>
         <div className="mb-4">
           <Link
-            href={route('dashboard.finance.savings-goals.index')}
+            href={route("dashboard.finance.savings-goals.index")}
             className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -175,15 +178,13 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                 <div className="flex items-center gap-3">
                   <div
                     className="flex h-12 w-12 items-center justify-center rounded-full"
-                    style={{ backgroundColor: goal.color || '#3b82f6' }}
+                    style={{ backgroundColor: goal.color || "#3b82f6" }}
                   >
                     <Target className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <CardTitle>{goal.name}</CardTitle>
-                    {goal.description && (
-                      <CardDescription>{goal.description}</CardDescription>
-                    )}
+                    {goal.description && <CardDescription>{goal.description}</CardDescription>}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -231,18 +232,20 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                   <div className="flex items-center gap-2">
                     <RefreshCw className="h-4 w-4 text-blue-500" />
                     <span>
-                      Auto-synced with <span className="font-medium">{goal.target_account.name}</span>
+                      Auto-synced with{" "}
+                      <span className="font-medium">{goal.target_account.name}</span>
                       {goal.target_account.currency_code === goal.currency_code
-                        ? ' — progress updates automatically with account balance'
-                        : ` — auto-sync disabled (currency mismatch: ${goal.currency_code} vs ${goal.target_account.currency_code})`
-                      }
+                        ? " — progress updates automatically with account balance"
+                        : ` — auto-sync disabled (currency mismatch: ${goal.currency_code} vs ${goal.target_account.currency_code})`}
                     </span>
                   </div>
                   {goal.target_account.currency_code === goal.currency_code && (
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => router.post(route('dashboard.finance.savings-goals.sync', goal.id))}
+                      onClick={() =>
+                        router.post(route("dashboard.finance.savings-goals.sync", goal.id))
+                      }
                     >
                       <RefreshCw className="mr-1 h-3 w-3" />
                       Sync Now
@@ -309,9 +312,7 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
         <Card className="mt-6">
           <CardHeader>
             <CardTitle>Contribution History</CardTitle>
-            <CardDescription>
-              All deposits and withdrawals for this goal
-            </CardDescription>
+            <CardDescription>All deposits and withdrawals for this goal</CardDescription>
           </CardHeader>
           <CardContent>
             {goal.contributions && goal.contributions.length > 0 ? (
@@ -330,27 +331,25 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                     <TableRow key={contribution.id}>
                       <TableCell>{formatDateDisplay(contribution.contribution_date)}</TableCell>
                       <TableCell
-                        className={
-                          contribution.amount >= 0 ? 'text-green-600' : 'text-red-600'
-                        }
+                        className={contribution.amount >= 0 ? "text-green-600" : "text-red-600"}
                       >
-                        {contribution.amount >= 0 ? '+' : ''}
+                        {contribution.amount >= 0 ? "+" : ""}
                         {formatMoney(contribution.amount, contribution.currency_code)}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">
-                          {contribution.type === 'linked' ? (
+                          {contribution.type === "linked" ? (
                             <>
                               <LinkIcon className="mr-1 h-3 w-3" />
                               Linked
                             </>
                           ) : (
-                            'Manual'
+                            "Manual"
                           )}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground">
-                        {contribution.notes || '-'}
+                        {contribution.notes || "-"}
                       </TableCell>
                       <TableCell>
                         <Button
@@ -358,8 +357,8 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                           size="icon"
                           className="h-8 w-8 text-red-600"
                           onClick={() => {
-                            setSelectedContribution(contribution)
-                            setShowDeleteDialog(true)
+                            setSelectedContribution(contribution);
+                            setShowDeleteDialog(true);
                           }}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -382,9 +381,7 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add Money</DialogTitle>
-              <DialogDescription>
-                Add funds to "{goal.name}"
-              </DialogDescription>
+              <DialogDescription>Add funds to "{goal.name}"</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleContribute} className="space-y-4">
               <div className="space-y-2">
@@ -395,7 +392,7 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                   step="1"
                   min="1"
                   value={contributeForm.data.amount}
-                  onChange={(e) => contributeForm.setData('amount', e.target.value)}
+                  onChange={(e) => contributeForm.setData("amount", e.target.value)}
                   placeholder="0"
                   autoFocus
                 />
@@ -407,7 +404,12 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                 <Label>Date</Label>
                 <DatePicker
                   value={contributeForm.data.contribution_date}
-                  onChange={(date) => contributeForm.setData('contribution_date', date ? format(date, 'yyyy-MM-dd') : '')}
+                  onChange={(date) =>
+                    contributeForm.setData(
+                      "contribution_date",
+                      date ? format(date, "yyyy-MM-dd") : "",
+                    )
+                  }
                   placeholder="Select date"
                 />
               </div>
@@ -416,17 +418,21 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                 <Textarea
                   id="contribute-notes"
                   value={contributeForm.data.notes}
-                  onChange={(e) => contributeForm.setData('notes', e.target.value)}
+                  onChange={(e) => contributeForm.setData("notes", e.target.value)}
                   placeholder="Add a note..."
                   rows={2}
                 />
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setShowContributeDialog(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowContributeDialog(false)}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" disabled={contributeForm.processing}>
-                  {contributeForm.processing ? 'Adding...' : 'Add Money'}
+                  {contributeForm.processing ? "Adding..." : "Add Money"}
                 </Button>
               </DialogFooter>
             </form>
@@ -438,14 +444,12 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Withdraw Money</DialogTitle>
-              <DialogDescription>
-                Withdraw funds from "{goal.name}"
-              </DialogDescription>
+              <DialogDescription>Withdraw funds from "{goal.name}"</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleWithdraw} className="space-y-4">
               <div className="p-3 rounded-lg bg-muted">
                 <p className="text-sm text-muted-foreground">
-                  Available balance:{' '}
+                  Available balance:{" "}
                   <span className="font-medium text-foreground">
                     {formatMoney(goal.current_amount, goal.currency_code)}
                   </span>
@@ -460,7 +464,7 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                   min="1"
                   max={goal.current_amount}
                   value={withdrawForm.data.amount}
-                  onChange={(e) => withdrawForm.setData('amount', e.target.value)}
+                  onChange={(e) => withdrawForm.setData("amount", e.target.value)}
                   placeholder="0"
                   autoFocus
                 />
@@ -472,7 +476,12 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                 <Label>Date</Label>
                 <DatePicker
                   value={withdrawForm.data.contribution_date}
-                  onChange={(date) => withdrawForm.setData('contribution_date', date ? format(date, 'yyyy-MM-dd') : '')}
+                  onChange={(date) =>
+                    withdrawForm.setData(
+                      "contribution_date",
+                      date ? format(date, "yyyy-MM-dd") : "",
+                    )
+                  }
                   placeholder="Select date"
                 />
               </div>
@@ -481,17 +490,21 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                 <Textarea
                   id="withdraw-notes"
                   value={withdrawForm.data.notes}
-                  onChange={(e) => withdrawForm.setData('notes', e.target.value)}
+                  onChange={(e) => withdrawForm.setData("notes", e.target.value)}
                   placeholder="Add a note..."
                   rows={2}
                 />
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setShowWithdrawDialog(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowWithdrawDialog(false)}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" variant="destructive" disabled={withdrawForm.processing}>
-                  {withdrawForm.processing ? 'Processing...' : 'Withdraw'}
+                  {withdrawForm.processing ? "Processing..." : "Withdraw"}
                 </Button>
               </DialogFooter>
             </form>
@@ -503,16 +516,14 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Transfer to Goal</DialogTitle>
-              <DialogDescription>
-                Transfer money from an account to "{goal.name}"
-              </DialogDescription>
+              <DialogDescription>Transfer money from an account to "{goal.name}"</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleTransfer} className="space-y-4">
               <div className="space-y-2">
                 <Label>From Account</Label>
                 <Select
                   value={transferForm.data.from_account_id}
-                  onValueChange={(value) => transferForm.setData('from_account_id', value)}
+                  onValueChange={(value) => transferForm.setData("from_account_id", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select source account" />
@@ -537,7 +548,7 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                   step="1"
                   min="1"
                   value={transferForm.data.amount}
-                  onChange={(e) => transferForm.setData('amount', e.target.value)}
+                  onChange={(e) => transferForm.setData("amount", e.target.value)}
                   placeholder="0"
                 />
                 {transferForm.errors.amount && (
@@ -548,7 +559,9 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                 <Label>Date</Label>
                 <DatePicker
                   value={transferForm.data.transfer_date}
-                  onChange={(date) => transferForm.setData('transfer_date', date ? format(date, 'yyyy-MM-dd') : '')}
+                  onChange={(date) =>
+                    transferForm.setData("transfer_date", date ? format(date, "yyyy-MM-dd") : "")
+                  }
                   placeholder="Select date"
                 />
               </div>
@@ -557,17 +570,21 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
                 <Textarea
                   id="transfer-notes"
                   value={transferForm.data.notes}
-                  onChange={(e) => transferForm.setData('notes', e.target.value)}
+                  onChange={(e) => transferForm.setData("notes", e.target.value)}
                   placeholder="Add a note..."
                   rows={2}
                 />
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setShowTransferDialog(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowTransferDialog(false)}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" disabled={transferForm.processing}>
-                  {transferForm.processing ? 'Transferring...' : 'Transfer'}
+                  {transferForm.processing ? "Transferring..." : "Transfer"}
                 </Button>
               </DialogFooter>
             </form>
@@ -580,7 +597,8 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Contribution</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete this contribution? This will affect your goal's progress.
+                Are you sure you want to delete this contribution? This will affect your goal's
+                progress.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -596,5 +614,5 @@ export default function ShowSavingsGoal({ goal, availableTransactions, accounts 
         </AlertDialog>
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

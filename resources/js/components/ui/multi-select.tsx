@@ -1,7 +1,7 @@
-import * as React from 'react'
-import { Check, ChevronsUpDown, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Check, ChevronsUpDown, X } from "lucide-react";
+import * as React from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -9,62 +9,58 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 export interface MultiSelectOption {
-  value: string
-  label: string
+  value: string;
+  label: string;
 }
 
 interface MultiSelectProps {
-  options: MultiSelectOption[]
-  value?: string[]
-  onChange?: (value: string[]) => void
-  placeholder?: string
-  searchPlaceholder?: string
-  emptyText?: string
-  disabled?: boolean
-  className?: string
-  maxDisplay?: number
+  options: MultiSelectOption[];
+  value?: string[];
+  onChange?: (value: string[]) => void;
+  placeholder?: string;
+  searchPlaceholder?: string;
+  emptyText?: string;
+  disabled?: boolean;
+  className?: string;
+  maxDisplay?: number;
 }
 
 export function MultiSelect({
   options,
   value = [],
   onChange,
-  placeholder = 'Select...',
-  searchPlaceholder = 'Search...',
-  emptyText = 'No results found.',
+  placeholder = "Select...",
+  searchPlaceholder = "Search...",
+  emptyText = "No results found.",
   disabled = false,
   className,
   maxDisplay = 2,
 }: MultiSelectProps) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
 
-  const selectedOptions = options.filter((opt) => value.includes(opt.value))
+  const selectedOptions = options.filter((opt) => value.includes(opt.value));
 
   const handleSelect = (optionValue: string) => {
     const newValue = value.includes(optionValue)
       ? value.filter((v) => v !== optionValue)
-      : [...value, optionValue]
-    onChange?.(newValue)
-  }
+      : [...value, optionValue];
+    onChange?.(newValue);
+  };
 
   const handleRemove = (optionValue: string, e: React.MouseEvent) => {
-    e.stopPropagation()
-    onChange?.(value.filter((v) => v !== optionValue))
-  }
+    e.stopPropagation();
+    onChange?.(value.filter((v) => v !== optionValue));
+  };
 
   const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onChange?.([])
-  }
+    e.stopPropagation();
+    onChange?.([]);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -74,18 +70,14 @@ export function MultiSelect({
           role="combobox"
           aria-expanded={open}
           disabled={disabled}
-          className={cn('w-full justify-between font-normal h-auto min-h-9', className)}
+          className={cn("w-full justify-between font-normal h-auto min-h-9", className)}
         >
           <div className="flex flex-wrap gap-1 flex-1">
             {selectedOptions.length === 0 ? (
               <span className="text-muted-foreground">{placeholder}</span>
             ) : selectedOptions.length <= maxDisplay ? (
               selectedOptions.map((opt) => (
-                <Badge
-                  key={opt.value}
-                  variant="secondary"
-                  className="text-xs"
-                >
+                <Badge key={opt.value} variant="secondary" className="text-xs">
                   {opt.label}
                   <X
                     className="ml-1 h-3 w-3 cursor-pointer hover:text-destructive"
@@ -124,15 +116,13 @@ export function MultiSelect({
                 >
                   <div
                     className={cn(
-                      'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                      "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
                       value.includes(option.value)
-                        ? 'bg-primary text-primary-foreground'
-                        : 'opacity-50'
+                        ? "bg-primary text-primary-foreground"
+                        : "opacity-50",
                     )}
                   >
-                    {value.includes(option.value) && (
-                      <Check className="h-3 w-3" />
-                    )}
+                    {value.includes(option.value) && <Check className="h-3 w-3" />}
                   </div>
                   {option.label}
                 </CommandItem>
@@ -142,5 +132,5 @@ export function MultiSelect({
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

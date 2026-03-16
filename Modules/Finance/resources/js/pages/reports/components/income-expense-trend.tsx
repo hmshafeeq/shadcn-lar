@@ -1,106 +1,104 @@
-import * as React from 'react'
-import { useTranslation } from 'react-i18next'
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import type { IncomeExpensePoint } from "@modules/Finance/types/finance";
+import * as React from "react";
+import { useTranslation } from "react-i18next";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart'
-import type { IncomeExpensePoint } from '@modules/Finance/types/finance'
+} from "@/components/ui/chart";
 
 interface IncomeExpenseTrendProps {
-  data: IncomeExpensePoint[]
-  currencyCode: string
+  data: IncomeExpensePoint[];
+  currencyCode: string;
 }
 
 // chartConfig moved inside component for i18n
 
 function formatCurrency(value: number, code: string): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency: code,
-    notation: 'compact',
+    notation: "compact",
     maximumFractionDigits: 1,
-  }).format(value)
+  }).format(value);
 }
 
 function formatFullCurrency(value: number, code: string): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency: code,
-  }).format(value)
+  }).format(value);
 }
 
 function formatPeriod(period: string): string {
   if (period.length === 7) {
-    const [year, month] = period.split('-')
-    const date = new Date(parseInt(year), parseInt(month) - 1)
-    return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
+    const [year, month] = period.split("-");
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    return date.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
   }
-  const date = new Date(period)
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  const date = new Date(period);
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 export function IncomeExpenseTrend({ data, currencyCode }: IncomeExpenseTrendProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const chartConfig = {
     income: {
-      label: t('filter.income'),
-      color: 'hsl(142, 76%, 36%)',
+      label: t("filter.income"),
+      color: "hsl(142, 76%, 36%)",
     },
     expense: {
-      label: t('filter.expense'),
-      color: 'hsl(0, 84%, 60%)',
+      label: t("filter.expense"),
+      color: "hsl(0, 84%, 60%)",
     },
-  } satisfies ChartConfig
+  } satisfies ChartConfig;
 
   const formattedData = data.map((item) => ({
     ...item,
     periodLabel: formatPeriod(item.period),
-  }))
+  }));
 
-  const totals = React.useMemo(() => ({
-    income: data.reduce((acc, curr) => acc + curr.income, 0),
-    expense: data.reduce((acc, curr) => acc + curr.expense, 0),
-  }), [data])
+  const totals = React.useMemo(
+    () => ({
+      income: data.reduce((acc, curr) => acc + curr.income, 0),
+      expense: data.reduce((acc, curr) => acc + curr.expense, 0),
+    }),
+    [data],
+  );
 
-  const netChange = totals.income - totals.expense
+  const netChange = totals.income - totals.expense;
 
   return (
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-4">
-          <CardTitle>{t('page.reports.income_vs_expense')}</CardTitle>
-          <CardDescription>
-            {t('page.reports.income_vs_expense_description')}
-          </CardDescription>
+          <CardTitle>{t("page.reports.income_vs_expense")}</CardTitle>
+          <CardDescription>{t("page.reports.income_vs_expense_description")}</CardDescription>
         </div>
         <div className="flex flex-wrap">
           <div className="flex flex-1 flex-col justify-center gap-1 border-t px-4 py-3 text-left even:border-l sm:border-l sm:border-t-0 sm:px-6 sm:py-4">
-            <span className="text-xs text-muted-foreground">{t('page.reports.net')}</span>
-            <span className={`text-sm font-bold leading-none ${netChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {netChange >= 0 ? '+' : ''}{formatFullCurrency(netChange, currencyCode)}
+            <span className="text-xs text-muted-foreground">{t("page.reports.net")}</span>
+            <span
+              className={`text-sm font-bold leading-none ${netChange >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              {netChange >= 0 ? "+" : ""}
+              {formatFullCurrency(netChange, currencyCode)}
             </span>
           </div>
           <div className="flex flex-1 flex-col justify-center gap-1 border-t px-4 py-3 text-left even:border-l sm:border-l sm:border-t-0 sm:px-6 sm:py-4">
-            <span className="text-xs text-muted-foreground">{t('filter.income')}</span>
+            <span className="text-xs text-muted-foreground">{t("filter.income")}</span>
             <span className="text-sm font-bold leading-none text-green-600">
               {formatFullCurrency(totals.income, currencyCode)}
             </span>
           </div>
           <div className="flex flex-1 flex-col justify-center gap-1 border-t px-4 py-3 text-left even:border-l sm:border-l sm:border-t-0 sm:px-6 sm:py-4">
-            <span className="text-xs text-muted-foreground">{t('filter.expense')}</span>
+            <span className="text-xs text-muted-foreground">{t("filter.expense")}</span>
             <span className="text-sm font-bold leading-none text-red-600">
               {formatFullCurrency(totals.expense, currencyCode)}
             </span>
@@ -135,7 +133,7 @@ export function IncomeExpenseTrend({ data, currencyCode }: IncomeExpenseTrendPro
                   formatter={(value, name) => (
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground">
-                        {name === 'income' ? t('filter.income') : t('filter.expense')}:
+                        {name === "income" ? t("filter.income") : t("filter.expense")}:
                       </span>
                       <span className="font-mono font-medium">
                         {formatCurrency(value as number, currencyCode)}
@@ -146,19 +144,11 @@ export function IncomeExpenseTrend({ data, currencyCode }: IncomeExpenseTrendPro
               }
             />
             <ChartLegend content={<ChartLegendContent />} />
-            <Bar
-              dataKey="income"
-              fill="var(--color-income)"
-              radius={[4, 4, 0, 0]}
-            />
-            <Bar
-              dataKey="expense"
-              fill="var(--color-expense)"
-              radius={[4, 4, 0, 0]}
-            />
+            <Bar dataKey="income" fill="var(--color-income)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="expense" fill="var(--color-expense)" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

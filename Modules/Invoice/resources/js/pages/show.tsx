@@ -1,10 +1,9 @@
-import { Link } from '@inertiajs/react'
-import { AuthenticatedLayout } from '@/layouts'
-import { Main } from '@/components/layout/main'
-import { PageProps } from '@/types'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Link } from "@inertiajs/react";
+import { IconArrowLeft, IconDownload, IconEdit } from "@tabler/icons-react";
+import { Main } from "@/components/layout/main";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -12,20 +11,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { IconEdit, IconDownload, IconArrowLeft } from '@tabler/icons-react'
-import { cn } from '@/lib/utils'
-import { Invoice } from './data/schema'
-import { statusColors } from './data/data'
+} from "@/components/ui/table";
+import { AuthenticatedLayout } from "@/layouts";
+import { cn } from "@/lib/utils";
+import type { PageProps } from "@/types";
+import { statusColors } from "./data/data";
+import type { Invoice } from "./data/schema";
 
 interface ShowInvoiceProps extends PageProps {
-  invoice: Invoice
+  invoice: Invoice;
 }
 
 export default function ShowInvoice({ invoice }: ShowInvoiceProps) {
-  const subtotal = Number(invoice.subtotal)
-  const taxAmount = Number(invoice.tax_amount)
-  const total = Number(invoice.total)
+  const subtotal = Number(invoice.subtotal);
+  const taxAmount = Number(invoice.tax_amount);
+  const total = Number(invoice.total);
 
   return (
     <AuthenticatedLayout title={`Invoice #${invoice.invoice_number}`}>
@@ -33,7 +33,7 @@ export default function ShowInvoice({ invoice }: ShowInvoiceProps) {
         <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" asChild>
-              <Link href={route('dashboard.invoices.index')}>
+              <Link href={route("dashboard.invoices.index")}>
                 <IconArrowLeft size={20} />
               </Link>
             </Button>
@@ -43,7 +43,7 @@ export default function ShowInvoice({ invoice }: ShowInvoiceProps) {
               </h2>
               <Badge
                 variant="outline"
-                className={cn('capitalize mt-1', statusColors.get(invoice.status))}
+                className={cn("capitalize mt-1", statusColors.get(invoice.status))}
               >
                 {invoice.status}
               </Badge>
@@ -52,12 +52,12 @@ export default function ShowInvoice({ invoice }: ShowInvoiceProps) {
           <div className="flex gap-2">
             <Button
               variant="outline"
-              onClick={() => window.open(route('dashboard.invoices.pdf', invoice.id), '_blank')}
+              onClick={() => window.open(route("dashboard.invoices.pdf", invoice.id), "_blank")}
             >
               <IconDownload size={18} className="mr-1" /> Download PDF
             </Button>
             <Button asChild>
-              <Link href={route('dashboard.invoices.edit', invoice.id)}>
+              <Link href={route("dashboard.invoices.edit", invoice.id)}>
                 <IconEdit size={18} className="mr-1" /> Edit
               </Link>
             </Button>
@@ -108,15 +108,11 @@ export default function ShowInvoice({ invoice }: ShowInvoiceProps) {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground">Invoice Date</p>
-                <p className="font-medium">
-                  {new Date(invoice.invoice_date).toLocaleDateString()}
-                </p>
+                <p className="font-medium">{new Date(invoice.invoice_date).toLocaleDateString()}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Due Date</p>
-                <p className="font-medium">
-                  {new Date(invoice.due_date).toLocaleDateString()}
-                </p>
+                <p className="font-medium">{new Date(invoice.due_date).toLocaleDateString()}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Tax Rate</p>
@@ -124,9 +120,7 @@ export default function ShowInvoice({ invoice }: ShowInvoiceProps) {
               </div>
               <div>
                 <p className="text-muted-foreground">Created</p>
-                <p className="font-medium">
-                  {new Date(invoice.created_at).toLocaleDateString()}
-                </p>
+                <p className="font-medium">{new Date(invoice.created_at).toLocaleDateString()}</p>
               </div>
             </div>
           </CardContent>
@@ -148,7 +142,7 @@ export default function ShowInvoice({ invoice }: ShowInvoiceProps) {
               </TableHeader>
               <TableBody>
                 {invoice.items.map((item, index) => {
-                  const amount = Number(item.quantity) * Number(item.unit_price)
+                  const amount = Number(item.quantity) * Number(item.unit_price);
                   return (
                     <TableRow key={item.id || index}>
                       <TableCell>{item.description}</TableCell>
@@ -156,11 +150,9 @@ export default function ShowInvoice({ invoice }: ShowInvoiceProps) {
                       <TableCell className="text-right">
                         ${Number(item.unit_price).toFixed(2)}
                       </TableCell>
-                      <TableCell className="text-right font-medium">
-                        ${amount.toFixed(2)}
-                      </TableCell>
+                      <TableCell className="text-right font-medium">${amount.toFixed(2)}</TableCell>
                     </TableRow>
-                  )
+                  );
                 })}
               </TableBody>
             </Table>
@@ -174,14 +166,12 @@ export default function ShowInvoice({ invoice }: ShowInvoiceProps) {
                 <CardTitle>Notes</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground whitespace-pre-line">
-                  {invoice.notes}
-                </p>
+                <p className="text-sm text-muted-foreground whitespace-pre-line">{invoice.notes}</p>
               </CardContent>
             </Card>
           )}
 
-          <Card className={invoice.notes ? '' : 'md:col-start-2'}>
+          <Card className={invoice.notes ? "" : "md:col-start-2"}>
             <CardHeader>
               <CardTitle>Summary</CardTitle>
             </CardHeader>
@@ -205,5 +195,5 @@ export default function ShowInvoice({ invoice }: ShowInvoiceProps) {
         </div>
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

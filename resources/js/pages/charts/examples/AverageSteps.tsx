@@ -1,6 +1,13 @@
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
-import {Bar, BarChart, Label, Rectangle, ReferenceLine, XAxis} from "recharts";
+import { Bar, BarChart, Label, Rectangle, ReferenceLine, XAxis } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 export function AverageSteps() {
   return (
@@ -10,8 +17,8 @@ export function AverageSteps() {
         <CardTitle className="text-4xl tabular-nums">
           12,584{" "}
           <span className="font-sans text-sm font-normal tracking-normal text-muted-foreground">
-          steps
-        </span>
+            steps
+          </span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -75,7 +82,7 @@ export function AverageSteps() {
               tickFormatter={(value) => {
                 return new Date(value).toLocaleDateString("en-US", {
                   weekday: "short",
-                })
+                });
               }}
             />
             <ChartTooltip
@@ -88,7 +95,7 @@ export function AverageSteps() {
                       day: "numeric",
                       month: "long",
                       year: "numeric",
-                    })
+                    });
                   }}
                 />
               }
@@ -124,11 +131,10 @@ export function AverageSteps() {
           <span className="font-medium text-foreground">53,305</span> steps.
         </CardDescription>
         <CardDescription>
-          You need{" "}
-          <span className="font-medium text-foreground">12,584</span> more
-          steps to reach your goal.
+          You need <span className="font-medium text-foreground">12,584</span> more steps to reach
+          your goal.
         </CardDescription>
       </CardFooter>
     </Card>
-  )
+  );
 }

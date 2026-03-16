@@ -1,21 +1,10 @@
-import { Link, router } from '@inertiajs/react'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { AuthenticatedLayout } from '@/layouts'
-import { Main } from '@/components/layout/main'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Link, router } from "@inertiajs/react";
+import type {
+  Account,
+  Category,
+  MonthlyProjection,
+  RecurringTransaction,
+} from "@modules/Finance/types/finance";
 import {
   ArrowDownLeft,
   ArrowLeft,
@@ -27,25 +16,41 @@ import {
   TrendingDown,
   TrendingUp,
   Wallet,
-} from 'lucide-react'
-import { RecurringCard } from './components/recurring-card'
-import { RecurringForm } from './components/recurring-form'
-import type { Account, Category, RecurringTransaction, MonthlyProjection } from '@modules/Finance/types/finance'
+} from "lucide-react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Main } from "@/components/layout/main";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AuthenticatedLayout } from "@/layouts";
+import { RecurringCard } from "./components/recurring-card";
+import { RecurringForm } from "./components/recurring-form";
 
 interface Props {
-  recurrings: RecurringTransaction[]
-  upcoming: RecurringTransaction[]
-  projection: MonthlyProjection
-  accounts: Account[]
-  categories: Category[]
+  recurrings: RecurringTransaction[];
+  upcoming: RecurringTransaction[];
+  projection: MonthlyProjection;
+  accounts: Account[];
+  categories: Category[];
 }
 
-function formatMoney(amount: number, currencyCode = 'VND'): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+function formatMoney(amount: number, currencyCode = "VND"): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency: currencyCode,
     maximumFractionDigits: 0,
-  }).format(amount)
+  }).format(amount);
 }
 
 export default function RecurringTransactionsIndex({
@@ -55,74 +60,79 @@ export default function RecurringTransactionsIndex({
   accounts,
   categories,
 }: Props) {
-  const { t } = useTranslation()
-  const [formOpen, setFormOpen] = useState(false)
-  const [editingRecurring, setEditingRecurring] = useState<RecurringTransaction | null>(null)
-  const [deletingRecurring, setDeletingRecurring] = useState<RecurringTransaction | null>(null)
+  const { t } = useTranslation();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingRecurring, setEditingRecurring] = useState<RecurringTransaction | null>(null);
+  const [deletingRecurring, setDeletingRecurring] = useState<RecurringTransaction | null>(null);
 
-  const activeRecurrings = recurrings.filter((r) => r.is_active)
-  const pausedRecurrings = recurrings.filter((r) => !r.is_active)
+  const activeRecurrings = recurrings.filter((r) => r.is_active);
+  const pausedRecurrings = recurrings.filter((r) => !r.is_active);
 
-  const incomeRecurrings = activeRecurrings.filter((r) => r.transaction_type === 'income')
-  const expenseRecurrings = activeRecurrings.filter((r) => r.transaction_type === 'expense')
+  const incomeRecurrings = activeRecurrings.filter((r) => r.transaction_type === "income");
+  const expenseRecurrings = activeRecurrings.filter((r) => r.transaction_type === "expense");
 
   const handleEdit = (recurring: RecurringTransaction) => {
-    setEditingRecurring(recurring)
-    setFormOpen(true)
-  }
+    setEditingRecurring(recurring);
+    setFormOpen(true);
+  };
 
   const handleDelete = (recurring: RecurringTransaction) => {
-    setDeletingRecurring(recurring)
-  }
+    setDeletingRecurring(recurring);
+  };
 
   const confirmDelete = () => {
     if (deletingRecurring) {
-      router.delete(route('dashboard.finance.recurring-transactions.destroy', deletingRecurring.id), {
-        preserveScroll: true,
-      })
+      router.delete(
+        route("dashboard.finance.recurring-transactions.destroy", deletingRecurring.id),
+        {
+          preserveScroll: true,
+        },
+      );
     }
-    setDeletingRecurring(null)
-  }
+    setDeletingRecurring(null);
+  };
 
   const handleProcess = () => {
-    router.post(route('dashboard.finance.recurring-transactions.process'), {}, {
-      preserveScroll: true,
-    })
-  }
+    router.post(
+      route("dashboard.finance.recurring-transactions.process"),
+      {},
+      {
+        preserveScroll: true,
+      },
+    );
+  };
 
   const handleFormClose = () => {
-    setFormOpen(false)
-    setEditingRecurring(null)
-  }
+    setFormOpen(false);
+    setEditingRecurring(null);
+  };
 
   return (
-    <AuthenticatedLayout title={t('page.recurring.title')}>
+    <AuthenticatedLayout title={t("page.recurring.title")}>
       <Main>
         <div className="mb-4">
           <Link
-            href={route('dashboard.finance.index')}
+            href={route("dashboard.finance.index")}
             className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('action.back_to_dashboard')}
+            {t("action.back_to_dashboard")}
           </Link>
         </div>
 
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{t('page.recurring.title')}</h1>
-            <p className="text-muted-foreground">
-              {t('page.recurring.description')}
-            </p>
+            <h1 className="text-2xl font-bold tracking-tight">{t("page.recurring.title")}</h1>
+            <p className="text-muted-foreground">{t("page.recurring.description")}</p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleProcess}>
               <RefreshCw className="mr-2 h-4 w-4" />
-              {t('page.recurring.process_due')}
+              {t("page.recurring.process_due")}
             </Button>
             <Button onClick={() => setFormOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              {t('page.recurring.new')}
+              {t("page.recurring.new")}
             </Button>
           </div>
         </div>
@@ -131,7 +141,9 @@ export default function RecurringTransactionsIndex({
         <div className="grid gap-3 grid-cols-2 lg:grid-cols-5 mb-6">
           <Card className="p-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">{t('page.recurring.monthly_income')}</span>
+              <span className="text-xs text-muted-foreground">
+                {t("page.recurring.monthly_income")}
+              </span>
               <ArrowDownLeft className="h-3 w-3 text-green-600" />
             </div>
             <div className="text-lg font-bold text-green-600 mt-1">
@@ -141,7 +153,9 @@ export default function RecurringTransactionsIndex({
 
           <Card className="p-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">{t('page.recurring.monthly_expense')}</span>
+              <span className="text-xs text-muted-foreground">
+                {t("page.recurring.monthly_expense")}
+              </span>
               <ArrowUpRight className="h-3 w-3 text-red-600" />
             </div>
             <div className="text-lg font-bold text-red-600 mt-1">
@@ -151,21 +165,28 @@ export default function RecurringTransactionsIndex({
 
           <Card className="p-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">{t('page.recurring.net_monthly')}</span>
+              <span className="text-xs text-muted-foreground">
+                {t("page.recurring.net_monthly")}
+              </span>
               {projection.monthly_net >= 0 ? (
                 <TrendingUp className="h-3 w-3 text-green-600" />
               ) : (
                 <TrendingDown className="h-3 w-3 text-red-600" />
               )}
             </div>
-            <div className={`text-lg font-bold mt-1 ${projection.monthly_net >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {projection.monthly_net >= 0 ? '+' : ''}{formatMoney(projection.monthly_net, projection.currency_code)}
+            <div
+              className={`text-lg font-bold mt-1 ${projection.monthly_net >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              {projection.monthly_net >= 0 ? "+" : ""}
+              {formatMoney(projection.monthly_net, projection.currency_code)}
             </div>
           </Card>
 
           <Card className="p-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">{t('page.recurring.passive_income')}</span>
+              <span className="text-xs text-muted-foreground">
+                {t("page.recurring.passive_income")}
+              </span>
               <Wallet className="h-3 w-3 text-blue-600" />
             </div>
             <div className="text-lg font-bold text-blue-600 mt-1">
@@ -175,7 +196,9 @@ export default function RecurringTransactionsIndex({
 
           <Card className="p-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">{t('page.recurring.passive_coverage')}</span>
+              <span className="text-xs text-muted-foreground">
+                {t("page.recurring.passive_coverage")}
+              </span>
               <Target className="h-3 w-3 text-purple-600" />
             </div>
             <div className="text-lg font-bold text-purple-600 mt-1">
@@ -187,11 +210,19 @@ export default function RecurringTransactionsIndex({
         {/* Recurring Transactions List */}
         <Tabs defaultValue="all" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="all">{t('common.all')} ({recurrings.length})</TabsTrigger>
-            <TabsTrigger value="income">{t('transaction.income')} ({incomeRecurrings.length})</TabsTrigger>
-            <TabsTrigger value="expense">{t('transaction.expense')} ({expenseRecurrings.length})</TabsTrigger>
+            <TabsTrigger value="all">
+              {t("common.all")} ({recurrings.length})
+            </TabsTrigger>
+            <TabsTrigger value="income">
+              {t("transaction.income")} ({incomeRecurrings.length})
+            </TabsTrigger>
+            <TabsTrigger value="expense">
+              {t("transaction.expense")} ({expenseRecurrings.length})
+            </TabsTrigger>
             {pausedRecurrings.length > 0 && (
-              <TabsTrigger value="paused">{t('page.recurring.paused')} ({pausedRecurrings.length})</TabsTrigger>
+              <TabsTrigger value="paused">
+                {t("page.recurring.paused")} ({pausedRecurrings.length})
+              </TabsTrigger>
             )}
           </TabsList>
 
@@ -199,13 +230,13 @@ export default function RecurringTransactionsIndex({
             {recurrings.length === 0 ? (
               <Card className="p-8 text-center">
                 <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="font-semibold mb-2">{t('page.recurring.no_recurring')}</h3>
+                <h3 className="font-semibold mb-2">{t("page.recurring.no_recurring")}</h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  {t('page.recurring.get_started')}
+                  {t("page.recurring.get_started")}
                 </p>
                 <Button onClick={() => setFormOpen(true)}>
                   <Plus className="mr-2 h-4 w-4" />
-                  {t('page.recurring.create_first')}
+                  {t("page.recurring.create_first")}
                 </Button>
               </Card>
             ) : (
@@ -223,7 +254,7 @@ export default function RecurringTransactionsIndex({
           <TabsContent value="income" className="space-y-3">
             {incomeRecurrings.length === 0 ? (
               <Card className="p-8 text-center">
-                <p className="text-muted-foreground">{t('page.recurring.no_income')}</p>
+                <p className="text-muted-foreground">{t("page.recurring.no_income")}</p>
               </Card>
             ) : (
               incomeRecurrings.map((recurring) => (
@@ -240,7 +271,7 @@ export default function RecurringTransactionsIndex({
           <TabsContent value="expense" className="space-y-3">
             {expenseRecurrings.length === 0 ? (
               <Card className="p-8 text-center">
-                <p className="text-muted-foreground">{t('page.recurring.no_expense')}</p>
+                <p className="text-muted-foreground">{t("page.recurring.no_expense")}</p>
               </Card>
             ) : (
               expenseRecurrings.map((recurring) => (
@@ -279,20 +310,20 @@ export default function RecurringTransactionsIndex({
         <AlertDialog open={!!deletingRecurring} onOpenChange={() => setDeletingRecurring(null)}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{t('page.recurring.delete_title')}</AlertDialogTitle>
+              <AlertDialogTitle>{t("page.recurring.delete_title")}</AlertDialogTitle>
               <AlertDialogDescription>
-                {t('page.recurring.delete_confirm', { name: deletingRecurring?.name })}
+                {t("page.recurring.delete_confirm", { name: deletingRecurring?.name })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>{t('action.cancel')}</AlertDialogCancel>
+              <AlertDialogCancel>{t("action.cancel")}</AlertDialogCancel>
               <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
-                {t('action.delete')}
+                {t("action.delete")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

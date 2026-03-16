@@ -1,24 +1,24 @@
-import { useUsers } from '../context/users-context'
-import { UsersDeleteDialog } from './users-delete-dialog'
+import { useUsers } from "../context/users-context";
+import { UsersDeleteDialog } from "./users-delete-dialog";
 
 export function UsersDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = useUsers()
+  const { open, setOpen, currentRow, setCurrentRow } = useUsers();
 
   return (
     <>
       {currentRow && (
         <UsersDeleteDialog
           key={`user-delete-${currentRow.id}`}
-          open={open === 'delete'}
+          open={open === "delete"}
           onOpenChange={() => {
-            setOpen('delete')
+            setOpen("delete");
             setTimeout(() => {
-              setCurrentRow(null)
-            }, 500)
+              setCurrentRow(null);
+            }, 500);
           }}
           currentRow={currentRow}
         />
       )}
     </>
-  )
+  );
 }

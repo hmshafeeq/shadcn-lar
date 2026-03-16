@@ -1,9 +1,9 @@
-import { TIERS } from "@/config";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import NumberFlow from "@number-flow/react";
 import { ArrowRight, BadgeCheck } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import type { TIERS } from "@/config";
+import { cn } from "@/lib/utils";
 
 export const PricingCard = ({
   tier,
@@ -20,9 +20,7 @@ export const PricingCard = ({
     <div
       className={cn(
         "relative flex flex-col gap-8 overflow-hidden rounded-2xl border p-6 shadow-sm",
-        isHighlighted
-          ? "bg-foreground text-background"
-          : "bg-background text-foreground",
+        isHighlighted ? "bg-foreground text-background" : "bg-background text-foreground",
         isPopular && "outline-solid outline-[rgba(120,119,198)]",
       )}
     >

@@ -1,18 +1,18 @@
-import type { Method, VisitOptions } from "@inertiajs/core"
-import { router } from "@inertiajs/core"
+import type { Method, VisitOptions } from "@inertiajs/core";
+import { router } from "@inertiajs/core";
 
 export class ValidationError extends Error {
   constructor(public readonly errors: Record<string, any>) {
-    super("Validation error")
+    super("Validation error");
   }
 }
 
 export function makeRequest<R>(props: {
-  url: URL | string
-  method: Uppercase<Method>
-  options?: Omit<VisitOptions, "method">
+  url: URL | string;
+  method: Uppercase<Method>;
+  options?: Omit<VisitOptions, "method">;
 }): Promise<R | null> {
-  const { method, url, options } = props
+  const { method, url, options } = props;
 
   return new Promise((resolve, reject) => {
     router.visit(url, {
@@ -20,17 +20,17 @@ export function makeRequest<R>(props: {
       method: method.toLowerCase() as Method,
       preserveState: true,
       onError: (errors) => {
-        options?.onError?.(errors)
-        reject(new ValidationError(errors))
+        options?.onError?.(errors);
+        reject(new ValidationError(errors));
       },
       onSuccess: (...props) => {
-        options?.onSuccess?.(...props)
-        resolve(null)
+        options?.onSuccess?.(...props);
+        resolve(null);
       },
       onCancel: () => {
-        options?.onCancel?.()
-        reject(null)
+        options?.onCancel?.();
+        reject(null);
       },
-    })
-  })
+    });
+  });
 }

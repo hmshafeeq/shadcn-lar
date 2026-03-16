@@ -1,9 +1,9 @@
 "use client";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useTheme } from '@/context/theme-context'
+import { Button } from "@/components/ui/button";
+import { useTheme } from "@/context/theme-context";
+import { cn } from "@/lib/utils";
 
 export const ThemeToggle = ({ className }: { className?: string }) => {
   const [mounted, setMounted] = useState(false);
@@ -19,11 +19,7 @@ export const ThemeToggle = ({ className }: { className?: string }) => {
 
   if (!mounted) {
     return (
-      <Button
-        size={"icon"}
-        variant={"ghost"}
-        className={cn("rounded-xl", className)}
-      >
+      <Button size={"icon"} variant={"ghost"} className={cn("rounded-xl", className)}>
         <Moon />
       </Button>
     );

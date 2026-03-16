@@ -1,57 +1,51 @@
-import { router } from '@inertiajs/react'
-import { formatDateDisplay } from '@/lib/date-utils'
+import { router } from "@inertiajs/react";
+import type { SavingsGoal } from "@modules/Finance/types/finance";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
+  Calendar,
+  CheckCircle,
+  Minus,
+  MoreHorizontal,
+  Pause,
+  Pencil,
+  Play,
+  Plus,
+  RefreshCw,
+  Target,
+  Trash2,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  Target,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  Plus,
-  Minus,
-  Pause,
-  Play,
-  CheckCircle,
-  Calendar,
-  RefreshCw,
-} from 'lucide-react'
-import type { SavingsGoal } from '@modules/Finance/types/finance'
+} from "@/components/ui/dropdown-menu";
+import { Progress } from "@/components/ui/progress";
+import { formatDateDisplay } from "@/lib/date-utils";
 
 interface SavingsGoalCardProps {
-  goal: SavingsGoal
-  onEdit: (goal: SavingsGoal) => void
-  onDelete: (goal: SavingsGoal) => void
-  onContribute: (goal: SavingsGoal) => void
-  onWithdraw: (goal: SavingsGoal) => void
+  goal: SavingsGoal;
+  onEdit: (goal: SavingsGoal) => void;
+  onDelete: (goal: SavingsGoal) => void;
+  onContribute: (goal: SavingsGoal) => void;
+  onWithdraw: (goal: SavingsGoal) => void;
 }
 
-function formatMoney(amount: number, currencyCode = 'VND'): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+function formatMoney(amount: number, currencyCode = "VND"): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency: currencyCode,
-  }).format(amount)
+  }).format(amount);
 }
-
 
 function getDaysRemaining(targetDate: string): number {
-  const target = new Date(targetDate)
-  const today = new Date()
-  const diffTime = target.getTime() - today.getTime()
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  const target = new Date(targetDate);
+  const today = new Date();
+  const diffTime = target.getTime() - today.getTime();
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
 export function SavingsGoalCard({
@@ -61,18 +55,18 @@ export function SavingsGoalCard({
   onContribute,
   onWithdraw,
 }: SavingsGoalCardProps) {
-  const progress = Math.min(goal.progress_percent, 100)
-  const isCompleted = goal.status === 'completed'
-  const isPaused = goal.status === 'paused'
-  const daysRemaining = goal.target_date ? getDaysRemaining(goal.target_date) : null
+  const progress = Math.min(goal.progress_percent, 100);
+  const isCompleted = goal.status === "completed";
+  const isPaused = goal.status === "paused";
+  const daysRemaining = goal.target_date ? getDaysRemaining(goal.target_date) : null;
 
   const handlePauseResume = () => {
     if (isPaused) {
-      router.post(route('dashboard.finance.savings-goals.resume', goal.id))
+      router.post(route("dashboard.finance.savings-goals.resume", goal.id));
     } else {
-      router.post(route('dashboard.finance.savings-goals.pause', goal.id))
+      router.post(route("dashboard.finance.savings-goals.pause", goal.id));
     }
-  }
+  };
 
   const getStatusBadge = () => {
     if (isCompleted) {
@@ -81,7 +75,7 @@ export function SavingsGoalCard({
           <CheckCircle className="mr-1 h-3 w-3" />
           Completed
         </Badge>
-      )
+      );
     }
 
     if (isPaused) {
@@ -90,36 +84,38 @@ export function SavingsGoalCard({
           <Pause className="mr-1 h-3 w-3" />
           Paused
         </Badge>
-      )
+      );
     }
 
     if (daysRemaining !== null && daysRemaining < 0) {
-      return <Badge variant="destructive">Overdue</Badge>
+      return <Badge variant="destructive">Overdue</Badge>;
     }
 
     if (daysRemaining !== null && daysRemaining <= 7) {
-      return <Badge variant="outline" className="border-orange-500 text-orange-500">Due Soon</Badge>
+      return (
+        <Badge variant="outline" className="border-orange-500 text-orange-500">
+          Due Soon
+        </Badge>
+      );
     }
 
-    return null
-  }
+    return null;
+  };
 
   return (
-    <Card className={isPaused ? 'opacity-60' : ''}>
+    <Card className={isPaused ? "opacity-60" : ""}>
       <CardHeader className="flex flex-row items-start justify-between pb-2">
         <div className="flex items-center gap-3">
           <div
             className="flex h-10 w-10 items-center justify-center rounded-full"
-            style={{ backgroundColor: goal.color || '#3b82f6' }}
+            style={{ backgroundColor: goal.color || "#3b82f6" }}
           >
             <Target className="h-5 w-5 text-white" />
           </div>
           <div>
             <h3 className="font-semibold leading-none">{goal.name}</h3>
             {goal.description && (
-              <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
-                {goal.description}
-              </p>
+              <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{goal.description}</p>
             )}
           </div>
         </div>
@@ -165,10 +161,7 @@ export function SavingsGoalCard({
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => onDelete(goal)}
-              className="text-red-600"
-            >
+            <DropdownMenuItem onClick={() => onDelete(goal)} className="text-red-600">
               <Trash2 className="mr-2 h-4 w-4" />
               Delete
             </DropdownMenuItem>
@@ -192,7 +185,8 @@ export function SavingsGoalCard({
                 {formatMoney(goal.current_amount, goal.currency_code)}
               </span>
               <span className="text-muted-foreground text-sm">
-                {' '}/ {formatMoney(goal.target_amount, goal.currency_code)}
+                {" "}
+                / {formatMoney(goal.target_amount, goal.currency_code)}
               </span>
             </div>
           </div>
@@ -213,9 +207,7 @@ export function SavingsGoalCard({
       </CardContent>
 
       <CardFooter className="flex items-center justify-between pt-2">
-        <div className="flex items-center gap-2">
-          {getStatusBadge()}
-        </div>
+        <div className="flex items-center gap-2">{getStatusBadge()}</div>
         {goal.target_date && !isCompleted && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Calendar className="h-3 w-3" />
@@ -233,5 +225,5 @@ export function SavingsGoalCard({
         )}
       </CardFooter>
     </Card>
-  )
+  );
 }

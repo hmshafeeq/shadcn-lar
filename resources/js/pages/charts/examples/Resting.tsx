@@ -1,29 +1,23 @@
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
-import {CartesianGrid, Line, LineChart, XAxis, YAxis} from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
-export  function Resting() {
+export function Resting() {
   return (
-    <Card
-      className="flex flex-col w-full" x-chunk="charts-01-chunk-1"
-    >
+    <Card className="flex flex-col w-full" x-chunk="charts-01-chunk-1">
       <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2 [&>div]:flex-1">
         <div>
           <CardDescription>Resting HR</CardDescription>
           <CardTitle className="flex items-baseline gap-1 text-4xl tabular-nums">
             62
-            <span className="text-sm font-normal tracking-normal text-muted-foreground">
-              bpm
-            </span>
+            <span className="text-sm font-normal tracking-normal text-muted-foreground">bpm</span>
           </CardTitle>
         </div>
         <div>
           <CardDescription>Variability</CardDescription>
           <CardTitle className="flex items-baseline gap-1 text-4xl tabular-nums">
             35
-            <span className="text-sm font-normal tracking-normal text-muted-foreground">
-              ms
-            </span>
+            <span className="text-sm font-normal tracking-normal text-muted-foreground">ms</span>
           </CardTitle>
         </div>
       </CardHeader>
@@ -90,7 +84,7 @@ export  function Resting() {
               tickFormatter={(value) => {
                 return new Date(value).toLocaleDateString("en-US", {
                   weekday: "short",
-                })
+                });
               }}
             />
             <Line
@@ -115,7 +109,7 @@ export  function Resting() {
                       day: "numeric",
                       month: "long",
                       year: "numeric",
-                    })
+                    });
                   }}
                 />
               }
@@ -125,5 +119,5 @@ export  function Resting() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,27 +1,24 @@
-import { useState, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { router, usePage } from '@inertiajs/react'
 import {
-  DndContext,
   closestCenter,
+  DndContext,
+  type DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-  type DragEndEvent,
-} from '@dnd-kit/core'
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { toast } from '@/hooks/use-toast'
-import { Switch } from '@/components/ui/switch'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { router, usePage } from "@inertiajs/react";
+import { IconGripVertical, IconLoader2 } from "@tabler/icons-react";
+import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,79 +28,72 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { IconGripVertical, IconLoader2 } from '@tabler/icons-react'
-import { type Module, type PageProps } from '@/types'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import type { Module, PageProps } from "@/types";
 
 interface Props {
-  modules: Module[]
+  modules: Module[];
 }
 
 interface SortableModuleItemProps {
-  module: Module
-  processing: string | null
-  onToggle: (module: Module) => void
+  module: Module;
+  processing: string | null;
+  onToggle: (module: Module) => void;
 }
 
 function SortableModuleItem({ module, processing, onToggle }: SortableModuleItemProps) {
-  const { t } = useTranslation()
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: module.name })
+  const { t } = useTranslation();
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: module.name,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-  }
+  };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
       className={cn(
-        'flex flex-row items-center justify-between rounded-lg border p-4',
-        isDragging && 'opacity-50 shadow-lg z-50 bg-background'
+        "flex flex-row items-center justify-between rounded-lg border p-4",
+        isDragging && "opacity-50 shadow-lg z-50 bg-background",
       )}
     >
-      <div className='flex items-center gap-3'>
+      <div className="flex items-center gap-3">
         <button
-          type='button'
-          className='cursor-grab touch-none text-muted-foreground hover:text-foreground'
+          type="button"
+          className="cursor-grab touch-none text-muted-foreground hover:text-foreground"
           {...attributes}
           {...listeners}
         >
           <IconGripVertical size={20} />
         </button>
-        <div className='space-y-0.5'>
-          <div className='flex items-center gap-2'>
-            <span className='text-base font-medium'>{module.name}</span>
+        <div className="space-y-0.5">
+          <div className="flex items-center gap-2">
+            <span className="text-base font-medium">{module.name}</span>
             {module.isCore && (
-              <Badge variant='secondary' className='text-xs'>
-                {t('settings.modules.core')}
+              <Badge variant="secondary" className="text-xs">
+                {t("settings.modules.core")}
               </Badge>
             )}
-            <Badge
-              variant={module.enabled ? 'default' : 'outline-solid'}
-              className='text-xs'
-            >
-              {module.enabled ? t('settings.modules.enabled') : t('settings.modules.disabled')}
+            <Badge variant={module.enabled ? "default" : "outline-solid"} className="text-xs">
+              {module.enabled ? t("settings.modules.enabled") : t("settings.modules.disabled")}
             </Badge>
           </div>
           {module.description && (
-            <p className='text-sm text-muted-foreground'>
-              {module.description}
-            </p>
+            <p className="text-sm text-muted-foreground">{module.description}</p>
           )}
           {module.keywords.length > 0 && (
-            <div className='flex gap-1 pt-1'>
+            <div className="flex gap-1 pt-1">
               {module.keywords.slice(0, 3).map((keyword) => (
-                <Badge key={keyword} variant='outline' className='text-xs'>
+                <Badge key={keyword} variant="outline" className="text-xs">
                   {keyword}
                 </Badge>
               ))}
@@ -111,9 +101,9 @@ function SortableModuleItem({ module, processing, onToggle }: SortableModuleItem
           )}
         </div>
       </div>
-      <div className='flex items-center gap-2'>
+      <div className="flex items-center gap-2">
         {processing === module.name && (
-          <IconLoader2 className='h-4 w-4 animate-spin text-muted-foreground' />
+          <IconLoader2 className="h-4 w-4 animate-spin text-muted-foreground" />
         )}
         <Switch
           checked={module.enabled}
@@ -123,168 +113,159 @@ function SortableModuleItem({ module, processing, onToggle }: SortableModuleItem
         />
       </div>
     </div>
-  )
+  );
 }
 
 export function ModulesForm({ modules: initialModules }: Props) {
-  const { t } = useTranslation()
-  const { sidebarSettings } = usePage<PageProps>().props
-  const savedOrder = sidebarSettings?.module_order || []
+  const { t } = useTranslation();
+  const { sidebarSettings } = usePage<PageProps>().props;
+  const savedOrder = sidebarSettings?.module_order || [];
 
   // Sort modules based on saved order, fallback to priority
-  const sortModules = useCallback((mods: Module[]) => {
-    if (savedOrder.length === 0) {
-      return [...mods].sort((a, b) => a.priority - b.priority)
-    }
-    return [...mods].sort((a, b) => {
-      const aIndex = savedOrder.indexOf(a.name)
-      const bIndex = savedOrder.indexOf(b.name)
-      if (aIndex === -1 && bIndex === -1) return a.priority - b.priority
-      if (aIndex === -1) return 1
-      if (bIndex === -1) return -1
-      return aIndex - bIndex
-    })
-  }, [savedOrder])
+  const sortModules = useCallback(
+    (mods: Module[]) => {
+      if (savedOrder.length === 0) {
+        return [...mods].sort((a, b) => a.priority - b.priority);
+      }
+      return [...mods].sort((a, b) => {
+        const aIndex = savedOrder.indexOf(a.name);
+        const bIndex = savedOrder.indexOf(b.name);
+        if (aIndex === -1 && bIndex === -1) return a.priority - b.priority;
+        if (aIndex === -1) return 1;
+        if (bIndex === -1) return -1;
+        return aIndex - bIndex;
+      });
+    },
+    [savedOrder],
+  );
 
-  const [modules, setModules] = useState<Module[]>(() => sortModules(initialModules))
-  const [processing, setProcessing] = useState<string | null>(null)
-  const [pendingDisable, setPendingDisable] = useState<Module | null>(null)
-  const [orderChanged, setOrderChanged] = useState(false)
-  const [savingOrder, setSavingOrder] = useState(false)
+  const [modules, setModules] = useState<Module[]>(() => sortModules(initialModules));
+  const [processing, setProcessing] = useState<string | null>(null);
+  const [pendingDisable, setPendingDisable] = useState<Module | null>(null);
+  const [orderChanged, setOrderChanged] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+    }),
+  );
 
   function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event
+    const { active, over } = event;
 
     if (over && active.id !== over.id) {
       setModules((items) => {
-        const oldIndex = items.findIndex((item) => item.name === active.id)
-        const newIndex = items.findIndex((item) => item.name === over.id)
-        return arrayMove(items, oldIndex, newIndex)
-      })
-      setOrderChanged(true)
+        const oldIndex = items.findIndex((item) => item.name === active.id);
+        const newIndex = items.findIndex((item) => item.name === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+      setOrderChanged(true);
     }
   }
 
   function saveOrder() {
-    setSavingOrder(true)
-    const order = modules.map((m) => m.name)
+    setSavingOrder(true);
+    const order = modules.map((m) => m.name);
 
     router.patch(
-      '/dashboard/settings/modules/reorder',
+      "/dashboard/settings/modules/reorder",
       { order },
       {
         preserveScroll: true,
         onSuccess: () => {
           toast({
-            title: t('settings.modules.order_saved'),
-            description: t('settings.modules.order_saved_description'),
-          })
-          setOrderChanged(false)
-          setSavingOrder(false)
+            title: t("settings.modules.order_saved"),
+            description: t("settings.modules.order_saved_description"),
+          });
+          setOrderChanged(false);
+          setSavingOrder(false);
         },
         onError: (errors) => {
           toast({
-            title: t('settings.modules.order_error'),
-            description: Object.values(errors).flat().join(', '),
-            variant: 'destructive',
-          })
-          setSavingOrder(false)
+            title: t("settings.modules.order_error"),
+            description: Object.values(errors).flat().join(", "),
+            variant: "destructive",
+          });
+          setSavingOrder(false);
         },
-      }
-    )
+      },
+    );
   }
 
   function handleToggle(module: Module) {
     if (module.isCore) {
       toast({
-        title: t('settings.modules.core_error'),
-        description: t('settings.modules.core_error_description', { name: module.name }),
-        variant: 'destructive',
-      })
-      return
+        title: t("settings.modules.core_error"),
+        description: t("settings.modules.core_error_description", { name: module.name }),
+        variant: "destructive",
+      });
+      return;
     }
 
     if (module.enabled) {
-      setPendingDisable(module)
-      return
+      setPendingDisable(module);
+      return;
     }
 
-    executeToggle(module)
+    executeToggle(module);
   }
 
   function executeToggle(module: Module) {
-    const previousState = [...modules]
+    const previousState = [...modules];
 
     setModules((prev) =>
-      prev.map((m) =>
-        m.name === module.name ? { ...m, enabled: !m.enabled } : m
-      )
-    )
-    setProcessing(module.name)
-    setPendingDisable(null)
+      prev.map((m) => (m.name === module.name ? { ...m, enabled: !m.enabled } : m)),
+    );
+    setProcessing(module.name);
+    setPendingDisable(null);
 
     router.patch(
-      '/dashboard/settings/modules/toggle',
+      "/dashboard/settings/modules/toggle",
       { name: module.name },
       {
         preserveScroll: true,
         onSuccess: () => {
-          const actionKey = module.enabled ? 'module_disabled' : 'module_enabled'
+          const actionKey = module.enabled ? "module_disabled" : "module_enabled";
           toast({
             title: t(`settings.modules.${actionKey}`),
             description: t(`settings.modules.${actionKey}_description`, { name: module.name }),
-          })
-          setProcessing(null)
+          });
+          setProcessing(null);
         },
         onError: (errors) => {
-          setModules(previousState)
+          setModules(previousState);
           toast({
-            title: t('settings.modules.toggle_error'),
-            description: Object.values(errors).flat().join(', '),
-            variant: 'destructive',
-          })
-          setProcessing(null)
+            title: t("settings.modules.toggle_error"),
+            description: Object.values(errors).flat().join(", "),
+            variant: "destructive",
+          });
+          setProcessing(null);
         },
-      }
-    )
+      },
+    );
   }
 
   return (
     <>
-      <div className='space-y-4'>
-        <div className='flex items-center justify-between'>
-          <p className='text-sm text-muted-foreground'>
-            {t('settings.modules.drag_hint')}
-          </p>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">{t("settings.modules.drag_hint")}</p>
           {orderChanged && (
-            <Button
-              size='sm'
-              onClick={saveOrder}
-              disabled={savingOrder}
-            >
-              {savingOrder && <IconLoader2 className='mr-2 h-4 w-4 animate-spin' />}
-              {t('settings.modules.save_order')}
+            <Button size="sm" onClick={saveOrder} disabled={savingOrder}>
+              {savingOrder && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {t("settings.modules.save_order")}
             </Button>
           )}
         </div>
 
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext
             items={modules.map((m) => m.name)}
             strategy={verticalListSortingStrategy}
           >
-            <div className='space-y-2'>
+            <div className="space-y-2">
               {modules.map((module) => (
                 <SortableModuleItem
                   key={module.name}
@@ -304,22 +285,24 @@ export function ModulesForm({ modules: initialModules }: Props) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('settings.modules.disable_title', { name: pendingDisable?.name })}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("settings.modules.disable_title", { name: pendingDisable?.name })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {t('settings.modules.disable_description')}
+              {t("settings.modules.disable_description")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => pendingDisable && executeToggle(pendingDisable)}
-              className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {t('settings.modules.disable_confirm')}
+              {t("settings.modules.disable_confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
+  );
 }

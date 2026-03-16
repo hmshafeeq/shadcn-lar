@@ -1,17 +1,10 @@
-import {AuthenticatedLayout} from "@/layouts"
-import {
-  File,
-  ListFilter,
-  MoreHorizontal,
-  PlusCircle,
-  Eye,
-  Edit,
-  Trash2,
-} from "lucide-react"
-import { useTranslation } from 'react-i18next'
-
-import {Badge} from "@/components/ui/badge"
-import {Button} from "@/components/ui/button"
+import { router } from "@inertiajs/react";
+import { Edit, Eye, File, ListFilter, MoreHorizontal, PlusCircle, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Main } from "@/components/layout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -19,7 +12,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -28,28 +21,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Main } from "@/components/layout"
-import { useState } from "react"
-import { BlogPost, BlogCategory, BlogTag, BlogFilters } from "@/types/blog"
-import { router } from "@inertiajs/react"
-import { PageProps } from "@/types"
-import { useToast } from "@/hooks/use-toast"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Pagination,
   PaginationContent,
@@ -57,151 +30,181 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination"
+} from "@/components/ui/pagination";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
+import { AuthenticatedLayout } from "@/layouts";
+import type { PageProps } from "@/types";
+import type { BlogCategory, BlogFilters, BlogPost, BlogTag } from "@/types/blog";
 
 interface BlogPostsPageProps extends PageProps {
   posts: {
-    data: BlogPost[]
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-  }
-  filters: BlogFilters
-  categories: BlogCategory[]
-  tags: BlogTag[]
+    data: BlogPost[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+  filters: BlogFilters;
+  categories: BlogCategory[];
+  tags: BlogTag[];
 }
 
-export default function BlogPosts({ posts, filters: initialFilters, categories, tags }: BlogPostsPageProps) {
-  const { t } = useTranslation()
-  const [filters, setFilters] = useState<BlogFilters>(initialFilters)
-  const [searchTerm, setSearchTerm] = useState(initialFilters.search || "")
-  const { toast } = useToast()
+export default function BlogPosts({
+  posts,
+  filters: initialFilters,
+  categories,
+  tags,
+}: BlogPostsPageProps) {
+  const { t } = useTranslation();
+  const [filters, setFilters] = useState<BlogFilters>(initialFilters);
+  const [searchTerm, setSearchTerm] = useState(initialFilters.search || "");
+  const { toast } = useToast();
 
   const handleSearch = (value: string) => {
-    setSearchTerm(value)
-    router.get(route('dashboard.posts.index'), { ...filters, search: value }, {
-      preserveState: true,
-      replace: true,
-    })
-  }
+    setSearchTerm(value);
+    router.get(
+      route("dashboard.posts.index"),
+      { ...filters, search: value },
+      {
+        preserveState: true,
+        replace: true,
+      },
+    );
+  };
 
   const handleFilterChange = (newFilters: Partial<BlogFilters>) => {
-    const updatedFilters = { ...filters, ...newFilters }
-    setFilters(updatedFilters)
-    router.get(route('dashboard.posts.index'), updatedFilters, {
+    const updatedFilters = { ...filters, ...newFilters };
+    setFilters(updatedFilters);
+    router.get(route("dashboard.posts.index"), updatedFilters, {
       preserveState: true,
       replace: true,
-    })
-  }
+    });
+  };
 
   const handleTabChange = (status: string) => {
-    const newStatus = status === 'all' ? undefined : status as 'draft' | 'published' | 'archived'
-    handleFilterChange({ status: newStatus })
-  }
+    const newStatus = status === "all" ? undefined : (status as "draft" | "published" | "archived");
+    handleFilterChange({ status: newStatus });
+  };
 
   const handleDelete = (post: BlogPost) => {
-    if (confirm(t('page.blog.posts.toast.delete_confirm'))) {
-      router.delete(route('dashboard.posts.destroy', post.slug), {
+    if (confirm(t("page.blog.posts.toast.delete_confirm"))) {
+      router.delete(route("dashboard.posts.destroy", post.slug), {
         onSuccess: () => {
           toast({
-            title: t('page.blog.posts.toast.deleted_title'),
-            description: t('page.blog.posts.toast.deleted_description', { title: post.title }),
-          })
+            title: t("page.blog.posts.toast.deleted_title"),
+            description: t("page.blog.posts.toast.deleted_description", { title: post.title }),
+          });
         },
         onError: () => {
           toast({
             variant: "destructive",
-            title: t('page.blog.posts.toast.delete_error_title'),
-            description: t('page.blog.posts.toast.delete_error_description'),
-          })
-        }
-      })
+            title: t("page.blog.posts.toast.delete_error_title"),
+            description: t("page.blog.posts.toast.delete_error_description"),
+          });
+        },
+      });
     }
-  }
+  };
 
   const handlePageChange = (page: number) => {
-    router.get(route('dashboard.posts.index'), { ...filters, page }, {
-      preserveState: true,
-      replace: true,
-    })
-  }
+    router.get(
+      route("dashboard.posts.index"),
+      { ...filters, page },
+      {
+        preserveState: true,
+        replace: true,
+      },
+    );
+  };
 
   const generatePageNumbers = () => {
-    const pages = []
-    const delta = 2 // Number of pages to show on each side of current page
-    const rangeStart = Math.max(2, posts.current_page - delta)
-    const rangeEnd = Math.min(posts.last_page - 1, posts.current_page + delta)
+    const pages = [];
+    const delta = 2; // Number of pages to show on each side of current page
+    const rangeStart = Math.max(2, posts.current_page - delta);
+    const rangeEnd = Math.min(posts.last_page - 1, posts.current_page + delta);
 
     // Always show first page
     if (posts.last_page > 1) {
-      pages.push(1)
+      pages.push(1);
     }
 
     // Add ellipsis if there's a gap
     if (rangeStart > 2) {
-      pages.push('...')
+      pages.push("...");
     }
 
     // Add pages around current page
     for (let i = rangeStart; i <= rangeEnd; i++) {
       if (i !== 1 && i !== posts.last_page) {
-        pages.push(i)
+        pages.push(i);
       }
     }
 
     // Add ellipsis if there's a gap
     if (rangeEnd < posts.last_page - 1) {
-      pages.push('...')
+      pages.push("...");
     }
 
     // Always show last page
     if (posts.last_page > 1 && posts.last_page !== 1) {
-      pages.push(posts.last_page)
+      pages.push(posts.last_page);
     }
 
-    return pages
-  }
+    return pages;
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "published":
-        return <Badge variant="outline" className="text-green-600 border-green-600">{t('page.blog.posts.status.published')}</Badge>
+        return (
+          <Badge variant="outline" className="text-green-600 border-green-600">
+            {t("page.blog.posts.status.published")}
+          </Badge>
+        );
       case "draft":
-        return <Badge variant="secondary">{t('page.blog.posts.status.draft')}</Badge>
+        return <Badge variant="secondary">{t("page.blog.posts.status.draft")}</Badge>;
       case "archived":
-        return <Badge variant="outline">{t('page.blog.posts.status.archived')}</Badge>
+        return <Badge variant="outline">{t("page.blog.posts.status.archived")}</Badge>;
       default:
-        return <Badge>{status}</Badge>
+        return <Badge>{status}</Badge>;
     }
-  }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   const hasActiveFilters = () => {
-    return filters.featured || filters.category || filters.tag
-  }
+    return filters.featured || filters.category || filters.tag;
+  };
 
   const clearAllFilters = () => {
     handleFilterChange({
       featured: undefined,
       category: undefined,
-      tag: undefined
-    })
-  }
+      tag: undefined,
+    });
+  };
 
-  const getActiveFilterLabel = (type: 'category' | 'tag', slug: string) => {
-    if (type === 'category') {
-      return categories.find(c => c.slug === slug)?.name
+  const getActiveFilterLabel = (type: "category" | "tag", slug: string) => {
+    if (type === "category") {
+      return categories.find((c) => c.slug === slug)?.name;
     }
-    return tags.find(t => t.slug === slug)?.name
-  }
+    return tags.find((t) => t.slug === slug)?.name;
+  };
 
   return (
     <>
@@ -231,9 +234,7 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm" className="h-7 gap-1">
                         <ListFilter className="h-3.5 w-3.5" />
-                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                          Filter
-                        </span>
+                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Filter</span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
@@ -258,7 +259,7 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             checked={!filters.category}
                             onCheckedChange={(checked) => {
                               if (checked) {
-                                handleFilterChange({ category: undefined })
+                                handleFilterChange({ category: undefined });
                               }
                             }}
                           >
@@ -269,7 +270,9 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                               key={category.id}
                               checked={filters.category === category.slug}
                               onCheckedChange={(checked) =>
-                                handleFilterChange({ category: checked ? category.slug : undefined })
+                                handleFilterChange({
+                                  category: checked ? category.slug : undefined,
+                                })
                               }
                             >
                               {category.name}
@@ -291,7 +294,7 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             checked={!filters.tag}
                             onCheckedChange={(checked) => {
                               if (checked) {
-                                handleFilterChange({ tag: undefined })
+                                handleFilterChange({ tag: undefined });
                               }
                             }}
                           >
@@ -315,27 +318,21 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                           )}
                         </>
                       ) : (
-                        <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                          No tags
-                        </div>
+                        <div className="px-2 py-1.5 text-sm text-muted-foreground">No tags</div>
                       )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <Button size="sm" variant="outline" className="h-7 gap-1">
                     <File className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Export
-                    </span>
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Export</span>
                   </Button>
                   <Button
                     size="sm"
                     className="h-7 gap-1"
-                    onClick={() => router.get(route('dashboard.posts.create'))}
+                    onClick={() => router.get(route("dashboard.posts.create"))}
                   >
                     <PlusCircle className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Add Post
-                    </span>
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Add Post</span>
                   </Button>
                 </div>
               </div>
@@ -356,7 +353,7 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                   )}
                   {filters.category && (
                     <Badge variant="secondary" className="gap-1">
-                      {getActiveFilterLabel('category', filters.category)}
+                      {getActiveFilterLabel("category", filters.category)}
                       <button
                         onClick={() => handleFilterChange({ category: undefined })}
                         className="ml-1 hover:bg-secondary-foreground/20 rounded-full"
@@ -367,7 +364,7 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                   )}
                   {filters.tag && (
                     <Badge variant="secondary" className="gap-1">
-                      {getActiveFilterLabel('tag', filters.tag)}
+                      {getActiveFilterLabel("tag", filters.tag)}
                       <button
                         onClick={() => handleFilterChange({ tag: undefined })}
                         className="ml-1 hover:bg-secondary-foreground/20 rounded-full"
@@ -405,12 +402,8 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                           <TableHead>Title</TableHead>
                           <TableHead>Category</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead className="hidden md:table-cell">
-                            Author
-                          </TableHead>
-                          <TableHead className="hidden md:table-cell">
-                            Published
-                          </TableHead>
+                          <TableHead className="hidden md:table-cell">Author</TableHead>
+                          <TableHead className="hidden md:table-cell">Published</TableHead>
                           <TableHead>
                             <span className="sr-only">Actions</span>
                           </TableHead>
@@ -440,14 +433,10 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             </TableCell>
                             <TableCell>
                               {post.category?.name && (
-                                <Badge variant="outline">
-                                  {post.category?.name }
-                                </Badge>
+                                <Badge variant="outline">{post.category?.name}</Badge>
                               )}
                             </TableCell>
-                            <TableCell>
-                              {getStatusBadge(post.status)}
-                            </TableCell>
+                            <TableCell>{getStatusBadge(post.status)}</TableCell>
                             <TableCell className="hidden md:table-cell">
                               <div className="flex items-center gap-2">
                                 <img
@@ -466,11 +455,7 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             <TableCell>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button
-                                    aria-haspopup="true"
-                                    size="icon"
-                                    variant="ghost"
-                                  >
+                                  <Button aria-haspopup="true" size="icon" variant="ghost">
                                     <MoreHorizontal className="h-4 w-4" />
                                     <span className="sr-only">Toggle menu</span>
                                   </Button>
@@ -479,13 +464,17 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
-                                    onClick={() => router.get(route('dashboard.posts.show', post.slug))}
+                                    onClick={() =>
+                                      router.get(route("dashboard.posts.show", post.slug))
+                                    }
                                   >
                                     <Eye className="mr-2 h-4 w-4" />
                                     View
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
-                                    onClick={() => router.get(route('dashboard.posts.edit', post.slug))}
+                                    onClick={() =>
+                                      router.get(route("dashboard.posts.edit", post.slug))
+                                    }
                                   >
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit
@@ -510,11 +499,17 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                     <div className="text-xs text-muted-foreground">
                       {posts?.current_page && posts?.per_page && posts?.total ? (
                         <>
-                          Showing <strong>{((posts.current_page - 1) * posts.per_page) + 1}-{Math.min(posts.current_page * posts.per_page, posts.total)}</strong> of <strong>{posts.total}</strong>{" "}
-                          posts
+                          Showing{" "}
+                          <strong>
+                            {(posts.current_page - 1) * posts.per_page + 1}-
+                            {Math.min(posts.current_page * posts.per_page, posts.total)}
+                          </strong>{" "}
+                          of <strong>{posts.total}</strong> posts
                         </>
                       ) : (
-                        <>Showing <strong>0</strong> posts</>
+                        <>
+                          Showing <strong>0</strong> posts
+                        </>
                       )}
                     </div>
 
@@ -525,25 +520,29 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             <PaginationPrevious
                               href="#"
                               onClick={(e) => {
-                                e.preventDefault()
+                                e.preventDefault();
                                 if (posts.current_page > 1) {
-                                  handlePageChange(posts.current_page - 1)
+                                  handlePageChange(posts.current_page - 1);
                                 }
                               }}
-                              className={posts.current_page === 1 ? "pointer-events-none opacity-50" : ""}
+                              className={
+                                posts.current_page === 1 ? "pointer-events-none opacity-50" : ""
+                              }
                             />
                           </PaginationItem>
 
                           {generatePageNumbers().map((page, index) => (
                             <PaginationItem key={index}>
-                              {page === '...' ? (
-                                <span className="flex h-9 w-9 items-center justify-center text-sm">...</span>
+                              {page === "..." ? (
+                                <span className="flex h-9 w-9 items-center justify-center text-sm">
+                                  ...
+                                </span>
                               ) : (
                                 <PaginationLink
                                   href="#"
                                   onClick={(e) => {
-                                    e.preventDefault()
-                                    handlePageChange(page as number)
+                                    e.preventDefault();
+                                    handlePageChange(page as number);
                                   }}
                                   isActive={page === posts.current_page}
                                 >
@@ -557,12 +556,16 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             <PaginationNext
                               href="#"
                               onClick={(e) => {
-                                e.preventDefault()
+                                e.preventDefault();
                                 if (posts.current_page < posts.last_page) {
-                                  handlePageChange(posts.current_page + 1)
+                                  handlePageChange(posts.current_page + 1);
                                 }
                               }}
-                              className={posts.current_page === posts.last_page ? "pointer-events-none opacity-50" : ""}
+                              className={
+                                posts.current_page === posts.last_page
+                                  ? "pointer-events-none opacity-50"
+                                  : ""
+                              }
                             />
                           </PaginationItem>
                         </PaginationContent>
@@ -590,12 +593,8 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                           <TableHead>Title</TableHead>
                           <TableHead>Category</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead className="hidden md:table-cell">
-                            Author
-                          </TableHead>
-                          <TableHead className="hidden md:table-cell">
-                            Published
-                          </TableHead>
+                          <TableHead className="hidden md:table-cell">Author</TableHead>
+                          <TableHead className="hidden md:table-cell">Published</TableHead>
                           <TableHead>
                             <span className="sr-only">Actions</span>
                           </TableHead>
@@ -624,13 +623,9 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                               </div>
                             </TableCell>
                             <TableCell>
-                              <Badge variant="outline">
-                                {post.category?.name}
-                              </Badge>
+                              <Badge variant="outline">{post.category?.name}</Badge>
                             </TableCell>
-                            <TableCell>
-                              {getStatusBadge(post.status)}
-                            </TableCell>
+                            <TableCell>{getStatusBadge(post.status)}</TableCell>
                             <TableCell className="hidden md:table-cell">
                               <div className="flex items-center gap-2">
                                 <img
@@ -649,11 +644,7 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             <TableCell>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button
-                                    aria-haspopup="true"
-                                    size="icon"
-                                    variant="ghost"
-                                  >
+                                  <Button aria-haspopup="true" size="icon" variant="ghost">
                                     <MoreHorizontal className="h-4 w-4" />
                                     <span className="sr-only">Toggle menu</span>
                                   </Button>
@@ -662,13 +653,17 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
-                                    onClick={() => router.get(route('dashboard.posts.show', post.slug))}
+                                    onClick={() =>
+                                      router.get(route("dashboard.posts.show", post.slug))
+                                    }
                                   >
                                     <Eye className="mr-2 h-4 w-4" />
                                     View
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
-                                    onClick={() => router.get(route('dashboard.posts.edit', post.slug))}
+                                    onClick={() =>
+                                      router.get(route("dashboard.posts.edit", post.slug))
+                                    }
                                   >
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit
@@ -693,11 +688,17 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                     <div className="text-xs text-muted-foreground">
                       {posts?.current_page && posts?.per_page && posts?.total ? (
                         <>
-                          Showing <strong>{((posts.current_page - 1) * posts.per_page) + 1}-{Math.min(posts.current_page * posts.per_page, posts.total)}</strong> of <strong>{posts.total}</strong>{" "}
-                          posts
+                          Showing{" "}
+                          <strong>
+                            {(posts.current_page - 1) * posts.per_page + 1}-
+                            {Math.min(posts.current_page * posts.per_page, posts.total)}
+                          </strong>{" "}
+                          of <strong>{posts.total}</strong> posts
                         </>
                       ) : (
-                        <>Showing <strong>0</strong> posts</>
+                        <>
+                          Showing <strong>0</strong> posts
+                        </>
                       )}
                     </div>
 
@@ -708,25 +709,29 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             <PaginationPrevious
                               href="#"
                               onClick={(e) => {
-                                e.preventDefault()
+                                e.preventDefault();
                                 if (posts.current_page > 1) {
-                                  handlePageChange(posts.current_page - 1)
+                                  handlePageChange(posts.current_page - 1);
                                 }
                               }}
-                              className={posts.current_page === 1 ? "pointer-events-none opacity-50" : ""}
+                              className={
+                                posts.current_page === 1 ? "pointer-events-none opacity-50" : ""
+                              }
                             />
                           </PaginationItem>
 
                           {generatePageNumbers().map((page, index) => (
                             <PaginationItem key={index}>
-                              {page === '...' ? (
-                                <span className="flex h-9 w-9 items-center justify-center text-sm">...</span>
+                              {page === "..." ? (
+                                <span className="flex h-9 w-9 items-center justify-center text-sm">
+                                  ...
+                                </span>
                               ) : (
                                 <PaginationLink
                                   href="#"
                                   onClick={(e) => {
-                                    e.preventDefault()
-                                    handlePageChange(page as number)
+                                    e.preventDefault();
+                                    handlePageChange(page as number);
                                   }}
                                   isActive={page === posts.current_page}
                                 >
@@ -740,12 +745,16 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             <PaginationNext
                               href="#"
                               onClick={(e) => {
-                                e.preventDefault()
+                                e.preventDefault();
                                 if (posts.current_page < posts.last_page) {
-                                  handlePageChange(posts.current_page + 1)
+                                  handlePageChange(posts.current_page + 1);
                                 }
                               }}
-                              className={posts.current_page === posts.last_page ? "pointer-events-none opacity-50" : ""}
+                              className={
+                                posts.current_page === posts.last_page
+                                  ? "pointer-events-none opacity-50"
+                                  : ""
+                              }
                             />
                           </PaginationItem>
                         </PaginationContent>
@@ -773,12 +782,8 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                           <TableHead>Title</TableHead>
                           <TableHead>Category</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead className="hidden md:table-cell">
-                            Author
-                          </TableHead>
-                          <TableHead className="hidden md:table-cell">
-                            Published
-                          </TableHead>
+                          <TableHead className="hidden md:table-cell">Author</TableHead>
+                          <TableHead className="hidden md:table-cell">Published</TableHead>
                           <TableHead>
                             <span className="sr-only">Actions</span>
                           </TableHead>
@@ -807,13 +812,9 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                               </div>
                             </TableCell>
                             <TableCell>
-                              <Badge variant="outline">
-                                {post.category?.name}
-                              </Badge>
+                              <Badge variant="outline">{post.category?.name}</Badge>
                             </TableCell>
-                            <TableCell>
-                              {getStatusBadge(post.status)}
-                            </TableCell>
+                            <TableCell>{getStatusBadge(post.status)}</TableCell>
                             <TableCell className="hidden md:table-cell">
                               <div className="flex items-center gap-2">
                                 <img
@@ -832,11 +833,7 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             <TableCell>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button
-                                    aria-haspopup="true"
-                                    size="icon"
-                                    variant="ghost"
-                                  >
+                                  <Button aria-haspopup="true" size="icon" variant="ghost">
                                     <MoreHorizontal className="h-4 w-4" />
                                     <span className="sr-only">Toggle menu</span>
                                   </Button>
@@ -845,13 +842,17 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
-                                    onClick={() => router.get(route('dashboard.posts.show', post.slug))}
+                                    onClick={() =>
+                                      router.get(route("dashboard.posts.show", post.slug))
+                                    }
                                   >
                                     <Eye className="mr-2 h-4 w-4" />
                                     View
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
-                                    onClick={() => router.get(route('dashboard.posts.edit', post.slug))}
+                                    onClick={() =>
+                                      router.get(route("dashboard.posts.edit", post.slug))
+                                    }
                                   >
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit
@@ -876,11 +877,17 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                     <div className="text-xs text-muted-foreground">
                       {posts?.current_page && posts?.per_page && posts?.total ? (
                         <>
-                          Showing <strong>{((posts.current_page - 1) * posts.per_page) + 1}-{Math.min(posts.current_page * posts.per_page, posts.total)}</strong> of <strong>{posts.total}</strong>{" "}
-                          posts
+                          Showing{" "}
+                          <strong>
+                            {(posts.current_page - 1) * posts.per_page + 1}-
+                            {Math.min(posts.current_page * posts.per_page, posts.total)}
+                          </strong>{" "}
+                          of <strong>{posts.total}</strong> posts
                         </>
                       ) : (
-                        <>Showing <strong>0</strong> posts</>
+                        <>
+                          Showing <strong>0</strong> posts
+                        </>
                       )}
                     </div>
 
@@ -891,25 +898,29 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             <PaginationPrevious
                               href="#"
                               onClick={(e) => {
-                                e.preventDefault()
+                                e.preventDefault();
                                 if (posts.current_page > 1) {
-                                  handlePageChange(posts.current_page - 1)
+                                  handlePageChange(posts.current_page - 1);
                                 }
                               }}
-                              className={posts.current_page === 1 ? "pointer-events-none opacity-50" : ""}
+                              className={
+                                posts.current_page === 1 ? "pointer-events-none opacity-50" : ""
+                              }
                             />
                           </PaginationItem>
 
                           {generatePageNumbers().map((page, index) => (
                             <PaginationItem key={index}>
-                              {page === '...' ? (
-                                <span className="flex h-9 w-9 items-center justify-center text-sm">...</span>
+                              {page === "..." ? (
+                                <span className="flex h-9 w-9 items-center justify-center text-sm">
+                                  ...
+                                </span>
                               ) : (
                                 <PaginationLink
                                   href="#"
                                   onClick={(e) => {
-                                    e.preventDefault()
-                                    handlePageChange(page as number)
+                                    e.preventDefault();
+                                    handlePageChange(page as number);
                                   }}
                                   isActive={page === posts.current_page}
                                 >
@@ -923,12 +934,16 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             <PaginationNext
                               href="#"
                               onClick={(e) => {
-                                e.preventDefault()
+                                e.preventDefault();
                                 if (posts.current_page < posts.last_page) {
-                                  handlePageChange(posts.current_page + 1)
+                                  handlePageChange(posts.current_page + 1);
                                 }
                               }}
-                              className={posts.current_page === posts.last_page ? "pointer-events-none opacity-50" : ""}
+                              className={
+                                posts.current_page === posts.last_page
+                                  ? "pointer-events-none opacity-50"
+                                  : ""
+                              }
                             />
                           </PaginationItem>
                         </PaginationContent>
@@ -956,12 +971,8 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                           <TableHead>Title</TableHead>
                           <TableHead>Category</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead className="hidden md:table-cell">
-                            Author
-                          </TableHead>
-                          <TableHead className="hidden md:table-cell">
-                            Published
-                          </TableHead>
+                          <TableHead className="hidden md:table-cell">Author</TableHead>
+                          <TableHead className="hidden md:table-cell">Published</TableHead>
                           <TableHead>
                             <span className="sr-only">Actions</span>
                           </TableHead>
@@ -990,13 +1001,9 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                               </div>
                             </TableCell>
                             <TableCell>
-                              <Badge variant="outline">
-                                {post.category?.name}
-                              </Badge>
+                              <Badge variant="outline">{post.category?.name}</Badge>
                             </TableCell>
-                            <TableCell>
-                              {getStatusBadge(post.status)}
-                            </TableCell>
+                            <TableCell>{getStatusBadge(post.status)}</TableCell>
                             <TableCell className="hidden md:table-cell">
                               <div className="flex items-center gap-2">
                                 <img
@@ -1015,11 +1022,7 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             <TableCell>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button
-                                    aria-haspopup="true"
-                                    size="icon"
-                                    variant="ghost"
-                                  >
+                                  <Button aria-haspopup="true" size="icon" variant="ghost">
                                     <MoreHorizontal className="h-4 w-4" />
                                     <span className="sr-only">Toggle menu</span>
                                   </Button>
@@ -1028,13 +1031,17 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
-                                    onClick={() => router.get(route('dashboard.posts.show', post.slug))}
+                                    onClick={() =>
+                                      router.get(route("dashboard.posts.show", post.slug))
+                                    }
                                   >
                                     <Eye className="mr-2 h-4 w-4" />
                                     View
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
-                                    onClick={() => router.get(route('dashboard.posts.edit', post.slug))}
+                                    onClick={() =>
+                                      router.get(route("dashboard.posts.edit", post.slug))
+                                    }
                                   >
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit
@@ -1059,11 +1066,17 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                     <div className="text-xs text-muted-foreground">
                       {posts?.current_page && posts?.per_page && posts?.total ? (
                         <>
-                          Showing <strong>{((posts.current_page - 1) * posts.per_page) + 1}-{Math.min(posts.current_page * posts.per_page, posts.total)}</strong> of <strong>{posts.total}</strong>{" "}
-                          posts
+                          Showing{" "}
+                          <strong>
+                            {(posts.current_page - 1) * posts.per_page + 1}-
+                            {Math.min(posts.current_page * posts.per_page, posts.total)}
+                          </strong>{" "}
+                          of <strong>{posts.total}</strong> posts
                         </>
                       ) : (
-                        <>Showing <strong>0</strong> posts</>
+                        <>
+                          Showing <strong>0</strong> posts
+                        </>
                       )}
                     </div>
 
@@ -1074,25 +1087,29 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             <PaginationPrevious
                               href="#"
                               onClick={(e) => {
-                                e.preventDefault()
+                                e.preventDefault();
                                 if (posts.current_page > 1) {
-                                  handlePageChange(posts.current_page - 1)
+                                  handlePageChange(posts.current_page - 1);
                                 }
                               }}
-                              className={posts.current_page === 1 ? "pointer-events-none opacity-50" : ""}
+                              className={
+                                posts.current_page === 1 ? "pointer-events-none opacity-50" : ""
+                              }
                             />
                           </PaginationItem>
 
                           {generatePageNumbers().map((page, index) => (
                             <PaginationItem key={index}>
-                              {page === '...' ? (
-                                <span className="flex h-9 w-9 items-center justify-center text-sm">...</span>
+                              {page === "..." ? (
+                                <span className="flex h-9 w-9 items-center justify-center text-sm">
+                                  ...
+                                </span>
                               ) : (
                                 <PaginationLink
                                   href="#"
                                   onClick={(e) => {
-                                    e.preventDefault()
-                                    handlePageChange(page as number)
+                                    e.preventDefault();
+                                    handlePageChange(page as number);
                                   }}
                                   isActive={page === posts.current_page}
                                 >
@@ -1106,12 +1123,16 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
                             <PaginationNext
                               href="#"
                               onClick={(e) => {
-                                e.preventDefault()
+                                e.preventDefault();
                                 if (posts.current_page < posts.last_page) {
-                                  handlePageChange(posts.current_page + 1)
+                                  handlePageChange(posts.current_page + 1);
                                 }
                               }}
-                              className={posts.current_page === posts.last_page ? "pointer-events-none opacity-50" : ""}
+                              className={
+                                posts.current_page === posts.last_page
+                                  ? "pointer-events-none opacity-50"
+                                  : ""
+                              }
                             />
                           </PaginationItem>
                         </PaginationContent>
@@ -1125,5 +1146,5 @@ export default function BlogPosts({ posts, filters: initialFilters, categories, 
         </Main>
       </AuthenticatedLayout>
     </>
-  )
+  );
 }

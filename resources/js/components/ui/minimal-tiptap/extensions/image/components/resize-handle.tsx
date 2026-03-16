@@ -1,16 +1,11 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
+import type * as React from "react";
+import { cn } from "@/lib/utils";
 
 interface ResizeProps extends React.ComponentProps<"div"> {
-  isResizing?: boolean
+  isResizing?: boolean;
 }
 
-export const ResizeHandle = ({
-  ref,
-  className,
-  isResizing = false,
-  ...props
-}: ResizeProps) => {
+export const ResizeHandle = ({ ref, className, isResizing = false, ...props }: ResizeProps) => {
   return (
     <div
       className={cn(
@@ -21,12 +16,12 @@ export const ResizeHandle = ({
           "group-hover/node-image:opacity-80": !isResizing,
         },
         "before:absolute before:inset-y-0 before:-right-1 before:-left-1",
-        className
+        className,
       )}
       ref={ref}
       {...props}
     ></div>
-  )
-}
+  );
+};
 
-ResizeHandle.displayName = "ResizeHandle"
+ResizeHandle.displayName = "ResizeHandle";

@@ -3,9 +3,16 @@
     "type": "module",
     "scripts": {
         "build": "tsc && vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "lint": "biome lint .",
+        "lint:fix": "biome lint --write .",
+        "format": "biome format --write .",
+        "format:check": "biome format .",
+        "check": "biome check .",
+        "check:fix": "biome check --write ."
     },
     "devDependencies": {
+        "@biomejs/biome": "^2.4.7",
         "@headlessui/react": "^2.2.9",
         "@inertiajs/react": "3.0.0-beta.3",
         "@tailwindcss/vite": "^4.2.1",

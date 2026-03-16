@@ -1,21 +1,21 @@
+import { router } from "@inertiajs/react";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
-} from '@radix-ui/react-icons'
-import { Table } from '@tanstack/react-table'
-import { router } from '@inertiajs/react'
-import { Button } from '@/components/ui/button'
-import { PaginatedUsers } from '../data/schema'
+} from "@radix-ui/react-icons";
+import type { Table } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import type { PaginatedUsers } from "../data/schema";
 
 interface DataTablePaginationProps<TData> {
-  table: Table<TData>
-  pagination: PaginatedUsers
+  table: Table<TData>;
+  pagination: PaginatedUsers;
   filters?: {
-    search?: string
-    role?: string
-  }
+    search?: string;
+    role?: string;
+  };
 }
 
 export function DataTablePagination<TData>({
@@ -25,30 +25,29 @@ export function DataTablePagination<TData>({
 }: DataTablePaginationProps<TData>) {
   const handlePageChange = (page: number) => {
     router.get(
-      route('dashboard.users'),
+      route("dashboard.users"),
       { ...filters, page },
-      { preserveState: true, replace: true }
-    )
-  }
+      { preserveState: true, replace: true },
+    );
+  };
 
-  const current_page = pagination?.current_page ?? 1
-  const last_page = pagination?.last_page ?? 1
-  const per_page = pagination?.per_page ?? 10
-  const total = pagination?.total ?? 0
+  const current_page = pagination?.current_page ?? 1;
+  const last_page = pagination?.last_page ?? 1;
+  const per_page = pagination?.per_page ?? 10;
+  const total = pagination?.total ?? 0;
 
-  const startItem = total > 0 ? (current_page - 1) * per_page + 1 : 0
-  const endItem = Math.min(current_page * per_page, total)
+  const startItem = total > 0 ? (current_page - 1) * per_page + 1 : 0;
+  const endItem = Math.min(current_page * per_page, total);
 
   return (
     <div className="flex items-center justify-between overflow-auto px-2">
       <div className="hidden flex-1 text-sm text-muted-foreground sm:block">
-        {table.getFilteredSelectedRowModel().rows.length} of {total} row(s)
-        selected.
+        {table.getFilteredSelectedRowModel().rows.length} of {total} row(s) selected.
       </div>
       <div className="flex items-center sm:space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
           <p className="hidden text-sm font-medium sm:block">
-            {total > 0 ? `Showing ${startItem}-${endItem} of ${total}` : 'No results'}
+            {total > 0 ? `Showing ${startItem}-${endItem} of ${total}` : "No results"}
           </p>
         </div>
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
@@ -94,5 +93,5 @@ export function DataTablePagination<TData>({
         </div>
       </div>
     </div>
-  )
+  );
 }

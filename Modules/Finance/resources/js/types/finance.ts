@@ -9,9 +9,21 @@ export interface Currency {
   updated_at?: string;
 }
 
-export type AccountType = 'bank' | 'credit_card' | 'investment' | 'cash' | 'loan' | 'e_wallet' | 'other';
+export type AccountType =
+  | "bank"
+  | "credit_card"
+  | "investment"
+  | "cash"
+  | "loan"
+  | "e_wallet"
+  | "other";
 
-export type RateSource = 'exchangerate_api' | 'open_exchange_rates' | 'vietcombank' | 'payoneer' | null;
+export type RateSource =
+  | "exchangerate_api"
+  | "open_exchange_rates"
+  | "vietcombank"
+  | "payoneer"
+  | null;
 
 export interface Account {
   id: number;
@@ -38,11 +50,11 @@ export interface Account {
   utilization_rate?: number;
 }
 
-export type TransactionType = 'income' | 'expense' | 'transfer';
+export type TransactionType = "income" | "expense" | "transfer";
 
-export type CategoryType = 'income' | 'expense' | 'both';
+export type CategoryType = "income" | "expense" | "both";
 
-export type ExpenseType = 'essential' | 'discretionary' | 'savings';
+export type ExpenseType = "essential" | "discretionary" | "savings";
 
 export interface Category {
   id: number;
@@ -85,7 +97,7 @@ export interface Transaction {
   updated_at: string;
 }
 
-export type BudgetPeriod = 'weekly' | 'monthly' | 'quarterly' | 'yearly' | 'custom';
+export type BudgetPeriod = "weekly" | "monthly" | "quarterly" | "yearly" | "custom";
 
 export interface Budget {
   id: number;
@@ -174,7 +186,7 @@ export interface ExchangeRateFilters {
 }
 
 // Report types
-export type DateRangePreset = '30d' | '6m' | '12m' | 'ytd' | 'custom';
+export type DateRangePreset = "30d" | "6m" | "12m" | "ytd" | "custom";
 
 export interface ReportFilters {
   range: DateRangePreset;
@@ -222,9 +234,9 @@ export interface FinanceReportData {
 }
 
 // Savings Goals
-export type SavingsGoalStatus = 'active' | 'completed' | 'paused' | 'cancelled';
+export type SavingsGoalStatus = "active" | "completed" | "paused" | "cancelled";
 
-export type ContributionType = 'manual' | 'linked';
+export type ContributionType = "manual" | "linked";
 
 export interface SavingsGoal {
   id: number;
@@ -265,11 +277,11 @@ export interface SavingsContribution {
 }
 
 // Financial Planning
-export type PlanStatus = 'draft' | 'active' | 'archived';
+export type PlanStatus = "draft" | "active" | "archived";
 
-export type PlanItemRecurrence = 'one_time' | 'monthly' | 'quarterly' | 'yearly';
+export type PlanItemRecurrence = "one_time" | "monthly" | "quarterly" | "yearly";
 
-export type PlanItemType = 'income' | 'expense';
+export type PlanItemType = "income" | "expense";
 
 export interface PlanItem {
   id: number;
@@ -384,49 +396,49 @@ export interface SmartInputFormData {
 }
 
 // Chat Interface
-export type ChatMessageRole = 'user' | 'assistant' | 'system'
-export type ChatInputType = 'text' | 'voice' | 'image' | 'text_image'
+export type ChatMessageRole = "user" | "assistant" | "system";
+export type ChatInputType = "text" | "voice" | "image" | "text_image";
 
 export interface ChatAttachment {
-  type: 'image' | 'audio'
-  url: string
-  file?: File | Blob
-  name?: string
+  type: "image" | "audio";
+  url: string;
+  file?: File | Blob;
+  name?: string;
 }
 
 export interface ChatMessage {
-  id: string
-  role: ChatMessageRole
-  content: string
-  inputType: ChatInputType
-  attachment?: ChatAttachment
-  parsedTransaction?: ParsedTransaction
-  transactionSaved?: boolean
-  isProcessing?: boolean
-  error?: string
-  timestamp: Date
-  historyId?: number
+  id: string;
+  role: ChatMessageRole;
+  content: string;
+  inputType: ChatInputType;
+  attachment?: ChatAttachment;
+  parsedTransaction?: ParsedTransaction;
+  transactionSaved?: boolean;
+  isProcessing?: boolean;
+  error?: string;
+  timestamp: Date;
+  historyId?: number;
 }
 
 export interface SmartInputHistory {
-  id: number
-  user_id: number
-  transaction_id?: number
-  input_type: ChatInputType
-  raw_text?: string
-  parsed_result?: Record<string, unknown>
-  ai_provider?: string
-  language: string
-  confidence?: number
-  transaction_saved: boolean
+  id: number;
+  user_id: number;
+  transaction_id?: number;
+  input_type: ChatInputType;
+  raw_text?: string;
+  parsed_result?: Record<string, unknown>;
+  ai_provider?: string;
+  language: string;
+  confidence?: number;
+  transaction_saved: boolean;
   transaction?: {
-    id: number
-    description?: string
-    amount: number
-    transaction_type: string
-  }
-  created_at: string
-  updated_at: string
+    id: number;
+    description?: string;
+    amount: number;
+    transaction_type: string;
+  };
+  created_at: string;
+  updated_at: string;
 }
 
 // Cashflow Analysis Types
@@ -475,7 +487,7 @@ export interface CategoryTrendAnalysis {
 }
 
 // Recurring Transactions
-export type RecurringFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';
+export type RecurringFrequency = "daily" | "weekly" | "monthly" | "yearly";
 
 export interface RecurringTransaction {
   id: number;
@@ -486,7 +498,7 @@ export interface RecurringTransaction {
   category?: Category;
   name: string;
   description?: string;
-  transaction_type: 'income' | 'expense';
+  transaction_type: "income" | "expense";
   amount: number;
   currency_code: string;
   frequency: RecurringFrequency;
@@ -508,7 +520,7 @@ export interface RecurringTransaction {
 export interface RecurringPreview {
   date: string;
   amount: number;
-  type: 'income' | 'expense';
+  type: "income" | "expense";
 }
 
 export interface MonthlyProjection {
@@ -522,17 +534,17 @@ export interface MonthlyProjection {
 
 // AI Advisor
 export interface AdvisorConversationSummary {
-  id: number
-  title: string
-  updated_at: string
-  preview?: string | null
+  id: number;
+  title: string;
+  updated_at: string;
+  preview?: string | null;
 }
 
 export interface AdvisorMessage {
-  id: number
-  role: 'user' | 'assistant'
-  content: string
-  created_at: string
-  isProcessing?: boolean
-  error?: string
+  id: number;
+  role: "user" | "assistant";
+  content: string;
+  created_at: string;
+  isProcessing?: boolean;
+  error?: string;
 }

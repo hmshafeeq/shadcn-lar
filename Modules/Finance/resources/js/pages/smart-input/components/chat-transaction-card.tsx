@@ -1,53 +1,53 @@
-import { useState } from 'react'
-import { format } from 'date-fns'
-import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { DatePicker } from '@/components/ui/date-picker'
-import { Progress } from '@/components/ui/progress'
+import type {
+  Account,
+  Category,
+  ParsedTransaction,
+  TransactionType,
+} from "@modules/Finance/types/finance";
+import { format } from "date-fns";
+import {
+  ArrowLeftRight,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Pencil,
+  Save,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  TrendingUp,
-  TrendingDown,
-  ArrowLeftRight,
-  Save,
-  Pencil,
-  Check,
-  ChevronDown,
-  ChevronUp,
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
-import type {
-  Account,
-  Category,
-  ParsedTransaction,
-  TransactionType,
-} from '@modules/Finance/types/finance'
+} from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 interface ChatTransactionCardProps {
-  messageId: string
-  parsed: ParsedTransaction
-  accounts: Account[]
-  categories: Category[]
-  isSaved: boolean
-  onSave: (messageId: string, data: Record<string, unknown>) => void
+  messageId: string;
+  parsed: ParsedTransaction;
+  accounts: Account[];
+  categories: Category[];
+  isSaved: boolean;
+  onSave: (messageId: string, data: Record<string, unknown>) => void;
 }
 
-function formatMoney(amount: number, currencyCode = 'VND'): string {
-  const locale = currencyCode === 'VND' ? 'vi-VN' : 'en-US'
+function formatMoney(amount: number, currencyCode = "VND"): string {
+  const locale = currencyCode === "VND" ? "vi-VN" : "en-US";
   return new Intl.NumberFormat(locale, {
-    style: 'currency',
+    style: "currency",
     currency: currencyCode,
-  }).format(amount)
+  }).format(amount);
 }
 
 export function ChatTransactionCard({
@@ -58,36 +58,34 @@ export function ChatTransactionCard({
   isSaved,
   onSave,
 }: ChatTransactionCardProps) {
-  const { t } = useTranslation()
-  const [isEditing, setIsEditing] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [type, setType] = useState<TransactionType>(parsed.type || 'expense')
-  const [amount, setAmount] = useState(parsed.amount || 0)
-  const [description, setDescription] = useState(parsed.description || '')
+  const { t } = useTranslation();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [type, setType] = useState<TransactionType>(parsed.type || "expense");
+  const [amount, setAmount] = useState(parsed.amount || 0);
+  const [description, setDescription] = useState(parsed.description || "");
   const [accountId, setAccountId] = useState(
-    parsed.suggested_account?.id?.toString() || accounts[0]?.id?.toString() || ''
-  )
-  const [categoryId, setCategoryId] = useState(
-    parsed.suggested_category?.id?.toString() || ''
-  )
+    parsed.suggested_account?.id?.toString() || accounts[0]?.id?.toString() || "",
+  );
+  const [categoryId, setCategoryId] = useState(parsed.suggested_category?.id?.toString() || "");
   const [transactionDate, setTransactionDate] = useState(
-    parsed.transaction_date || format(new Date(), 'yyyy-MM-dd')
-  )
-  const [notes, setNotes] = useState(parsed.notes || '')
+    parsed.transaction_date || format(new Date(), "yyyy-MM-dd"),
+  );
+  const [notes, setNotes] = useState(parsed.notes || "");
 
-  const selectedAccount = accounts.find((a) => a.id.toString() === accountId)
-  const incomeCategories = categories.filter((c) => c.type === 'income' || c.type === 'both')
-  const expenseCategories = categories.filter((c) => c.type === 'expense' || c.type === 'both')
-  const currentCategories = type === 'income' ? incomeCategories : expenseCategories
-  const confidencePercent = Math.round((parsed.confidence || 0) * 100)
+  const selectedAccount = accounts.find((a) => a.id.toString() === accountId);
+  const incomeCategories = categories.filter((c) => c.type === "income" || c.type === "both");
+  const expenseCategories = categories.filter((c) => c.type === "expense" || c.type === "both");
+  const currentCategories = type === "income" ? incomeCategories : expenseCategories;
+  const confidencePercent = Math.round((parsed.confidence || 0) * 100);
 
   const handleTypeChange = (newType: TransactionType) => {
-    setType(newType)
-    setCategoryId('')
-  }
+    setType(newType);
+    setCategoryId("");
+  };
 
   const handleSave = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     await onSave(messageId, {
       type,
       amount,
@@ -96,14 +94,21 @@ export function ChatTransactionCard({
       category_id: categoryId ? parseInt(categoryId) : null,
       transaction_date: transactionDate,
       notes: notes || null,
-    })
-    setIsSaving(false)
-    setIsEditing(false)
-  }
+    });
+    setIsSaving(false);
+    setIsEditing(false);
+  };
 
-  const TypeIcon = type === 'income' ? TrendingUp : type === 'transfer' ? ArrowLeftRight : TrendingDown
-  const typeColor = type === 'income' ? 'text-green-600' : type === 'transfer' ? 'text-blue-600' : 'text-red-600'
-  const typeBgColor = type === 'income' ? 'bg-green-50 dark:bg-green-950' : type === 'transfer' ? 'bg-blue-50 dark:bg-blue-950' : 'bg-red-50 dark:bg-red-950'
+  const TypeIcon =
+    type === "income" ? TrendingUp : type === "transfer" ? ArrowLeftRight : TrendingDown;
+  const typeColor =
+    type === "income" ? "text-green-600" : type === "transfer" ? "text-blue-600" : "text-red-600";
+  const typeBgColor =
+    type === "income"
+      ? "bg-green-50 dark:bg-green-950"
+      : type === "transfer"
+        ? "bg-blue-50 dark:bg-blue-950"
+        : "bg-red-50 dark:bg-red-950";
 
   return (
     <div className="w-full max-w-[98%] rounded-lg border bg-card shadow-xs">
@@ -111,15 +116,15 @@ export function ChatTransactionCard({
       <div className="p-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <div className={cn('shrink-0 rounded-md p-1.5', typeBgColor)}>
-              <TypeIcon className={cn('h-4 w-4', typeColor)} />
+            <div className={cn("shrink-0 rounded-md p-1.5", typeBgColor)}>
+              <TypeIcon className={cn("h-4 w-4", typeColor)} />
             </div>
             <div className="min-w-0">
               <p className="font-semibold text-sm truncate">
                 {formatMoney(amount, selectedAccount?.currency_code)}
               </p>
               <p className="text-xs text-muted-foreground truncate">
-                {description || t('page.smart_input.transaction_description')}
+                {description || t("page.smart_input.transaction_description")}
               </p>
             </div>
           </div>
@@ -127,7 +132,7 @@ export function ChatTransactionCard({
             {isSaved ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900 px-2 py-0.5 text-xs font-medium text-green-700 dark:text-green-300">
                 <Check className="h-3 w-3" />
-                {t('page.smart_input.chat_saved_badge')}
+                {t("page.smart_input.chat_saved_badge")}
               </span>
             ) : (
               <>
@@ -138,7 +143,11 @@ export function ChatTransactionCard({
                   onClick={() => setIsEditing(!isEditing)}
                   disabled={isSaving}
                 >
-                  {isEditing ? <ChevronUp className="h-3.5 w-3.5" /> : <Pencil className="h-3.5 w-3.5" />}
+                  {isEditing ? (
+                    <ChevronUp className="h-3.5 w-3.5" />
+                  ) : (
+                    <Pencil className="h-3.5 w-3.5" />
+                  )}
                 </Button>
                 <Button
                   size="sm"
@@ -147,7 +156,7 @@ export function ChatTransactionCard({
                   disabled={isSaving || !accountId || !description}
                 >
                   <Save className="h-3.5 w-3.5 mr-1" />
-                  {isSaving ? '...' : t('page.smart_input.chat_quick_save')}
+                  {isSaving ? "..." : t("page.smart_input.chat_quick_save")}
                 </Button>
               </>
             )}
@@ -166,20 +175,20 @@ export function ChatTransactionCard({
         <div className="border-t p-3 space-y-3">
           {/* Type tabs */}
           <div className="space-y-1">
-            <Label className="text-xs">{t('form.type')}</Label>
+            <Label className="text-xs">{t("form.type")}</Label>
             <Tabs value={type} onValueChange={(v) => handleTypeChange(v as TransactionType)}>
               <TabsList className="w-full grid grid-cols-3 h-8">
                 <TabsTrigger value="income" className="text-xs h-7">
                   <TrendingUp className="h-3 w-3 mr-1 text-green-600" />
-                  {t('filter.income')}
+                  {t("filter.income")}
                 </TabsTrigger>
                 <TabsTrigger value="expense" className="text-xs h-7">
                   <TrendingDown className="h-3 w-3 mr-1 text-red-600" />
-                  {t('filter.expense')}
+                  {t("filter.expense")}
                 </TabsTrigger>
                 <TabsTrigger value="transfer" className="text-xs h-7">
                   <ArrowLeftRight className="h-3 w-3 mr-1" />
-                  {t('filter.transfer')}
+                  {t("filter.transfer")}
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -187,13 +196,15 @@ export function ChatTransactionCard({
 
           {/* Amount */}
           <div className="space-y-1">
-            <Label className="text-xs" htmlFor={`amount-${messageId}`}>{t('form.amount')}</Label>
+            <Label className="text-xs" htmlFor={`amount-${messageId}`}>
+              {t("form.amount")}
+            </Label>
             <Input
               id={`amount-${messageId}`}
               type="number"
               min={0.01}
               step="any"
-              value={amount || ''}
+              value={amount || ""}
               onChange={(e) => setAmount(Number(e.target.value))}
               className="h-8 text-sm"
             />
@@ -201,7 +212,9 @@ export function ChatTransactionCard({
 
           {/* Description */}
           <div className="space-y-1">
-            <Label className="text-xs" htmlFor={`desc-${messageId}`}>{t('form.description')}</Label>
+            <Label className="text-xs" htmlFor={`desc-${messageId}`}>
+              {t("form.description")}
+            </Label>
             <Input
               id={`desc-${messageId}`}
               value={description}
@@ -212,10 +225,10 @@ export function ChatTransactionCard({
 
           {/* Account */}
           <div className="space-y-1">
-            <Label className="text-xs">{t('form.account')}</Label>
+            <Label className="text-xs">{t("form.account")}</Label>
             <Select value={accountId} onValueChange={setAccountId}>
               <SelectTrigger className="h-8 text-sm">
-                <SelectValue placeholder={t('page.smart_input.select_account')} />
+                <SelectValue placeholder={t("page.smart_input.select_account")} />
               </SelectTrigger>
               <SelectContent>
                 {accounts.map((account) => (
@@ -228,12 +241,12 @@ export function ChatTransactionCard({
           </div>
 
           {/* Category */}
-          {type !== 'transfer' && (
+          {type !== "transfer" && (
             <div className="space-y-1">
-              <Label className="text-xs">{t('form.category')}</Label>
+              <Label className="text-xs">{t("form.category")}</Label>
               <Select value={categoryId} onValueChange={setCategoryId}>
                 <SelectTrigger className="h-8 text-sm">
-                  <SelectValue placeholder={t('page.smart_input.select_category')} />
+                  <SelectValue placeholder={t("page.smart_input.select_category")} />
                 </SelectTrigger>
                 <SelectContent>
                   {currentCategories.map((category) => (
@@ -248,12 +261,12 @@ export function ChatTransactionCard({
 
           {/* Date */}
           <div className="space-y-1">
-            <Label className="text-xs">{t('form.date')}</Label>
+            <Label className="text-xs">{t("form.date")}</Label>
             <DatePicker
               value={new Date(transactionDate)}
               onChange={(date) => {
                 if (date) {
-                  setTransactionDate(format(date, 'yyyy-MM-dd'))
+                  setTransactionDate(format(date, "yyyy-MM-dd"));
                 }
               }}
             />
@@ -261,11 +274,11 @@ export function ChatTransactionCard({
 
           {/* Notes */}
           <div className="space-y-1">
-            <Label className="text-xs">{t('page.smart_input.notes_optional')}</Label>
+            <Label className="text-xs">{t("page.smart_input.notes_optional")}</Label>
             <Textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder={t('page.smart_input.additional_notes')}
+              placeholder={t("page.smart_input.additional_notes")}
               rows={2}
               className="text-sm"
             />
@@ -273,5 +286,5 @@ export function ChatTransactionCard({
         </div>
       )}
     </div>
-  )
+  );
 }

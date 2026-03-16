@@ -1,13 +1,13 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { IconPlus, IconTrash } from '@tabler/icons-react'
-import { LineItem } from '../data/schema'
+import { IconPlus, IconTrash } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import type { LineItem } from "../data/schema";
 
 interface Props {
-  items: LineItem[]
-  onItemChange: (index: number, field: keyof LineItem, value: string | number) => void
-  onAddItem: () => void
-  onRemoveItem: (index: number) => void
+  items: LineItem[];
+  onItemChange: (index: number, field: keyof LineItem, value: string | number) => void;
+  onAddItem: () => void;
+  onRemoveItem: (index: number) => void;
 }
 
 export function LineItemsInput({ items, onItemChange, onAddItem, onRemoveItem }: Props) {
@@ -26,7 +26,7 @@ export function LineItemsInput({ items, onItemChange, onAddItem, onRemoveItem }:
           <Input
             className="col-span-5"
             value={item.description}
-            onChange={e => onItemChange(index, 'description', e.target.value)}
+            onChange={(e) => onItemChange(index, "description", e.target.value)}
             placeholder="Item description"
           />
           <Input
@@ -35,7 +35,7 @@ export function LineItemsInput({ items, onItemChange, onAddItem, onRemoveItem }:
             step="0.01"
             min="0.01"
             value={item.quantity}
-            onChange={e => onItemChange(index, 'quantity', parseFloat(e.target.value) || 0)}
+            onChange={(e) => onItemChange(index, "quantity", parseFloat(e.target.value) || 0)}
           />
           <Input
             className="col-span-2"
@@ -43,7 +43,7 @@ export function LineItemsInput({ items, onItemChange, onAddItem, onRemoveItem }:
             step="0.01"
             min="0"
             value={item.unit_price}
-            onChange={e => onItemChange(index, 'unit_price', parseFloat(e.target.value) || 0)}
+            onChange={(e) => onItemChange(index, "unit_price", parseFloat(e.target.value) || 0)}
           />
           <div className="col-span-2 text-right font-medium">
             ${(item.quantity * item.unit_price).toFixed(2)}
@@ -65,5 +65,5 @@ export function LineItemsInput({ items, onItemChange, onAddItem, onRemoveItem }:
         <IconPlus size={16} className="mr-2" /> Add Item
       </Button>
     </div>
-  )
+  );
 }

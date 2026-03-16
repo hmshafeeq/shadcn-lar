@@ -1,38 +1,32 @@
-import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui/button'
+import type { Account, AccountType } from "@modules/Finance/types/finance";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+  Banknote,
+  Building,
+  CreditCard,
+  HelpCircle,
+  MoreHorizontal,
+  Pencil,
+  Smartphone,
+  Trash2,
+  TrendingUp,
+  Wallet,
+} from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Badge } from '@/components/ui/badge'
-import {
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  Wallet,
-  CreditCard,
-  TrendingUp,
-  Banknote,
-  Building,
-  HelpCircle,
-  Smartphone,
-} from 'lucide-react'
-import type { Account, AccountType } from '@modules/Finance/types/finance'
+} from "@/components/ui/dropdown-menu";
 
 interface AccountCardProps {
-  account: Account
-  onEdit: (account: Account) => void
-  onDelete: (account: Account) => void
+  account: Account;
+  onEdit: (account: Account) => void;
+  onDelete: (account: Account) => void;
 }
 
 const accountTypeIcons: Record<AccountType, React.ElementType> = {
@@ -43,52 +37,49 @@ const accountTypeIcons: Record<AccountType, React.ElementType> = {
   e_wallet: Smartphone,
   loan: Wallet,
   other: HelpCircle,
-}
+};
 
 const accountTypeLabelsMap: Record<AccountType, string> = {
-  bank: 'account_type.bank',
-  credit_card: 'account_type.credit_card',
-  investment: 'account_type.investment',
-  cash: 'account_type.cash',
-  e_wallet: 'account_type.e_wallet',
-  loan: 'account_type.loan',
-  other: 'account_type.other',
-}
+  bank: "account_type.bank",
+  credit_card: "account_type.credit_card",
+  investment: "account_type.investment",
+  cash: "account_type.cash",
+  e_wallet: "account_type.e_wallet",
+  loan: "account_type.loan",
+  other: "account_type.other",
+};
 
-function formatMoney(amount: number, currencyCode = 'VND'): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+function formatMoney(amount: number, currencyCode = "VND"): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency: currencyCode,
-  }).format(amount)
+  }).format(amount);
 }
 
 // Get utilization color based on percentage
 function getUtilizationColor(rate: number): string {
-  if (rate < 30) return 'bg-green-500'
-  if (rate < 70) return 'bg-yellow-500'
-  return 'bg-red-500'
+  if (rate < 30) return "bg-green-500";
+  if (rate < 70) return "bg-yellow-500";
+  return "bg-red-500";
 }
 
 export function AccountCard({ account, onEdit, onDelete }: AccountCardProps) {
-  const { t } = useTranslation()
-  const Icon = accountTypeIcons[account.account_type] || Wallet
-  const isNegative = account.balance < 0
-  const hasCreditLimit = account.has_credit_limit
-  const amountOwed = account.amount_owed ?? 0
-  const utilizationRate = account.utilization_rate ?? 0
+  const { t } = useTranslation();
+  const Icon = accountTypeIcons[account.account_type] || Wallet;
+  const isNegative = account.balance < 0;
+  const hasCreditLimit = account.has_credit_limit;
+  const amountOwed = account.amount_owed ?? 0;
+  const utilizationRate = account.utilization_rate ?? 0;
 
   return (
-    <Card className={!account.is_active ? 'opacity-60' : ''}>
+    <Card className={!account.is_active ? "opacity-60" : ""}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center gap-3">
           <div
             className="rounded-lg p-2"
-            style={{ backgroundColor: account.color ? `${account.color}20` : '#f3f4f6' }}
+            style={{ backgroundColor: account.color ? `${account.color}20` : "#f3f4f6" }}
           >
-            <Icon
-              className="h-5 w-5"
-              style={{ color: account.color || '#6b7280' }}
-            />
+            <Icon className="h-5 w-5" style={{ color: account.color || "#6b7280" }} />
           </div>
           <div>
             <CardTitle className="text-base">{account.name}</CardTitle>
@@ -106,15 +97,12 @@ export function AccountCard({ account, onEdit, onDelete }: AccountCardProps) {
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => onEdit(account)}>
               <Pencil className="mr-2 h-4 w-4" />
-              {t('action.edit')}
+              {t("action.edit")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => onDelete(account)}
-              className="text-red-600"
-            >
+            <DropdownMenuItem onClick={() => onDelete(account)} className="text-red-600">
               <Trash2 className="mr-2 h-4 w-4" />
-              {t('action.delete')}
+              {t("action.delete")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -125,20 +113,20 @@ export function AccountCard({ account, onEdit, onDelete }: AccountCardProps) {
             {/* Credit/Loan account display */}
             <div className="space-y-1">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{t('page.accounts.credit_limit')}</span>
+                <span className="text-muted-foreground">{t("page.accounts.credit_limit")}</span>
                 <span className="font-medium">
                   {formatMoney(account.initial_balance, account.currency_code)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{t('page.accounts.available')}</span>
+                <span className="text-muted-foreground">{t("page.accounts.available")}</span>
                 <span className="font-medium text-green-600">
                   {formatMoney(account.current_balance, account.currency_code)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{t('page.accounts.amount_owed')}</span>
-                <span className={`font-bold ${amountOwed > 0 ? 'text-red-600' : ''}`}>
+                <span className="text-muted-foreground">{t("page.accounts.amount_owed")}</span>
+                <span className={`font-bold ${amountOwed > 0 ? "text-red-600" : ""}`}>
                   {formatMoney(amountOwed, account.currency_code)}
                 </span>
               </div>
@@ -146,8 +134,8 @@ export function AccountCard({ account, onEdit, onDelete }: AccountCardProps) {
             {/* Utilization bar */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{t('page.accounts.utilization')}</span>
-                <span className={utilizationRate >= 70 ? 'text-red-600 font-medium' : ''}>
+                <span>{t("page.accounts.utilization")}</span>
+                <span className={utilizationRate >= 70 ? "text-red-600 font-medium" : ""}>
                   {utilizationRate}%
                 </span>
               </div>
@@ -162,27 +150,21 @@ export function AccountCard({ account, onEdit, onDelete }: AccountCardProps) {
         ) : (
           <>
             {/* Regular account display */}
-            <div
-              className={`text-2xl font-bold ${isNegative ? 'text-red-600' : ''}`}
-            >
+            <div className={`text-2xl font-bold ${isNegative ? "text-red-600" : ""}`}>
               {formatMoney(account.balance, account.currency_code)}
             </div>
           </>
         )}
         {account.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2">
-            {account.description}
-          </p>
+          <p className="text-sm text-muted-foreground line-clamp-2">{account.description}</p>
         )}
       </CardContent>
       <CardFooter className="flex gap-2">
-        {!account.is_active && (
-          <Badge variant="secondary">{t('common.inactive')}</Badge>
-        )}
+        {!account.is_active && <Badge variant="secondary">{t("common.inactive")}</Badge>}
         {account.exclude_from_total && (
-          <Badge variant="outline">{t('page.accounts.excluded_from_total')}</Badge>
+          <Badge variant="outline">{t("page.accounts.excluded_from_total")}</Badge>
         )}
       </CardFooter>
     </Card>
-  )
+  );
 }

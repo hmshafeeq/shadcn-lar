@@ -1,70 +1,64 @@
-import { useState, useEffect } from 'react'
-import { router } from '@inertiajs/react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { router } from "@inertiajs/react";
+import type {
+  Category,
+  Currency,
+  FinancialPlan,
+  PlanFormItem,
+  PlanFormPeriod,
+  PlanItemRecurrence,
+  PlanItemType,
+  PlanStatus,
+} from "@modules/Finance/types/finance";
+import { Plus, Save, Trash2, TrendingDown, TrendingUp } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Plus, Trash2, TrendingUp, TrendingDown, Save } from 'lucide-react'
-import type {
-  FinancialPlan,
-  Currency,
-  Category,
-  PlanFormPeriod,
-  PlanFormItem,
-  PlanItemType,
-  PlanItemRecurrence,
-  PlanStatus,
-} from '@modules/Finance/types/finance'
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
-  plan?: FinancialPlan
-  currencies: Currency[]
-  categories: Category[]
-  currentYear: number
+  plan?: FinancialPlan;
+  currencies: Currency[];
+  categories: Category[];
+  currentYear: number;
 }
 
 const recurrenceOptions: { value: PlanItemRecurrence; label: string }[] = [
-  { value: 'one_time', label: 'One Time' },
-  { value: 'monthly', label: 'Monthly' },
-  { value: 'quarterly', label: 'Quarterly' },
-  { value: 'yearly', label: 'Yearly' },
-]
+  { value: "one_time", label: "One Time" },
+  { value: "monthly", label: "Monthly" },
+  { value: "quarterly", label: "Quarterly" },
+  { value: "yearly", label: "Yearly" },
+];
 
 const statusOptions: { value: PlanStatus; label: string }[] = [
-  { value: 'draft', label: 'Draft' },
-  { value: 'active', label: 'Active' },
-  { value: 'archived', label: 'Archived' },
-]
+  { value: "draft", label: "Draft" },
+  { value: "active", label: "Active" },
+  { value: "archived", label: "Archived" },
+];
 
-function formatMoney(amount: number, currencyCode = 'VND'): string {
+function formatMoney(amount: number, currencyCode = "VND"): string {
   if (isNaN(amount) || !isFinite(amount)) {
-    amount = 0
+    amount = 0;
   }
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency: currencyCode,
-  }).format(amount)
+  }).format(amount);
 }
 
 // Calculate yearly amount from recurrence
@@ -73,38 +67,38 @@ function formatMoney(amount: number, currencyCode = 'VND'): string {
 // - quarterly: 4 times per year = amount * 4
 // - yearly: once per year = amount * 1
 function getYearlyAmount(amount: number, recurrence: PlanItemRecurrence): number {
-  const safeAmount = Number(amount) || 0
+  const safeAmount = Number(amount) || 0;
   switch (recurrence) {
-    case 'monthly':
-      return safeAmount * 12
-    case 'quarterly':
-      return safeAmount * 4
-    case 'yearly':
-    case 'one_time':
+    case "monthly":
+      return safeAmount * 12;
+    case "quarterly":
+      return safeAmount * 4;
+    case "yearly":
+    case "one_time":
     default:
-      return safeAmount
+      return safeAmount;
   }
 }
 
 function generatePeriods(startYear: number, endYear: number): PlanFormPeriod[] {
-  const periods: PlanFormPeriod[] = []
+  const periods: PlanFormPeriod[] = [];
   for (let year = startYear; year <= endYear; year++) {
-    periods.push({ year, items: [] })
+    periods.push({ year, items: [] });
   }
-  return periods
+  return periods;
 }
 
 export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
-  const isEditing = !!plan
-  const defaultCurrency = currencies.find((c) => c.is_default)?.code || 'VND'
+  const isEditing = !!plan;
+  const defaultCurrency = currencies.find((c) => c.is_default)?.code || "VND";
 
-  const [processing, setProcessing] = useState(false)
-  const [name, setName] = useState(plan?.name || '')
-  const [description, setDescription] = useState(plan?.description || '')
-  const [startYear, setStartYear] = useState(plan?.start_year || currentYear)
-  const [endYear, setEndYear] = useState(plan?.end_year || currentYear)
-  const [currencyCode, setCurrencyCode] = useState(plan?.currency_code || defaultCurrency)
-  const [status, setStatus] = useState<PlanStatus>(plan?.status || 'draft')
+  const [processing, setProcessing] = useState(false);
+  const [name, setName] = useState(plan?.name || "");
+  const [description, setDescription] = useState(plan?.description || "");
+  const [startYear, setStartYear] = useState(plan?.start_year || currentYear);
+  const [endYear, setEndYear] = useState(plan?.end_year || currentYear);
+  const [currencyCode, setCurrencyCode] = useState(plan?.currency_code || defaultCurrency);
+  const [status, setStatus] = useState<PlanStatus>(plan?.status || "draft");
   const [periods, setPeriods] = useState<PlanFormPeriod[]>(
     plan?.periods?.map((p) => ({
       id: p.id,
@@ -118,31 +112,29 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
         category_id: i.category_id,
         notes: i.notes,
       })),
-    })) || generatePeriods(currentYear, currentYear)
-  )
+    })) || generatePeriods(currentYear, currentYear),
+  );
 
-  const [openYears, setOpenYears] = useState<string[]>(
-    periods.map((p) => String(p.year))
-  )
+  const [openYears, setOpenYears] = useState<string[]>(periods.map((p) => String(p.year)));
 
   useEffect(() => {
     if (!isEditing) {
-      const newPeriods = generatePeriods(startYear, endYear)
-      const existingByYear = new Map(periods.map((p) => [p.year, p]))
+      const newPeriods = generatePeriods(startYear, endYear);
+      const existingByYear = new Map(periods.map((p) => [p.year, p]));
 
       const mergedPeriods = newPeriods.map((newP) => {
-        const existing = existingByYear.get(newP.year)
-        return existing || newP
-      })
+        const existing = existingByYear.get(newP.year);
+        return existing || newP;
+      });
 
-      setPeriods(mergedPeriods)
-      setOpenYears(mergedPeriods.map((p) => String(p.year)))
+      setPeriods(mergedPeriods);
+      setOpenYears(mergedPeriods.map((p) => String(p.year)));
     }
-  }, [startYear, endYear, isEditing])
+  }, [startYear, endYear, isEditing]);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setProcessing(true)
+    e.preventDefault();
+    setProcessing(true);
 
     const formData = {
       name,
@@ -152,85 +144,85 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
       currency_code: currencyCode,
       status,
       periods,
-    }
+    };
 
     if (isEditing && plan) {
-      router.put(route('dashboard.finance.plans.update', plan.id), formData, {
+      router.put(route("dashboard.finance.plans.update", plan.id), formData, {
         onFinish: () => setProcessing(false),
-      })
+      });
     } else {
-      router.post(route('dashboard.finance.plans.store'), formData, {
+      router.post(route("dashboard.finance.plans.store"), formData, {
         onFinish: () => setProcessing(false),
-      })
+      });
     }
-  }
+  };
 
   const addItem = (periodIndex: number, type: PlanItemType) => {
-    const newPeriods = [...periods]
+    const newPeriods = [...periods];
     newPeriods[periodIndex].items.push({
-      name: '',
+      name: "",
       type,
       planned_amount: 0,
-      recurrence: 'monthly',
-    })
-    setPeriods(newPeriods)
-  }
+      recurrence: "monthly",
+    });
+    setPeriods(newPeriods);
+  };
 
   const updateItem = (
     periodIndex: number,
     itemIndex: number,
     field: keyof PlanFormItem,
-    value: string | number | undefined
+    value: string | number | undefined,
   ) => {
-    const newPeriods = [...periods]
-    const item = newPeriods[periodIndex].items[itemIndex]
-    if (field === 'planned_amount') {
-      item.planned_amount = Number(value) || 0
-    } else if (field === 'category_id') {
-      item.category_id = value ? Number(value) : undefined
-    } else if (field === 'name') {
-      item.name = String(value || '')
-    } else if (field === 'type') {
-      item.type = value as PlanItemType
-    } else if (field === 'recurrence') {
-      item.recurrence = value as PlanItemRecurrence
-    } else if (field === 'notes') {
-      item.notes = value ? String(value) : undefined
+    const newPeriods = [...periods];
+    const item = newPeriods[periodIndex].items[itemIndex];
+    if (field === "planned_amount") {
+      item.planned_amount = Number(value) || 0;
+    } else if (field === "category_id") {
+      item.category_id = value ? Number(value) : undefined;
+    } else if (field === "name") {
+      item.name = String(value || "");
+    } else if (field === "type") {
+      item.type = value as PlanItemType;
+    } else if (field === "recurrence") {
+      item.recurrence = value as PlanItemRecurrence;
+    } else if (field === "notes") {
+      item.notes = value ? String(value) : undefined;
     }
-    setPeriods(newPeriods)
-  }
+    setPeriods(newPeriods);
+  };
 
   const removeItem = (periodIndex: number, itemIndex: number) => {
-    const newPeriods = [...periods]
-    newPeriods[periodIndex].items.splice(itemIndex, 1)
-    setPeriods(newPeriods)
-  }
+    const newPeriods = [...periods];
+    newPeriods[periodIndex].items.splice(itemIndex, 1);
+    setPeriods(newPeriods);
+  };
 
   const calculatePeriodTotals = (period: PlanFormPeriod) => {
     const income = period.items
-      .filter((i) => i.type === 'income')
-      .reduce((sum, i) => sum + getYearlyAmount(i.planned_amount || 0, i.recurrence), 0)
+      .filter((i) => i.type === "income")
+      .reduce((sum, i) => sum + getYearlyAmount(i.planned_amount || 0, i.recurrence), 0);
     const expense = period.items
-      .filter((i) => i.type === 'expense')
-      .reduce((sum, i) => sum + getYearlyAmount(i.planned_amount || 0, i.recurrence), 0)
-    return { income, expense, net: income - expense }
-  }
+      .filter((i) => i.type === "expense")
+      .reduce((sum, i) => sum + getYearlyAmount(i.planned_amount || 0, i.recurrence), 0);
+    return { income, expense, net: income - expense };
+  };
 
   const calculateGrandTotals = () => {
     return periods.reduce(
       (acc, period) => {
-        const totals = calculatePeriodTotals(period)
+        const totals = calculatePeriodTotals(period);
         return {
           income: acc.income + totals.income,
           expense: acc.expense + totals.expense,
           net: acc.net + totals.net,
-        }
+        };
       },
-      { income: 0, expense: 0, net: 0 }
-    )
-  }
+      { income: 0, expense: 0, net: 0 },
+    );
+  };
 
-  const grandTotals = calculateGrandTotals()
+  const grandTotals = calculateGrandTotals();
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -309,11 +301,7 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
 
             <div className="space-y-2">
               <Label htmlFor="currency">Currency</Label>
-              <Select
-                value={currencyCode}
-                onValueChange={setCurrencyCode}
-                disabled={isEditing}
-              >
+              <Select value={currencyCode} onValueChange={setCurrencyCode} disabled={isEditing}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -353,7 +341,7 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
               <p className="text-sm text-muted-foreground">Net Savings</p>
               <p
                 className={`text-2xl font-bold ${
-                  grandTotals.net >= 0 ? 'text-green-600' : 'text-red-600'
+                  grandTotals.net >= 0 ? "text-green-600" : "text-red-600"
                 }`}
               >
                 {formatMoney(grandTotals.net, currencyCode)}
@@ -377,9 +365,9 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
             className="w-full"
           >
             {periods.map((period, periodIndex) => {
-              const totals = calculatePeriodTotals(period)
-              const incomeItems = period.items.filter((i) => i.type === 'income')
-              const expenseItems = period.items.filter((i) => i.type === 'expense')
+              const totals = calculatePeriodTotals(period);
+              const incomeItems = period.items.filter((i) => i.type === "income");
+              const expenseItems = period.items.filter((i) => i.type === "expense");
 
               return (
                 <AccordionItem key={period.year} value={String(period.year)}>
@@ -393,11 +381,7 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
                         <span className="text-red-600">
                           -{formatMoney(totals.expense, currencyCode)}
                         </span>
-                        <span
-                          className={
-                            totals.net >= 0 ? 'text-green-600' : 'text-red-600'
-                          }
-                        >
+                        <span className={totals.net >= 0 ? "text-green-600" : "text-red-600"}>
                           Net: {formatMoney(totals.net, currencyCode)}
                         </span>
                       </div>
@@ -418,13 +402,13 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
 
                       <TabsContent value="income" className="space-y-3">
                         {incomeItems.map((item, idx) => {
-                          const itemIndex = period.items.findIndex((i) => i === item)
+                          const itemIndex = period.items.findIndex((i) => i === item);
                           return (
                             <ItemRow
                               key={idx}
                               item={item}
                               categories={categories.filter(
-                                (c) => c.type === 'income' || c.type === 'both'
+                                (c) => c.type === "income" || c.type === "both",
                               )}
                               currencyCode={currencyCode}
                               onUpdate={(field, value) =>
@@ -432,13 +416,13 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
                               }
                               onRemove={() => removeItem(periodIndex, itemIndex)}
                             />
-                          )
+                          );
                         })}
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
-                          onClick={() => addItem(periodIndex, 'income')}
+                          onClick={() => addItem(periodIndex, "income")}
                           className="w-full"
                         >
                           <Plus className="mr-2 h-4 w-4" />
@@ -448,13 +432,13 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
 
                       <TabsContent value="expense" className="space-y-3">
                         {expenseItems.map((item, idx) => {
-                          const itemIndex = period.items.findIndex((i) => i === item)
+                          const itemIndex = period.items.findIndex((i) => i === item);
                           return (
                             <ItemRow
                               key={idx}
                               item={item}
                               categories={categories.filter(
-                                (c) => c.type === 'expense' || c.type === 'both'
+                                (c) => c.type === "expense" || c.type === "both",
                               )}
                               currencyCode={currencyCode}
                               onUpdate={(field, value) =>
@@ -462,13 +446,13 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
                               }
                               onRemove={() => removeItem(periodIndex, itemIndex)}
                             />
-                          )
+                          );
                         })}
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
-                          onClick={() => addItem(periodIndex, 'expense')}
+                          onClick={() => addItem(periodIndex, "expense")}
                           className="w-full"
                         >
                           <Plus className="mr-2 h-4 w-4" />
@@ -478,7 +462,7 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
                     </Tabs>
                   </AccordionContent>
                 </AccordionItem>
-              )
+              );
             })}
           </Accordion>
         </CardContent>
@@ -489,17 +473,17 @@ export function PlanForm({ plan, currencies, categories, currentYear }: Props) {
         <Button
           type="button"
           variant="outline"
-          onClick={() => router.visit(route('dashboard.finance.plans.index'))}
+          onClick={() => router.visit(route("dashboard.finance.plans.index"))}
         >
           Cancel
         </Button>
         <Button type="submit" disabled={processing}>
           <Save className="mr-2 h-4 w-4" />
-          {isEditing ? 'Update Plan' : 'Create Plan'}
+          {isEditing ? "Update Plan" : "Create Plan"}
         </Button>
       </div>
     </form>
-  )
+  );
 }
 
 function ItemRow({
@@ -509,11 +493,11 @@ function ItemRow({
   onUpdate,
   onRemove,
 }: {
-  item: PlanFormItem
-  categories: Category[]
-  currencyCode: string
-  onUpdate: (field: keyof PlanFormItem, value: string | number | undefined) => void
-  onRemove: () => void
+  item: PlanFormItem;
+  categories: Category[];
+  currencyCode: string;
+  onUpdate: (field: keyof PlanFormItem, value: string | number | undefined) => void;
+  onRemove: () => void;
 }) {
   return (
     <div className="flex items-start gap-3 rounded-lg border p-3">
@@ -522,7 +506,7 @@ function ItemRow({
           <Label className="text-xs">Name</Label>
           <Input
             value={item.name}
-            onChange={(e) => onUpdate('name', e.target.value)}
+            onChange={(e) => onUpdate("name", e.target.value)}
             placeholder="Item name"
           />
         </div>
@@ -532,18 +516,15 @@ function ItemRow({
           <Input
             type="number"
             min={0}
-            value={item.planned_amount || ''}
-            onChange={(e) => onUpdate('planned_amount', e.target.value)}
+            value={item.planned_amount || ""}
+            onChange={(e) => onUpdate("planned_amount", e.target.value)}
             placeholder="0"
           />
         </div>
 
         <div>
           <Label className="text-xs">Recurrence</Label>
-          <Select
-            value={item.recurrence}
-            onValueChange={(value) => onUpdate('recurrence', value)}
-          >
+          <Select value={item.recurrence} onValueChange={(value) => onUpdate("recurrence", value)}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -560,8 +541,8 @@ function ItemRow({
         <div>
           <Label className="text-xs">Category</Label>
           <Select
-            value={item.category_id ? String(item.category_id) : ''}
-            onValueChange={(value) => onUpdate('category_id', value || undefined)}
+            value={item.category_id ? String(item.category_id) : ""}
+            onValueChange={(value) => onUpdate("category_id", value || undefined)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Optional" />
@@ -587,5 +568,5 @@ function ItemRow({
         <Trash2 className="h-4 w-4" />
       </Button>
     </div>
-  )
+  );
 }

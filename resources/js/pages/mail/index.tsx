@@ -1,12 +1,11 @@
-import {AuthenticatedLayout} from "@/layouts"
-import Cookies from 'js-cookie'
-import { useEffect, useState } from "react"
-import { Mail } from "@/pages/mail/components/mail"
-import { accounts, mails } from "@/pages/mail/data"
-import {Main} from '@/components/layout/main'
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import { Main } from "@/components/layout/main";
+import { AuthenticatedLayout } from "@/layouts";
+import { Mail } from "@/pages/mail/components/mail";
+import { accounts, mails } from "@/pages/mail/data";
 
 export default function MailPage() {
-
   const [defaultLayout, setDefaultLayout] = useState<number[] | undefined>();
   const [defaultCollapsed, setDefaultCollapsed] = useState<boolean | undefined>();
 
@@ -36,7 +35,6 @@ export default function MailPage() {
       <AuthenticatedLayout title="Mails">
         <Main>
           <div className="rounded-xl border bg-card text-card-foreground shadow-xs">
-
             <div className="md:hidden">
               <img
                 src="/examples/mail-dark.png"
@@ -66,5 +64,5 @@ export default function MailPage() {
         </Main>
       </AuthenticatedLayout>
     </>
-  )
+  );
 }

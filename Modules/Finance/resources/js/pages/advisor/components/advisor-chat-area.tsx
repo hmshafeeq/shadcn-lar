@@ -1,21 +1,21 @@
-import { useEffect, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Bot } from 'lucide-react'
-import { AdvisorMessageBubble } from './advisor-message-bubble'
-import type { AdvisorMessage } from '@modules/Finance/types/finance'
+import type { AdvisorMessage } from "@modules/Finance/types/finance";
+import { Bot } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { AdvisorMessageBubble } from "./advisor-message-bubble";
 
 interface AdvisorChatAreaProps {
-  messages: AdvisorMessage[]
+  messages: AdvisorMessage[];
 }
 
 export function AdvisorChatArea({ messages }: AdvisorChatAreaProps) {
-  const { t } = useTranslation()
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const { t } = useTranslation();
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   if (messages.length === 0) {
     return (
@@ -23,11 +23,9 @@ export function AdvisorChatArea({ messages }: AdvisorChatAreaProps) {
         <div className="rounded-full bg-primary/10 p-4 mb-4">
           <Bot className="h-8 w-8 text-primary" />
         </div>
-        <p className="text-muted-foreground max-w-md">
-          {t('page.advisor.welcome')}
-        </p>
+        <p className="text-muted-foreground max-w-md">{t("page.advisor.welcome")}</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -39,5 +37,5 @@ export function AdvisorChatArea({ messages }: AdvisorChatAreaProps) {
         <div ref={bottomRef} />
       </div>
     </ScrollArea>
-  )
+  );
 }
