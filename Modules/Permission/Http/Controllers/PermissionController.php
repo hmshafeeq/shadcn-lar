@@ -2,6 +2,7 @@
 
 namespace Modules\Permission\Http\Controllers;
 
+use App\Support\DbHelper;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -34,7 +35,7 @@ class PermissionController extends Controller
 
         $permissions = $query->orderBy('name')->paginate(20)->withQueryString();
 
-        $groups = Permission::selectRaw("SUBSTRING_INDEX(name, '.', 1) as group_name")
+        $groups = Permission::selectRaw(DbHelper::substringBefore('name', '.').' as group_name')
             ->distinct()
             ->orderBy('group_name')
             ->pluck('group_name');
@@ -54,7 +55,7 @@ class PermissionController extends Controller
 
     public function create(): Response
     {
-        $groups = Permission::selectRaw("SUBSTRING_INDEX(name, '.', 1) as group_name")
+        $groups = Permission::selectRaw(DbHelper::substringBefore('name', '.').' as group_name')
             ->distinct()
             ->orderBy('group_name')
             ->pluck('group_name');

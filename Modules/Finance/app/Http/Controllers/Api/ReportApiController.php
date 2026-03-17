@@ -3,6 +3,7 @@
 namespace Modules\Finance\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Support\DbHelper;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -248,7 +249,7 @@ class ReportApiController extends Controller
         $phpFormat = $groupBy === 'day' ? 'Y-m-d' : 'Y-m';
 
         $transactions = Transaction::select(
-            DB::raw("DATE_FORMAT(transaction_date, '{$dateFormat}') as period"),
+            DB::raw(DbHelper::dateFormat('transaction_date', $dateFormat).' as period'),
             'transaction_type',
             DB::raw('SUM(amount) as total'),
             'currency_code'
@@ -399,7 +400,7 @@ class ReportApiController extends Controller
         $endDate = $now->copy()->endOfMonth();
 
         $transactions = Transaction::select(
-            DB::raw("DATE_FORMAT(transaction_date, '%Y-%m') as period"),
+            DB::raw(DbHelper::dateFormat('transaction_date', '%Y-%m').' as period'),
             'transaction_type',
             'category_id',
             DB::raw('SUM(amount) as total'),

@@ -5,6 +5,7 @@ namespace Modules\Finance\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\{JsonResponse, Request};
+use App\Support\DbHelper;
 use Illuminate\Support\Facades\DB;
 use Inertia\{Inertia, Response};
 use Modules\Finance\Models\{Account, Category, Currency, Transaction};
@@ -110,7 +111,7 @@ class FinanceReportController extends Controller
         $phpFormat = $groupBy === 'day' ? 'Y-m-d' : 'Y-m';
 
         $transactions = Transaction::select(
-            DB::raw("DATE_FORMAT(transaction_date, '{$dateFormat}') as period"),
+            DB::raw(DbHelper::dateFormat('transaction_date', $dateFormat).' as period'),
             'transaction_type',
             DB::raw('SUM(amount) as total'),
             'currency_code'
@@ -282,7 +283,7 @@ class FinanceReportController extends Controller
         $endDate = $now->copy()->endOfMonth();
 
         $transactions = Transaction::select(
-            DB::raw("DATE_FORMAT(transaction_date, '%Y-%m') as period"),
+            DB::raw(DbHelper::dateFormat('transaction_date', '%Y-%m').' as period'),
             'transaction_type',
             'category_id',
             DB::raw('SUM(amount) as total'),
@@ -584,7 +585,7 @@ class FinanceReportController extends Controller
         [$startDate, $endDate, $groupBy] = $this->parseDateRange($range, $start, $end);
 
         $transactions = Transaction::select(
-            DB::raw("DATE_FORMAT(transaction_date, '%Y-%m') as period"),
+            DB::raw(DbHelper::dateFormat('transaction_date', '%Y-%m').' as period'),
             DB::raw('SUM(amount) as total'),
             DB::raw('COUNT(*) as count'),
             'currency_code'
