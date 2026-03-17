@@ -1,85 +1,79 @@
-# Laravel Shadcn Admin Dashboard
+# Laravel Shadcn Admin Starter Kit
 
-A modern, responsive, and accessible admin dashboard built with Shadcn UI, Laravel, and Vite. This project combines the elegance of Shadcn's UI components with the robustness of Laravel's backend framework, providing a seamless development experience.
+A modern, responsive, and accessible admin dashboard starter kit built with Shadcn UI, Laravel 12, and React 19. Ships with a modular architecture, authentication, role management, and 10+ pages — ready to build on.
 
 ![alt text](public/images/shadcn-admin.png)
 
-This project is inspired by [Shadcn-admin](https://github.com/satnaing/shadcn-admin) and adapted to work seamlessly with Laravel and Inertia.js.
+Inspired by [shadcn-admin](https://github.com/satnaing/shadcn-admin), adapted for Laravel + Inertia.js.
 
 ## Features
 
 - Light/dark mode
-- Responsive
-- Accessible
-- With built-in Sidebar component
-- Global Search Command
-- 10+ pages
-- Extra custom components
+- Responsive and accessible
+- Built-in sidebar component
+- Global search command
+- Role & permission management
+- User profile management
+- Blog module (posts & categories)
+- Finance, Invoice, E-commerce modules
+- 10+ pages with extra custom components
 
 ## Tech Stack
 
-**UI:** [ShadcnUI](https://ui.shadcn.com) (TailwindCSS + RadixUI)
+| Layer | Technology |
+|-------|-----------|
+| **UI** | [Shadcn UI](https://ui.shadcn.com) (Tailwind CSS v4 + Radix UI) |
+| **Backend** | [Laravel](https://laravel.com/) 12.x |
+| **Frontend** | [React](https://react.dev/) 19 + [TypeScript](https://www.typescriptlang.org/) |
+| **Frontend Integration** | [Inertia.js](https://inertiajs.com/) v3 |
+| **Build Tool** | [Vite](https://vitejs.dev/) 8 |
+| **Compiler** | [React Compiler](https://react.dev/learn/react-compiler) |
+| **Validation** | [Zod](https://zod.dev/) v4 |
+| **Linting/Formatting** | [Biome](https://biomejs.dev/) |
+| **PHP Testing** | [Pest](https://pestphp.com/) v4 |
+| **JS Testing** | [Vitest](https://vitest.dev/) + Testing Library |
+| **Static Analysis** | [Larastan](https://github.com/larastan/larastan) |
+| **Debugging** | [Laravel Debugbar](https://github.com/barryvdh/laravel-debugbar) |
+| **Error Tracking** | [Sentry](https://sentry.io/) |
+| **Icons** | [Tabler Icons](https://tabler.io/icons) |
 
-**Backend:** [Laravel](https://laravel.com/) 12.x
+## Quick Start
 
-**Frontend Integration:** [InertiaJs](https://inertiajs.com/)
-
-**Build Tool:** [Vite](https://vitejs.dev/)
-
-**Type Checking:** [TypeScript](https://www.typescriptlang.org/)
-
-**Linting/Formatting:** [Eslint](https://eslint.org/) & [Prettier](https://prettier.io/)
-
-**Icons:** [Tabler Icons](https://tabler.io/icons)
-
-## Run Locally
-
-1. Clone the project
-
-```bash
-  git clone git@github.com:binjuhor/shadcn-lar.git
-```
-
-2. Go to the project directory
+1. **Clone the project**
 
 ```bash
-  cd shadcn-lar
+git clone git@github.com:hmshafeeq/shadcn-lar.git
+cd shadcn-lar
 ```
 
-3. Install dependencies
-
-- Install JavaScript dependencies:
+2. **Install dependencies**
 
 ```bash
-  pnpm install
+composer install
+pnpm install
 ```
 
-- Install PHP dependencies:
+3. **Set up environment**
 
 ```bash
-  composer install
+cp .env.example .env
+php artisan key:generate
 ```
 
-- Data migration
+4. **Database**
 
 ```bash
-  php artisan migrate
+php artisan migrate
+php artisan db:seed
 ```
 
-4. Start the dev
-Frotnedend and Backend server
-- Start the Vite development server:
+5. **Start development**
 
 ```bash
-  pnpm run dev
-```
-- Start the Laravel development server:
-
-```bash
-  php artisan serve
+composer dev
 ```
 
-5. Open your browser and visit http://localhost:8000 to view the dashboard.
+This single command starts the Laravel server, queue worker, log viewer, and Vite dev server concurrently. Open http://localhost:8000.
 
 ## CI/CD Guide
 
@@ -95,9 +89,9 @@ Automatically runs on every push to the `main` branch and performs:
 - **Dependencies:** Installs Composer dependencies
 - **Frontend Build:** Installs Node.js dependencies and builds production assets
 - **Database Setup:** Creates SQLite database for testing
-- **Test Execution:** Runs PHPUnit/Pest tests (unit and feature tests)
+- **Test Execution:** Runs Pest tests (unit and feature)
 
-#### 2. Deploy Workflow (`deploy.yml`) 
+#### 2. Deploy Workflow (`deploy.yml`)
 Automatically deploys to production server on successful pushes to `main` branch:
 
 - **Code Deployment:** Uses rsync to sync code to production server
@@ -113,7 +107,7 @@ For the deployment workflow to work, configure these GitHub repository secrets:
 
 - `PRIVATE_KEY` - SSH private key for server access
 - `SSH_HOST` - Production server hostname/IP
-- `SSH_USER` - SSH username for server access  
+- `SSH_USER` - SSH username for server access
 - `WORK_DIR` - Application directory path on server
 - `DOCKER_DIR` - Docker compose directory path on server
 
@@ -124,11 +118,11 @@ For the deployment workflow to work, configure these GitHub repository secrets:
 1. **Before Committing:**
    ```bash
    # Run tests locally
-   php artisan test
-   
+   composer test
+
    # Build frontend assets
    pnpm run build
-   
+
    # Check code formatting
    pnpm run lint
    ```
@@ -143,7 +137,7 @@ For the deployment workflow to work, configure these GitHub repository secrets:
 To modify the CI/CD behavior:
 
 - **Test Configuration:** Edit `.github/workflows/test.yml`
-- **Deployment Steps:** Edit `.github/workflows/deploy.yml` 
+- **Deployment Steps:** Edit `.github/workflows/deploy.yml`
 - **Add Quality Checks:** Consider adding code style checks, static analysis, or security scans
 
 ## Modular Architecture
@@ -241,24 +235,17 @@ Modules/
 
 ## Roadmap
 
-Here are some of the planned features for future updates:
-
-- **User Permissions & Roles:** Manage user roles and permissions with a flexible and intuitive system.
-
-- **Profile Manager:** Allow users to update their profiles, including personal information and security settings.
-
-- **Post & Page Manager:** Create and manage dynamic posts and pages with a rich text editor.
-
 - **Theme & Plugin Manager:** Easily install and manage themes and plugins to extend functionality.
-
 - **File & Media Manager:** A powerful file and media manager for handling uploads and organizing assets.
 
+## Credits
 
+Originally created by [@binjuhor](https://github.com/binjuhor) — thank you for building the foundation this project is based on.
 
 ## Author
 
-This project was crafted with 🤍 by [@binjuhor](https://github.com/binjuhor)
+Maintained by [@hmshafeeq](https://github.com/hmshafeeq)
 
 ## License
 
-This project is open-source and licensed under the [MIT License](https://choosealicense.com/licenses/mit/). Feel free to use, modify, and distribute it as needed.
+This project is open-source and licensed under the [MIT License](https://choosealicense.com/licenses/mit/).
