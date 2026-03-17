@@ -1,25 +1,19 @@
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {ChartContainer} from "@/components/ui/chart";
-import {Bar, BarChart, LabelList, XAxis, YAxis} from "recharts";
+import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer } from "@/components/ui/chart";
 
 export function Progress() {
   return (
-    <Card
-      className="w-full" x-chunk="charts-01-chunk-2"
-    >
+    <Card className="w-full" x-chunk="charts-01-chunk-2">
       <CardHeader>
         <CardTitle>Progress</CardTitle>
-        <CardDescription>
-          You're average more steps a day this year than last year.
-        </CardDescription>
+        <CardDescription>You're average more steps a day this year than last year.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className="grid auto-rows-min gap-2">
           <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
             12,453
-            <span className="text-sm font-normal text-muted-foreground">
-                        steps/day
-                      </span>
+            <span className="text-sm font-normal text-muted-foreground">steps/day</span>
           </div>
           <ChartContainer
             config={{
@@ -46,12 +40,7 @@ export function Progress() {
                 },
               ]}
             >
-              <Bar
-                dataKey="steps"
-                fill="var(--color-steps)"
-                radius={4}
-                barSize={32}
-              >
+              <Bar dataKey="steps" fill="var(--color-steps)" radius={4} barSize={32}>
                 <LabelList
                   position="insideLeft"
                   dataKey="date"
@@ -68,9 +57,7 @@ export function Progress() {
         <div className="grid auto-rows-min gap-2">
           <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
             10,103
-            <span className="text-sm font-normal text-muted-foreground">
-                        steps/day
-                      </span>
+            <span className="text-sm font-normal text-muted-foreground">steps/day</span>
           </div>
           <ChartContainer
             config={{
@@ -97,12 +84,7 @@ export function Progress() {
                 },
               ]}
             >
-              <Bar
-                dataKey="steps"
-                fill="var(--color-steps)"
-                radius={4}
-                barSize={32}
-              >
+              <Bar dataKey="steps" fill="var(--color-steps)" radius={4} barSize={32}>
                 <LabelList
                   position="insideLeft"
                   dataKey="date"
@@ -118,5 +100,5 @@ export function Progress() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

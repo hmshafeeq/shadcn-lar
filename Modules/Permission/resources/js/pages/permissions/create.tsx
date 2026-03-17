@@ -1,77 +1,82 @@
-import { AuthenticatedLayout } from "@/layouts"
-import { ChevronLeft } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { router } from "@inertiajs/react";
+import { ChevronLeft } from "lucide-react";
+import { useState } from "react";
+import { Main } from "@/components/layout";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Main } from "@/components/layout"
-import { useState } from "react"
-import { router } from "@inertiajs/react"
-import { PageProps } from "@/types"
-import { useToast } from "@/hooks/use-toast"
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { AuthenticatedLayout } from "@/layouts";
+import type { PageProps } from "@/types";
 
 interface CreatePermissionPageProps extends PageProps {
-  groups: string[]
+  groups: string[];
 }
 
-const COMMON_ACTIONS = ['view', 'create', 'edit', 'delete', 'export', 'import']
+const COMMON_ACTIONS = ["view", "create", "edit", "delete", "export", "import"];
 
 export default function CreatePermission({ groups }: CreatePermissionPageProps) {
-  const [selectedGroup, setSelectedGroup] = useState("")
-  const [customGroup, setCustomGroup] = useState("")
-  const [action, setAction] = useState("")
-  const [customAction, setCustomAction] = useState("")
-  const [processing, setProcessing] = useState(false)
-  const { toast } = useToast()
+  const [selectedGroup, setSelectedGroup] = useState("");
+  const [customGroup, setCustomGroup] = useState("");
+  const [action, setAction] = useState("");
+  const [customAction, setCustomAction] = useState("");
+  const [processing, setProcessing] = useState(false);
+  const { toast } = useToast();
 
   const getPermissionName = () => {
-    const group = selectedGroup === 'custom' ? customGroup : selectedGroup
-    const actionName = action === 'custom' ? customAction : action
+    const group = selectedGroup === "custom" ? customGroup : selectedGroup;
+    const actionName = action === "custom" ? customAction : action;
 
-    if (!group || !actionName) return ''
-    return `${group}.${actionName}`
-  }
+    if (!group || !actionName) return "";
+    return `${group}.${actionName}`;
+  };
 
   const handleSubmit = () => {
-    const permissionName = getPermissionName()
+    const permissionName = getPermissionName();
 
     if (!permissionName) {
       toast({
         variant: "destructive",
         title: "Validation Error",
         description: "Please select or enter a group and action.",
-      })
-      return
+      });
+      return;
     }
 
-    setProcessing(true)
-    router.post(route('dashboard.permissions.store'), {
-      name: permissionName,
-    }, {
-      onSuccess: () => {
-        setProcessing(false)
-        toast({
-          title: "Permission created!",
-          description: "The permission has been created successfully.",
-        })
+    setProcessing(true);
+    router.post(
+      route("dashboard.permissions.store"),
+      {
+        name: permissionName,
       },
-      onError: (errors) => {
-        setProcessing(false)
-        toast({
-          variant: "destructive",
-          title: "Error creating permission",
-          description: Object.values(errors)[0] as string || "Please check your form and try again.",
-        })
-      }
-    })
-  }
+      {
+        onSuccess: () => {
+          setProcessing(false);
+          toast({
+            title: "Permission created!",
+            description: "The permission has been created successfully.",
+          });
+        },
+        onError: (errors) => {
+          setProcessing(false);
+          toast({
+            variant: "destructive",
+            title: "Error creating permission",
+            description:
+              (Object.values(errors)[0] as string) || "Please check your form and try again.",
+          });
+        },
+      },
+    );
+  };
 
   return (
     <AuthenticatedLayout title="Create Permission">
@@ -79,7 +84,12 @@ export default function CreatePermission({ groups }: CreatePermissionPageProps) 
         <div className="grid flex-1 items-start gap-4 md:gap-8">
           <div className="grid flex-1 auto-rows-max gap-4">
             <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => window.history.back()}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => window.history.back()}
+              >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Back</span>
               </Button>
@@ -87,11 +97,14 @@ export default function CreatePermission({ groups }: CreatePermissionPageProps) 
                 Create Permission
               </h1>
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                <Button variant="outline" onClick={() => router.get(route('dashboard.permissions.index'))}>
+                <Button
+                  variant="outline"
+                  onClick={() => router.get(route("dashboard.permissions.index"))}
+                >
                   Cancel
                 </Button>
                 <Button size="sm" onClick={handleSubmit} disabled={processing}>
-                  {processing ? 'Creating...' : 'Create Permission'}
+                  {processing ? "Creating..." : "Create Permission"}
                 </Button>
               </div>
             </div>
@@ -102,7 +115,8 @@ export default function CreatePermission({ groups }: CreatePermissionPageProps) 
                   <CardHeader>
                     <CardTitle>Permission Details</CardTitle>
                     <CardDescription>
-                      Create a new permission using the format: group.action (e.g., users.view, posts.create)
+                      Create a new permission using the format: group.action (e.g., users.view,
+                      posts.create)
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -122,11 +136,15 @@ export default function CreatePermission({ groups }: CreatePermissionPageProps) 
                             <SelectItem value="custom">Custom group...</SelectItem>
                           </SelectContent>
                         </Select>
-                        {selectedGroup === 'custom' && (
+                        {selectedGroup === "custom" && (
                           <Input
                             placeholder="Enter custom group name"
                             value={customGroup}
-                            onChange={(e) => setCustomGroup(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                            onChange={(e) =>
+                              setCustomGroup(
+                                e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""),
+                              )
+                            }
                           />
                         )}
                       </div>
@@ -146,11 +164,15 @@ export default function CreatePermission({ groups }: CreatePermissionPageProps) 
                             <SelectItem value="custom">Custom action...</SelectItem>
                           </SelectContent>
                         </Select>
-                        {action === 'custom' && (
+                        {action === "custom" && (
                           <Input
                             placeholder="Enter custom action name"
                             value={customAction}
-                            onChange={(e) => setCustomAction(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                            onChange={(e) =>
+                              setCustomAction(
+                                e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""),
+                              )
+                            }
                           />
                         )}
                       </div>
@@ -168,7 +190,7 @@ export default function CreatePermission({ groups }: CreatePermissionPageProps) 
                   <CardContent>
                     <div className="p-4 rounded-md bg-muted">
                       <code className="text-sm font-mono">
-                        {getPermissionName() || 'Select group and action'}
+                        {getPermissionName() || "Select group and action"}
                       </code>
                     </div>
                   </CardContent>
@@ -179,7 +201,10 @@ export default function CreatePermission({ groups }: CreatePermissionPageProps) 
                     <CardTitle>Tips</CardTitle>
                   </CardHeader>
                   <CardContent className="text-sm text-muted-foreground space-y-2">
-                    <p>Permissions follow the format: <code className="bg-muted px-1 rounded">group.action</code></p>
+                    <p>
+                      Permissions follow the format:{" "}
+                      <code className="bg-muted px-1 rounded">group.action</code>
+                    </p>
                     <p>Common actions include: view, create, edit, delete</p>
                     <p>Examples: users.view, posts.create, orders.delete</p>
                   </CardContent>
@@ -188,16 +213,19 @@ export default function CreatePermission({ groups }: CreatePermissionPageProps) 
             </div>
 
             <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button variant="outline" onClick={() => router.get(route('dashboard.permissions.index'))}>
+              <Button
+                variant="outline"
+                onClick={() => router.get(route("dashboard.permissions.index"))}
+              >
                 Cancel
               </Button>
               <Button size="sm" onClick={handleSubmit} disabled={processing}>
-                {processing ? 'Creating...' : 'Create Permission'}
+                {processing ? "Creating..." : "Create Permission"}
               </Button>
             </div>
           </div>
         </div>
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

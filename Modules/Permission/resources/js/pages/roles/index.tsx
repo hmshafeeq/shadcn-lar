@@ -1,17 +1,10 @@
-import { AuthenticatedLayout } from "@/layouts"
-import { useTranslation } from "react-i18next"
-import {
-  File,
-  ListFilter,
-  MoreHorizontal,
-  PlusCircle,
-  Edit,
-  Trash2,
-  Shield,
-} from "lucide-react"
-
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { router } from "@inertiajs/react";
+import { Edit, MoreHorizontal, PlusCircle, Shield, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Main } from "@/components/layout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -19,7 +12,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,21 +20,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
-import { Main } from "@/components/layout"
-import { useState } from "react"
-import { router } from "@inertiajs/react"
-import { PageProps } from "@/types"
-import { useToast } from "@/hooks/use-toast"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Pagination,
   PaginationContent,
@@ -49,134 +29,151 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination"
+} from "@/components/ui/pagination";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useToast } from "@/hooks/use-toast";
+import { AuthenticatedLayout } from "@/layouts";
+import type { PageProps } from "@/types";
 
 interface Role {
-  id: number
-  name: string
-  guard_name: string
-  permissions: { id: number; name: string }[]
-  users_count: number
-  created_at: string
-  updated_at: string
+  id: number;
+  name: string;
+  guard_name: string;
+  permissions: { id: number; name: string }[];
+  users_count: number;
+  created_at: string;
+  updated_at: string;
 }
 
 interface RolesPageProps extends PageProps {
   roles: {
-    data: Role[]
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-  }
+    data: Role[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
   filters: {
-    search?: string
-  }
+    search?: string;
+  };
 }
 
 export default function Roles({ roles, filters: initialFilters = {} }: RolesPageProps) {
-  const { t } = useTranslation()
-  const [searchTerm, setSearchTerm] = useState(initialFilters?.search || "")
-  const { toast } = useToast()
+  const { t } = useTranslation();
+  const [searchTerm, setSearchTerm] = useState(initialFilters?.search || "");
+  const { toast } = useToast();
 
   const handleSearch = (value: string) => {
-    setSearchTerm(value)
-    router.get(route('dashboard.roles.index'), { search: value }, {
-      preserveState: true,
-      replace: true,
-    })
-  }
+    setSearchTerm(value);
+    router.get(
+      route("dashboard.roles.index"),
+      { search: value },
+      {
+        preserveState: true,
+        replace: true,
+      },
+    );
+  };
 
   const handleDelete = (role: Role) => {
-    if (role.name === 'Super Admin') {
+    if (role.name === "Super Admin") {
       toast({
         variant: "destructive",
-        title: t('page.roles.cannot_delete'),
-        description: t('page.roles.cannot_delete_super_admin'),
-      })
-      return
+        title: t("page.roles.cannot_delete"),
+        description: t("page.roles.cannot_delete_super_admin"),
+      });
+      return;
     }
 
-    if (confirm(t('page.roles.delete_confirm', { name: role.name }))) {
-      router.delete(route('dashboard.roles.destroy', role.id), {
+    if (confirm(t("page.roles.delete_confirm", { name: role.name }))) {
+      router.delete(route("dashboard.roles.destroy", role.id), {
         onSuccess: () => {
           toast({
-            title: t('page.roles.deleted'),
-            description: t('page.roles.deleted_description', { name: role.name }),
-          })
+            title: t("page.roles.deleted"),
+            description: t("page.roles.deleted_description", { name: role.name }),
+          });
         },
         onError: (errors) => {
           toast({
             variant: "destructive",
-            title: t('page.roles.delete_error'),
-            description: Object.values(errors)[0] as string || t('common.error'),
-          })
-        }
-      })
+            title: t("page.roles.delete_error"),
+            description: (Object.values(errors)[0] as string) || t("common.error"),
+          });
+        },
+      });
     }
-  }
+  };
 
   const handlePageChange = (page: number) => {
-    router.get(route('dashboard.roles.index'), { ...initialFilters, page }, {
-      preserveState: true,
-      replace: true,
-    })
-  }
+    router.get(
+      route("dashboard.roles.index"),
+      { ...initialFilters, page },
+      {
+        preserveState: true,
+        replace: true,
+      },
+    );
+  };
 
   const generatePageNumbers = () => {
-    const pages: (number | string)[] = []
-    const delta = 2
-    const rangeStart = Math.max(2, roles.current_page - delta)
-    const rangeEnd = Math.min(roles.last_page - 1, roles.current_page + delta)
+    const pages: (number | string)[] = [];
+    const delta = 2;
+    const rangeStart = Math.max(2, roles.current_page - delta);
+    const rangeEnd = Math.min(roles.last_page - 1, roles.current_page + delta);
 
     if (roles.last_page > 1) {
-      pages.push(1)
+      pages.push(1);
     }
 
     if (rangeStart > 2) {
-      pages.push('...')
+      pages.push("...");
     }
 
     for (let i = rangeStart; i <= rangeEnd; i++) {
       if (i !== 1 && i !== roles.last_page) {
-        pages.push(i)
+        pages.push(i);
       }
     }
 
     if (rangeEnd < roles.last_page - 1) {
-      pages.push('...')
+      pages.push("...");
     }
 
     if (roles.last_page > 1 && roles.last_page !== 1) {
-      pages.push(roles.last_page)
+      pages.push(roles.last_page);
     }
 
-    return pages
-  }
+    return pages;
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   return (
-    <AuthenticatedLayout title={t('page.roles.title')}>
+    <AuthenticatedLayout title={t("page.roles.title")}>
       <Main>
         <div className="grid flex-1 items-start gap-4 md:gap-8">
           <div className="md:flex items-center justify-between">
             <div className="mb-4">
-              <h2 className="text-2xl font-bold tracking-tight">{t('page.roles.title')}</h2>
-              <p className="text-muted-foreground">
-                {t('page.roles.description')}
-              </p>
+              <h2 className="text-2xl font-bold tracking-tight">{t("page.roles.title")}</h2>
+              <p className="text-muted-foreground">{t("page.roles.description")}</p>
             </div>
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Input
-                  placeholder={t('page.roles.search_placeholder')}
+                  placeholder={t("page.roles.search_placeholder")}
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}
                   className="w-64"
@@ -185,11 +182,11 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
               <Button
                 size="sm"
                 className="h-9 gap-1"
-                onClick={() => router.get(route('dashboard.roles.create'))}
+                onClick={() => router.get(route("dashboard.roles.create"))}
               >
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  {t('page.roles.add')}
+                  {t("page.roles.add")}
                 </span>
               </Button>
             </div>
@@ -197,21 +194,19 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
 
           <Card>
             <CardHeader>
-              <CardTitle>{t('page.roles.all')}</CardTitle>
-              <CardDescription>
-                {t('page.roles.all_description')}
-              </CardDescription>
+              <CardTitle>{t("page.roles.all")}</CardTitle>
+              <CardDescription>{t("page.roles.all_description")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t('table.name')}</TableHead>
-                    <TableHead>{t('table.permissions')}</TableHead>
-                    <TableHead>{t('table.users')}</TableHead>
-                    <TableHead className="hidden md:table-cell">{t('table.created')}</TableHead>
+                    <TableHead>{t("table.name")}</TableHead>
+                    <TableHead>{t("table.permissions")}</TableHead>
+                    <TableHead>{t("table.users")}</TableHead>
+                    <TableHead className="hidden md:table-cell">{t("table.created")}</TableHead>
                     <TableHead>
-                      <span className="sr-only">{t('table.actions')}</span>
+                      <span className="sr-only">{t("table.actions")}</span>
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -219,7 +214,7 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
                   {!roles.data || roles.data.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} className="h-24 text-center">
-                        {t('page.roles.no_roles')}
+                        {t("page.roles.no_roles")}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -229,8 +224,10 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
                           <div className="flex items-center gap-2">
                             <Shield className="h-4 w-4 text-muted-foreground" />
                             <span>{role.name}</span>
-                            {role.name === 'Super Admin' && (
-                              <Badge variant="secondary" className="text-xs">{t('common.system')}</Badge>
+                            {role.name === "Super Admin" && (
+                              <Badge variant="secondary" className="text-xs">
+                                {t("common.system")}
+                              </Badge>
                             )}
                           </div>
                         </TableCell>
@@ -243,16 +240,20 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
                             ))}
                             {role.permissions.length > 3 && (
                               <Badge variant="secondary" className="text-xs">
-                                {t('page.roles.more', { count: role.permissions.length - 3 })}
+                                {t("page.roles.more", { count: role.permissions.length - 3 })}
                               </Badge>
                             )}
                             {role.permissions.length === 0 && (
-                              <span className="text-sm text-muted-foreground">{t('page.roles.no_permissions')}</span>
+                              <span className="text-sm text-muted-foreground">
+                                {t("page.roles.no_permissions")}
+                              </span>
                             )}
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline">{role.users_count} {t('page.roles.users')}</Badge>
+                          <Badge variant="outline">
+                            {role.users_count} {t("page.roles.users")}
+                          </Badge>
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
                           {formatDate(role.created_at)}
@@ -260,25 +261,21 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button
-                                aria-haspopup="true"
-                                size="icon"
-                                variant="ghost"
-                              >
+                              <Button aria-haspopup="true" size="icon" variant="ghost">
                                 <MoreHorizontal className="h-4 w-4" />
                                 <span className="sr-only">Toggle menu</span>
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>{t('table.actions')}</DropdownMenuLabel>
+                              <DropdownMenuLabel>{t("table.actions")}</DropdownMenuLabel>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
-                                onClick={() => router.get(route('dashboard.roles.edit', role.id))}
+                                onClick={() => router.get(route("dashboard.roles.edit", role.id))}
                               >
                                 <Edit className="mr-2 h-4 w-4" />
-                                {t('action.edit')}
+                                {t("action.edit")}
                               </DropdownMenuItem>
-                              {role.name !== 'Super Admin' && (
+                              {role.name !== "Super Admin" && (
                                 <>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
@@ -286,7 +283,7 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
                                     onClick={() => handleDelete(role)}
                                   >
                                     <Trash2 className="mr-2 h-4 w-4" />
-                                    {t('action.delete')}
+                                    {t("action.delete")}
                                   </DropdownMenuItem>
                                 </>
                               )}
@@ -301,17 +298,13 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
             </CardContent>
             <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-xs text-muted-foreground">
-                {roles?.current_page && roles?.per_page && roles?.total ? (
-                  <>
-                    {t('page.roles.showing', {
-                      from: ((roles.current_page - 1) * roles.per_page) + 1,
+                {roles?.current_page && roles?.per_page && roles?.total
+                  ? t("page.roles.showing", {
+                      from: (roles.current_page - 1) * roles.per_page + 1,
                       to: Math.min(roles.current_page * roles.per_page, roles.total),
-                      total: roles.total
-                    })}
-                  </>
-                ) : (
-                  <>{t('page.roles.showing_zero')}</>
-                )}
+                      total: roles.total,
+                    })
+                  : t("page.roles.showing_zero")}
               </div>
 
               {roles.last_page > 1 && (
@@ -321,9 +314,9 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
                       <PaginationPrevious
                         href="#"
                         onClick={(e) => {
-                          e.preventDefault()
+                          e.preventDefault();
                           if (roles.current_page > 1) {
-                            handlePageChange(roles.current_page - 1)
+                            handlePageChange(roles.current_page - 1);
                           }
                         }}
                         className={roles.current_page === 1 ? "pointer-events-none opacity-50" : ""}
@@ -332,14 +325,16 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
 
                     {generatePageNumbers().map((page, index) => (
                       <PaginationItem key={index}>
-                        {page === '...' ? (
-                          <span className="flex h-9 w-9 items-center justify-center text-sm">...</span>
+                        {page === "..." ? (
+                          <span className="flex h-9 w-9 items-center justify-center text-sm">
+                            ...
+                          </span>
                         ) : (
                           <PaginationLink
                             href="#"
                             onClick={(e) => {
-                              e.preventDefault()
-                              handlePageChange(page as number)
+                              e.preventDefault();
+                              handlePageChange(page as number);
                             }}
                             isActive={page === roles.current_page}
                           >
@@ -353,12 +348,16 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
                       <PaginationNext
                         href="#"
                         onClick={(e) => {
-                          e.preventDefault()
+                          e.preventDefault();
                           if (roles.current_page < roles.last_page) {
-                            handlePageChange(roles.current_page + 1)
+                            handlePageChange(roles.current_page + 1);
                           }
                         }}
-                        className={roles.current_page === roles.last_page ? "pointer-events-none opacity-50" : ""}
+                        className={
+                          roles.current_page === roles.last_page
+                            ? "pointer-events-none opacity-50"
+                            : ""
+                        }
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -369,5 +368,5 @@ export default function Roles({ roles, filters: initialFilters = {} }: RolesPage
         </div>
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

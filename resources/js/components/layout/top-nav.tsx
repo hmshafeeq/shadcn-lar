@@ -1,39 +1,39 @@
-import { IconMenu } from '@tabler/icons-react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { Link } from "@inertiajs/react";
+import { IconMenu } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Link } from "@inertiajs/react";
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 interface TopNavProps extends React.HTMLAttributes<HTMLElement> {
   links: {
-    title: string
-    href: string
-    isActive: boolean
-    disabled?: boolean
-  }[]
+    title: string;
+    href: string;
+    isActive: boolean;
+    disabled?: boolean;
+  }[];
 }
 
 export function TopNav({ className, links, ...props }: TopNavProps) {
   return (
     <>
-      <div className='md:hidden'>
+      <div className="md:hidden">
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button size='icon' variant='outline'>
+            <Button size="icon" variant="outline">
               <IconMenu />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent side='bottom' align='start'>
+          <DropdownMenuContent side="bottom" align="start">
             {links.map(({ title, href, isActive, disabled }) => (
               <DropdownMenuItem key={`${title}-${href}`} asChild>
                 <Link
                   href={href}
-                  className={!isActive ? 'text-muted-foreground' : ''}
+                  className={!isActive ? "text-muted-foreground" : ""}
                   disabled={disabled}
                 >
                   {title}
@@ -45,10 +45,7 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
       </div>
 
       <nav
-        className={cn(
-          'hidden items-center space-x-4 md:flex lg:space-x-6',
-          className
-        )}
+        className={cn("hidden items-center space-x-4 md:flex lg:space-x-6", className)}
         {...props}
       >
         {links.map(({ title, href, isActive, disabled }) => (
@@ -56,12 +53,12 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
             key={`${title}-${href}`}
             href={href}
             disabled={disabled}
-            className={`text-sm font-medium transition-colors hover:text-primary ${isActive ? '' : 'text-muted-foreground'}`}
+            className={`text-sm font-medium transition-colors hover:text-primary ${isActive ? "" : "text-muted-foreground"}`}
           >
             {title}
           </Link>
         ))}
       </nav>
     </>
-  )
+  );
 }

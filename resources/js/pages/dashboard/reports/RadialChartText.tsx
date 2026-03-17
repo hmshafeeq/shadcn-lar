@@ -1,13 +1,7 @@
-"use client"
+"use client";
 
-import { TrendingUp } from "lucide-react"
-import {
-  Label,
-  PolarGrid,
-  PolarRadiusAxis,
-  RadialBar,
-  RadialBarChart,
-} from "recharts"
+import { TrendingUp } from "lucide-react";
+import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 
 import {
   Card,
@@ -16,14 +10,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { ChartConfig, ChartContainer } from "@/components/ui/chart"
+} from "@/components/ui/card";
+import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 
-export const description = "A radial chart with text"
+export const description = "A radial chart with text";
 
-const chartData = [
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-]
+const chartData = [{ browser: "safari", visitors: 200, fill: "var(--color-safari)" }];
 
 const chartConfig = {
   visitors: {
@@ -33,7 +25,7 @@ const chartConfig = {
     label: "Safari",
     color: "hsl(var(--chart-2))",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export function RadialChartText() {
   return (
@@ -43,10 +35,7 @@ export function RadialChartText() {
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
+        <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
           <RadialBarChart
             data={chartData}
             startAngle={0}
@@ -88,7 +77,7 @@ export function RadialChartText() {
                           Visitors
                         </tspan>
                       </text>
-                    )
+                    );
                   }
                 }}
               />
@@ -105,5 +94,5 @@ export function RadialChartText() {
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }

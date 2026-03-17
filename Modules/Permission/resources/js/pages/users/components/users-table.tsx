@@ -1,16 +1,16 @@
-import { useState } from 'react'
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  RowData,
-  SortingState,
-  VisibilityState,
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  type RowData,
+  type SortingState,
   useReactTable,
-} from '@tanstack/react-table'
+  type VisibilityState,
+} from "@tanstack/react-table";
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,41 +18,35 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Role } from '@/types'
-import { PaginatedUsers, User } from '../data/schema'
-import { DataTablePagination } from './data-table-pagination'
-import { DataTableToolbar } from './data-table-toolbar'
+} from "@/components/ui/table";
+import type { Role } from "@/types";
+import type { PaginatedUsers, User } from "../data/schema";
+import { DataTablePagination } from "./data-table-pagination";
+import { DataTableToolbar } from "./data-table-toolbar";
 
-declare module '@tanstack/react-table' {
+declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData extends RowData, TValue> {
-    className: string
+    className: string;
   }
 }
 
 interface DataTableProps {
-  columns: ColumnDef<User>[]
-  data: User[]
-  pagination: PaginatedUsers
-  roles: Role[]
+  columns: ColumnDef<User>[];
+  data: User[];
+  pagination: PaginatedUsers;
+  roles: Role[];
   filters?: {
-    search?: string
-    role?: string
-  }
+    search?: string;
+    role?: string;
+  };
 }
 
-export function UsersTable({
-  columns,
-  data,
-  pagination,
-  roles,
-  filters = {},
-}: DataTableProps) {
-  const [rowSelection, setRowSelection] = useState({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [sorting, setSorting] = useState<SortingState>([])
+export function UsersTable({ columns, data, pagination, roles, filters = {} }: DataTableProps) {
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
     data,
@@ -74,7 +68,7 @@ export function UsersTable({
     // Use manual pagination since backend handles it
     manualPagination: true,
     pageCount: pagination.last_page,
-  })
+  });
 
   return (
     <div className="space-y-4">
@@ -89,16 +83,13 @@ export function UsersTable({
                     <TableHead
                       key={header.id}
                       colSpan={header.colSpan}
-                      className={header.column.columnDef.meta?.className ?? ''}
+                      className={header.column.columnDef.meta?.className ?? ""}
                     >
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -108,28 +99,22 @@ export function UsersTable({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
+                  data-state={row.getIsSelected() && "selected"}
                   className="group/row"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={cell.column.columnDef.meta?.className ?? ''}
+                      className={cell.column.columnDef.meta?.className ?? ""}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -139,5 +124,5 @@ export function UsersTable({
       </div>
       <DataTablePagination table={table} pagination={pagination} filters={filters} />
     </div>
-  )
+  );
 }

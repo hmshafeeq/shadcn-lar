@@ -1,48 +1,46 @@
-import { Table } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { IconX } from '@tabler/icons-react'
-import { DataTableFacetedFilter } from './data-table-faceted-filter'
-import { invoiceStatuses } from '../data/data'
+import { IconX } from "@tabler/icons-react";
+import type { Table } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { invoiceStatuses } from "../data/data";
+import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 
 interface DataTableToolbarProps<TData> {
-  table: Table<TData>
+  table: Table<TData>;
 }
 
-export function DataTableToolbar<TData>({
-  table,
-}: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0
+export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
+  const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
-    <div className='flex items-center justify-between'>
-      <div className='flex flex-1 items-center space-x-2'>
+    <div className="flex items-center justify-between">
+      <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder='Search invoices...'
-          value={(table.getColumn('invoice_number')?.getFilterValue() as string) ?? ''}
+          placeholder="Search invoices..."
+          value={(table.getColumn("invoice_number")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn('invoice_number')?.setFilterValue(event.target.value)
+            table.getColumn("invoice_number")?.setFilterValue(event.target.value)
           }
-          className='h-8 w-[150px] lg:w-[250px]'
+          className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn('status') && (
+        {table.getColumn("status") && (
           <DataTableFacetedFilter
-            column={table.getColumn('status')}
-            title='Status'
+            column={table.getColumn("status")}
+            title="Status"
             options={invoiceStatuses}
           />
         )}
         {isFiltered && (
           <Button
-            variant='ghost'
+            variant="ghost"
             onClick={() => table.resetColumnFilters()}
-            className='h-8 px-2 lg:px-3'
+            className="h-8 px-2 lg:px-3"
           >
             Reset
-            <IconX className='ml-2 h-4 w-4' />
+            <IconX className="ml-2 h-4 w-4" />
           </Button>
         )}
       </div>
     </div>
-  )
+  );
 }

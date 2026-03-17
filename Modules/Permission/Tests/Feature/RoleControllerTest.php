@@ -1,89 +1,61 @@
 <?php
 
-namespace Modules\Permission\Tests\Feature;
-
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\Test;
 use Spatie\Permission\Models\{Permission, Role};
-use Tests\TestCase;
 
-class RoleControllerTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    protected User $user;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->createPermissions();
-        $this->user = User::factory()->create();
-        $this->user->givePermissionTo([
-            'roles.view',
-            'roles.create',
-            'roles.edit',
-            'roles.delete',
-        ]);
+beforeEach(function () {
+    foreach (['roles.view', 'roles.create', 'roles.edit', 'roles.delete'] as $permission) {
+        Permission::findOrCreate($permission, 'web');
     }
 
-    protected function createPermissions(): void
-    {
-        $permissions = [
-            'roles.view',
-            'roles.create',
-            'roles.edit',
-            'roles.delete',
-        ];
+    $this->user = User::factory()->create();
+    $this->user->givePermissionTo([
+        'roles.view',
+        'roles.create',
+        'roles.edit',
+        'roles.delete',
+    ]);
+});
 
-        foreach ($permissions as $permission) {
-            Permission::findOrCreate($permission, 'web');
-        }
-    }
+test('it can list all roles', function () {
+    $existingCount = Role::count();
+    Role::create(['name' => 'Admin', 'guard_name' => 'web']);
+    Role::create(['name' => 'Editor', 'guard_name' => 'web']);
 
-    #[Test]
-    public function it_can_list_all_roles()
-    {
-        Role::create(['name' => 'Admin', 'guard_name' => 'web']);
-        Role::create(['name' => 'Editor', 'guard_name' => 'web']);
+    $response = $this->actingAs($this->user)
+        ->get('/dashboard/roles');
 
-        $response = $this->actingAs($this->user)
-            ->get('/dashboard/roles');
+    $response->assertStatus(200)
+        ->assertInertia(fn ($page) => $page->component('Permission::roles/index', false)
+            ->has('roles.data', $existingCount + 2)
+        );
+});
 
-        $response->assertStatus(200)
-            ->assertInertia(fn ($page) => $page->component('roles/index')
-                ->has('roles.data', 2)
-            );
-    }
+test('it can create a role', function () {
+    $roleData = [
+        'name' => 'Manager',
+        'permissions' => [],
+    ];
 
-    #[Test]
-    public function it_can_create_a_role()
-    {
-        $roleData = [
-            'name' => 'Manager',
-            'permissions' => [],
-        ];
+    $response = $this->actingAs($this->user)
+        ->post('/dashboard/roles', $roleData);
 
-        $response = $this->actingAs($this->user)
-            ->post('/dashboard/roles', $roleData);
+    $response->assertRedirect();
 
-        $response->assertRedirect();
+    $this->assertDatabaseHas('roles', [
+        'name' => 'Manager',
+    ]);
+});
 
-        $this->assertDatabaseHas('roles', [
-            'name' => 'Manager',
-        ]);
-    }
+test('it requires authentication for all endpoints', function () {
+    $role = Role::create(['name' => 'Test', 'guard_name' => 'web']);
 
-    #[Test]
-    public function it_requires_authentication_for_all_endpoints()
-    {
-        $role = Role::create(['name' => 'Test', 'guard_name' => 'web']);
-
-        $this->get('/dashboard/roles')->assertRedirect('/login');
-        $this->post('/dashboard/roles', [])->assertRedirect('/login');
-        $this->get("/dashboard/roles/{$role->id}")->assertRedirect('/login');
-        $this->put("/dashboard/roles/{$role->id}", [])->assertRedirect('/login');
-        $this->delete("/dashboard/roles/{$role->id}")->assertRedirect('/login');
-    }
-}
+    $this->get('/dashboard/roles')->assertRedirect('/login');
+    $this->post('/dashboard/roles', [])->assertRedirect('/login');
+    $this->get("/dashboard/roles/{$role->id}")->assertRedirect('/login');
+    $this->put("/dashboard/roles/{$role->id}", [])->assertRedirect('/login');
+    $this->delete("/dashboard/roles/{$role->id}")->assertRedirect('/login');
+});

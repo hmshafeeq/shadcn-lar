@@ -1,39 +1,33 @@
-import { useTranslation } from 'react-i18next'
-import { formatDateDisplay } from '@/lib/date-utils'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import type { Budget } from "@modules/Finance/types/finance";
+import { AlertCircle, MoreHorizontal, Pencil, RefreshCw, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Progress } from '@/components/ui/progress'
-import { Badge } from '@/components/ui/badge'
-import { MoreHorizontal, Pencil, Trash2, RefreshCw, AlertCircle } from 'lucide-react'
-import type { Budget } from '@modules/Finance/types/finance'
+} from "@/components/ui/dropdown-menu";
+import { Progress } from "@/components/ui/progress";
+import { formatDateDisplay } from "@/lib/date-utils";
 
 interface BudgetCardProps {
-  budget: Budget
-  onEdit: (budget: Budget) => void
-  onDelete: (budget: Budget) => void
-  onRefresh: (budget: Budget) => void
-  compact?: boolean
+  budget: Budget;
+  onEdit: (budget: Budget) => void;
+  onDelete: (budget: Budget) => void;
+  onRefresh: (budget: Budget) => void;
+  compact?: boolean;
 }
 
-function formatMoney(amount: number, currencyCode = 'VND'): string {
-  const locale = currencyCode === 'VND' ? 'vi-VN' : 'en-US'
+function formatMoney(amount: number, currencyCode = "VND"): string {
+  const locale = currencyCode === "VND" ? "vi-VN" : "en-US";
   return new Intl.NumberFormat(locale, {
-    style: 'currency',
+    style: "currency",
     currency: currencyCode,
-  }).format(amount)
+  }).format(amount);
 }
 
 export function BudgetCard({
@@ -43,12 +37,10 @@ export function BudgetCard({
   onRefresh,
   compact = false,
 }: BudgetCardProps) {
-  const { t } = useTranslation()
-  const spentPercent = budget.amount > 0
-    ? Math.min((budget.spent / budget.amount) * 100, 100)
-    : 0
-  const isOverBudget = budget.spent > budget.amount
-  const remaining = budget.amount - budget.spent
+  const { t } = useTranslation();
+  const spentPercent = budget.amount > 0 ? Math.min((budget.spent / budget.amount) * 100, 100) : 0;
+  const isOverBudget = budget.spent > budget.amount;
+  const remaining = budget.amount - budget.spent;
 
   if (compact) {
     return (
@@ -56,13 +48,11 @@ export function BudgetCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="font-medium truncate">{budget.name}</span>
-            {isOverBudget && (
-              <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
-            )}
+            {isOverBudget && <AlertCircle className="h-4 w-4 text-red-600 shrink-0" />}
           </div>
           <Progress
             value={spentPercent}
-            className={`h-2 ${isOverBudget ? '[&>div]:bg-red-600' : ''}`}
+            className={`h-2 ${isOverBudget ? "[&>div]:bg-red-600" : ""}`}
           />
           <div className="flex justify-between text-xs text-muted-foreground mt-1">
             <span>{formatMoney(budget.spent, budget.currency_code)}</span>
@@ -70,7 +60,7 @@ export function BudgetCard({
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -78,9 +68,7 @@ export function BudgetCard({
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center gap-2">
           <CardTitle className="text-base">{budget.name}</CardTitle>
-          {isOverBudget && (
-            <AlertCircle className="h-4 w-4 text-red-600" />
-          )}
+          {isOverBudget && <AlertCircle className="h-4 w-4 text-red-600" />}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -91,19 +79,16 @@ export function BudgetCard({
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => onRefresh(budget)}>
               <RefreshCw className="mr-2 h-4 w-4" />
-              {t('page.budgets.refresh_spent')}
+              {t("page.budgets.refresh_spent")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onEdit(budget)}>
               <Pencil className="mr-2 h-4 w-4" />
-              {t('action.edit')}
+              {t("action.edit")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => onDelete(budget)}
-              className="text-red-600"
-            >
+            <DropdownMenuItem onClick={() => onDelete(budget)} className="text-red-600">
               <Trash2 className="mr-2 h-4 w-4" />
-              {t('action.delete')}
+              {t("action.delete")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -111,29 +96,28 @@ export function BudgetCard({
       <CardContent className="space-y-3">
         <div>
           <div className="flex justify-between text-sm mb-2">
-            <span className={isOverBudget ? 'text-red-600 font-medium' : ''}>
-              {t('page.budgets.spent', { amount: formatMoney(budget.spent, budget.currency_code) })}
+            <span className={isOverBudget ? "text-red-600 font-medium" : ""}>
+              {t("page.budgets.spent", { amount: formatMoney(budget.spent, budget.currency_code) })}
             </span>
             <span className="text-muted-foreground">
-              {t('page.budgets.of_budget', { amount: formatMoney(budget.amount, budget.currency_code) })}
+              {t("page.budgets.of_budget", {
+                amount: formatMoney(budget.amount, budget.currency_code),
+              })}
             </span>
           </div>
-          <Progress
-            value={spentPercent}
-            className={isOverBudget ? '[&>div]:bg-red-600' : ''}
-          />
+          <Progress value={spentPercent} className={isOverBudget ? "[&>div]:bg-red-600" : ""} />
         </div>
 
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">{t('page.budgets.remaining')}</span>
-          <span className={remaining < 0 ? 'text-red-600 font-medium' : 'text-green-600'}>
+          <span className="text-muted-foreground">{t("page.budgets.remaining")}</span>
+          <span className={remaining < 0 ? "text-red-600 font-medium" : "text-green-600"}>
             {formatMoney(remaining, budget.currency_code)}
           </span>
         </div>
 
         {budget.category && (
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">{t('page.budgets.category')}</span>
+            <span className="text-muted-foreground">{t("page.budgets.category")}</span>
             <Badge variant="secondary">{budget.category.name}</Badge>
           </div>
         )}
@@ -145,5 +129,5 @@ export function BudgetCard({
         </span>
       </CardFooter>
     </Card>
-  )
+  );
 }

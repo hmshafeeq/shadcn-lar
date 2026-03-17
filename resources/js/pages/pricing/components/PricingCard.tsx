@@ -1,9 +1,9 @@
-import { TIERS } from "@/config";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import NumberFlow from "@number-flow/react";
 import { ArrowRight, BadgeCheck } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import type { TIERS } from "@/config";
+import { cn } from "@/lib/utils";
 
 export const PricingCard = ({
   tier,
@@ -19,11 +19,9 @@ export const PricingCard = ({
   return (
     <div
       className={cn(
-        "relative flex flex-col gap-8 overflow-hidden rounded-2xl border p-6 shadow",
-        isHighlighted
-          ? "bg-foreground text-background"
-          : "bg-background text-foreground",
-        isPopular && "outline outline-[rgba(120,119,198)]",
+        "relative flex flex-col gap-8 overflow-hidden rounded-2xl border p-6 shadow-sm",
+        isHighlighted ? "bg-foreground text-background" : "bg-background text-foreground",
+        isPopular && "outline-solid outline-[rgba(120,119,198)]",
       )}
     >
       {/* Background Decoration */}
@@ -96,7 +94,7 @@ export const PricingCard = ({
 
 // Highlighted Background Component
 const HighlightedBackground = () => (
-  <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:45px_45px] opacity-100 [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] dark:opacity-30" />
+  <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-size-[45px_45px] opacity-100 mask-[radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] dark:opacity-30" />
 );
 
 // Popular Background Component

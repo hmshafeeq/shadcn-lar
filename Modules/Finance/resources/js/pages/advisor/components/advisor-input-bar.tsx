@@ -1,56 +1,56 @@
-import { useState, useRef, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Send } from 'lucide-react'
+import { Send } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 interface AdvisorInputBarProps {
-  onSend: (text: string) => void
-  isProcessing: boolean
+  onSend: (text: string) => void;
+  isProcessing: boolean;
 }
 
 export function AdvisorInputBar({ onSend, isProcessing }: AdvisorInputBarProps) {
-  const { t } = useTranslation()
-  const [text, setText] = useState('')
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const { t } = useTranslation();
+  const [text, setText] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    const el = textareaRef.current
-    if (!el) return
+    const el = textareaRef.current;
+    if (!el) return;
 
-    el.style.height = 'auto'
-    el.style.height = `${Math.min(el.scrollHeight, 160)}px`
-  }, [text])
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+  }, [text]);
 
   const handleSend = () => {
-    const trimmed = text.trim()
-    if (!trimmed || isProcessing) return
+    const trimmed = text.trim();
+    if (!trimmed || isProcessing) return;
 
-    onSend(trimmed)
-    setText('')
+    onSend(trimmed);
+    setText("");
 
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = "auto";
     }
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
-  }
+  };
 
   return (
     <div className="bg-background px-3 sm:px-4 pb-3 pt-2 sm:pb-4">
       <div className="max-w-2xl mx-auto">
-        <div className="relative rounded-2xl border bg-muted/30 shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1 transition-shadow">
+        <div className="relative rounded-2xl border bg-muted/30 shadow-xs focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1 transition-shadow">
           <Textarea
             ref={textareaRef}
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={t('page.advisor.placeholder')}
+            placeholder={t("page.advisor.placeholder")}
             rows={1}
             className="min-h-[48px] sm:min-h-[56px] max-h-[160px] resize-none overflow-y-auto border-0 bg-transparent text-base shadow-none focus-visible:ring-0 px-3 sm:px-4 pt-3 sm:pt-4 pb-0"
             disabled={isProcessing}
@@ -70,5 +70,5 @@ export function AdvisorInputBar({ onSend, isProcessing }: AdvisorInputBarProps) 
         </div>
       </div>
     </div>
-  )
+  );
 }

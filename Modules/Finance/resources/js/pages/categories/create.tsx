@@ -1,67 +1,69 @@
-import { Link, useForm, router } from '@inertiajs/react'
-import { AuthenticatedLayout } from '@/layouts'
-import { Main } from '@/components/layout/main'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Link, router, useForm } from "@inertiajs/react";
+import type { Category } from "@modules/Finance/types/finance";
+import { ArrowLeft } from "lucide-react";
+import { Main } from "@/components/layout/main";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { ArrowLeft } from 'lucide-react'
-import type { Category } from '@modules/Finance/types/finance'
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { AuthenticatedLayout } from "@/layouts";
 
 interface Props {
-  parentCategories: Category[]
+  parentCategories: Category[];
 }
 
 const colors = [
-  '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
-  '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1',
-]
+  "#3b82f6",
+  "#10b981",
+  "#f59e0b",
+  "#ef4444",
+  "#8b5cf6",
+  "#ec4899",
+  "#06b6d4",
+  "#84cc16",
+  "#f97316",
+  "#6366f1",
+];
 
 export default function CreateCategory({ parentCategories }: Props) {
   const { data, setData, post, processing, errors, transform, reset } = useForm({
-    name: '',
-    type: 'expense' as 'income' | 'expense',
-    icon: '',
-    color: '#3b82f6',
-    parent_id: '',
+    name: "",
+    type: "expense" as "income" | "expense",
+    icon: "",
+    color: "#3b82f6",
+    parent_id: "",
     is_active: true as boolean,
-  })
+  });
 
-  const filteredParentCategories = parentCategories.filter((c) => c.type === data.type)
+  const filteredParentCategories = parentCategories.filter((c) => c.type === data.type);
 
   transform((formData) => ({
     ...formData,
-    parent_id: formData.parent_id ? parseInt(formData.parent_id) : null,
-  }))
+    parent_id: formData.parent_id ? parseInt(formData.parent_id, 10) : null,
+  }));
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    post(route('dashboard.finance.categories.store'), {
+    e.preventDefault();
+    post(route("dashboard.finance.categories.store"), {
       preserveState: false,
       onSuccess: () => reset(),
-    })
-  }
+    });
+  };
 
   return (
     <AuthenticatedLayout title="Create Category">
       <Main>
         <div className="mb-4">
           <Link
-            href={route('dashboard.finance.categories.index')}
+            href={route("dashboard.finance.categories.index")}
             className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -72,9 +74,7 @@ export default function CreateCategory({ parentCategories }: Props) {
         <Card className="max-w-2xl">
           <CardHeader>
             <CardTitle>Create Category</CardTitle>
-            <CardDescription>
-              Add a new category to organize your transactions
-            </CardDescription>
+            <CardDescription>Add a new category to organize your transactions</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -83,12 +83,10 @@ export default function CreateCategory({ parentCategories }: Props) {
                 <Input
                   id="name"
                   value={data.name}
-                  onChange={(e) => setData('name', e.target.value)}
+                  onChange={(e) => setData("name", e.target.value)}
                   placeholder="e.g., Groceries"
                 />
-                {errors.name && (
-                  <p className="text-sm text-red-600">{errors.name}</p>
-                )}
+                {errors.name && <p className="text-sm text-red-600">{errors.name}</p>}
               </div>
 
               <div className="space-y-2">
@@ -96,8 +94,8 @@ export default function CreateCategory({ parentCategories }: Props) {
                 <Select
                   value={data.type}
                   onValueChange={(value) => {
-                    setData('type', value as 'income' | 'expense')
-                    setData('parent_id', '')
+                    setData("type", value as "income" | "expense");
+                    setData("parent_id", "");
                   }}
                 >
                   <SelectTrigger>
@@ -108,16 +106,14 @@ export default function CreateCategory({ parentCategories }: Props) {
                     <SelectItem value="income">Income</SelectItem>
                   </SelectContent>
                 </Select>
-                {errors.type && (
-                  <p className="text-sm text-red-600">{errors.type}</p>
-                )}
+                {errors.type && <p className="text-sm text-red-600">{errors.type}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="parent_id">Parent Category (Optional)</Label>
                 <Select
-                  value={data.parent_id || '__none__'}
-                  onValueChange={(value) => setData('parent_id', value === '__none__' ? '' : value)}
+                  value={data.parent_id || "__none__"}
+                  onValueChange={(value) => setData("parent_id", value === "__none__" ? "" : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="No parent (top-level)" />
@@ -131,9 +127,7 @@ export default function CreateCategory({ parentCategories }: Props) {
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.parent_id && (
-                  <p className="text-sm text-red-600">{errors.parent_id}</p>
-                )}
+                {errors.parent_id && <p className="text-sm text-red-600">{errors.parent_id}</p>}
               </div>
 
               <div className="space-y-2">
@@ -141,7 +135,7 @@ export default function CreateCategory({ parentCategories }: Props) {
                 <Input
                   id="icon"
                   value={data.icon}
-                  onChange={(e) => setData('icon', e.target.value)}
+                  onChange={(e) => setData("icon", e.target.value)}
                   placeholder="e.g., shopping-cart"
                 />
               </div>
@@ -154,12 +148,10 @@ export default function CreateCategory({ parentCategories }: Props) {
                       key={color}
                       type="button"
                       className={`w-8 h-8 rounded-full border-2 transition-all ${
-                        data.color === color
-                          ? 'border-foreground scale-110'
-                          : 'border-transparent'
+                        data.color === color ? "border-foreground scale-110" : "border-transparent"
                       }`}
                       style={{ backgroundColor: color }}
-                      onClick={() => setData('color', color)}
+                      onClick={() => setData("color", color)}
                     />
                   ))}
                 </div>
@@ -175,7 +167,7 @@ export default function CreateCategory({ parentCategories }: Props) {
                 <Switch
                   id="is_active"
                   checked={data.is_active}
-                  onCheckedChange={(checked) => setData('is_active', checked)}
+                  onCheckedChange={(checked) => setData("is_active", checked)}
                 />
               </div>
 
@@ -183,13 +175,13 @@ export default function CreateCategory({ parentCategories }: Props) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.visit(route('dashboard.finance.categories.index'))}
+                  onClick={() => router.visit(route("dashboard.finance.categories.index"))}
                   disabled={processing}
                 >
                   Cancel
                 </Button>
                 <Button type="submit" disabled={processing}>
-                  {processing ? 'Creating...' : 'Create Category'}
+                  {processing ? "Creating..." : "Create Category"}
                 </Button>
               </div>
             </form>
@@ -197,5 +189,5 @@ export default function CreateCategory({ parentCategories }: Props) {
         </Card>
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

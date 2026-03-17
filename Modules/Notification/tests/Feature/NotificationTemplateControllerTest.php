@@ -1,170 +1,143 @@
 <?php
 
-namespace Modules\Notification\Tests\Feature;
-
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Modules\Notification\{
-    Enums\NotificationCategory,
-    Enums\NotificationChannel,
-    Models\NotificationTemplate
-};
-use Spatie\Permission\Models\{Permission, Role};
-use Tests\TestCase;
+use Modules\Notification\Enums\NotificationCategory;
+use Modules\Notification\Enums\NotificationChannel;
+use Modules\Notification\Models\NotificationTemplate;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
-class NotificationTemplateControllerTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    protected User $admin;
+beforeEach(function () {
+    $this->withoutVite();
 
-    protected User $user;
+    $permissions = [
+        'notifications.templates.view',
+        'notifications.templates.create',
+        'notifications.templates.edit',
+        'notifications.templates.delete',
+        'notifications.send',
+    ];
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->withoutVite();
-
-        $this->setupPermissions();
-
-        $adminRole = Role::create(['name' => 'super-admin']);
-        $adminRole->givePermissionTo(Permission::all());
-
-        $this->admin = User::factory()->create();
-        $this->admin->assignRole($adminRole);
-
-        $this->user = User::factory()->create();
+    foreach ($permissions as $permission) {
+        Permission::firstOrCreate(['name' => $permission]);
     }
 
-    protected function setupPermissions(): void
-    {
-        $permissions = [
-            'notifications.templates.view',
-            'notifications.templates.create',
-            'notifications.templates.edit',
-            'notifications.templates.delete',
-            'notifications.send',
-        ];
+    $adminRole = Role::create(['name' => 'super-admin']);
+    $adminRole->givePermissionTo(Permission::all());
 
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
-        }
-    }
+    $this->admin = User::factory()->create();
+    $this->admin->assignRole($adminRole);
 
-    public function test_admin_can_view_templates_index(): void
-    {
-        $response = $this->actingAs($this->admin)
-            ->get(route('dashboard.notifications.templates.index'));
+    $this->user = User::factory()->create();
+});
 
-        $response->assertStatus(200);
-    }
+test('admin can view templates index', function () {
+    $response = $this->actingAs($this->admin)
+        ->get(route('dashboard.notifications.templates.index'));
 
-    public function test_admin_can_view_create_template_page(): void
-    {
-        $response = $this->actingAs($this->admin)
-            ->get(route('dashboard.notifications.templates.create'));
+    $response->assertStatus(200);
+});
 
-        $response->assertStatus(200);
-    }
+test('admin can view create template page', function () {
+    $response = $this->actingAs($this->admin)
+        ->get(route('dashboard.notifications.templates.create'));
 
-    public function test_admin_can_create_template(): void
-    {
-        $data = [
-            'name' => 'Test Template',
-            'subject' => 'Test Subject',
-            'body' => 'Test body content',
-            'category' => NotificationCategory::SYSTEM->value,
-            'channels' => [NotificationChannel::DATABASE->value],
-            'variables' => ['user_name'],
-            'is_active' => true,
-        ];
+    $response->assertStatus(200);
+});
 
-        $response = $this->actingAs($this->admin)
-            ->post(route('dashboard.notifications.templates.store'), $data);
+test('admin can create template', function () {
+    $data = [
+        'name' => 'Test Template',
+        'subject' => 'Test Subject',
+        'body' => 'Test body content',
+        'category' => NotificationCategory::SYSTEM->value,
+        'channels' => [NotificationChannel::DATABASE->value],
+        'variables' => ['user_name'],
+        'is_active' => true,
+    ];
 
-        $response->assertRedirect(route('dashboard.notifications.templates.index'));
+    $response = $this->actingAs($this->admin)
+        ->post(route('dashboard.notifications.templates.store'), $data);
 
-        $this->assertDatabaseHas('notification_templates', [
-            'name' => 'Test Template',
-            'category' => 'system',
-        ]);
-    }
+    $response->assertRedirect(route('dashboard.notifications.templates.index'));
 
-    public function test_admin_can_view_edit_template_page(): void
-    {
-        $template = NotificationTemplate::factory()->create();
+    $this->assertDatabaseHas('notification_templates', [
+        'name' => 'Test Template',
+        'category' => 'system',
+    ]);
+});
 
-        $response = $this->actingAs($this->admin)
-            ->get(route('dashboard.notifications.templates.edit', $template));
+test('admin can view edit template page', function () {
+    $template = NotificationTemplate::factory()->create();
 
-        $response->assertStatus(200);
-    }
+    $response = $this->actingAs($this->admin)
+        ->get(route('dashboard.notifications.templates.edit', $template));
 
-    public function test_admin_can_update_template(): void
-    {
-        $template = NotificationTemplate::factory()->create([
-            'name' => 'Old Name',
-        ]);
+    $response->assertStatus(200);
+});
 
-        $data = [
-            'name' => 'Updated Name',
-            'subject' => 'Updated Subject',
-            'body' => 'Updated body',
-            'category' => NotificationCategory::MARKETING->value,
-            'channels' => [NotificationChannel::EMAIL->value],
-            'is_active' => false,
-        ];
+test('admin can update template', function () {
+    $template = NotificationTemplate::factory()->create([
+        'name' => 'Old Name',
+    ]);
 
-        $response = $this->actingAs($this->admin)
-            ->put(route('dashboard.notifications.templates.update', $template), $data);
+    $data = [
+        'name' => 'Updated Name',
+        'subject' => 'Updated Subject',
+        'body' => 'Updated body',
+        'category' => NotificationCategory::MARKETING->value,
+        'channels' => [NotificationChannel::EMAIL->value],
+        'is_active' => false,
+    ];
 
-        $response->assertRedirect(route('dashboard.notifications.templates.index'));
+    $response = $this->actingAs($this->admin)
+        ->put(route('dashboard.notifications.templates.update', $template), $data);
 
-        $this->assertDatabaseHas('notification_templates', [
-            'id' => $template->id,
-            'name' => 'Updated Name',
-        ]);
-    }
+    $response->assertRedirect(route('dashboard.notifications.templates.index'));
 
-    public function test_admin_can_delete_template(): void
-    {
-        $template = NotificationTemplate::factory()->create();
+    $this->assertDatabaseHas('notification_templates', [
+        'id' => $template->id,
+        'name' => 'Updated Name',
+    ]);
+});
 
-        $response = $this->actingAs($this->admin)
-            ->delete(route('dashboard.notifications.templates.destroy', $template));
+test('admin can delete template', function () {
+    $template = NotificationTemplate::factory()->create();
 
-        $response->assertRedirect(route('dashboard.notifications.templates.index'));
+    $response = $this->actingAs($this->admin)
+        ->delete(route('dashboard.notifications.templates.destroy', $template));
 
-        $this->assertSoftDeleted('notification_templates', ['id' => $template->id]);
-    }
+    $response->assertRedirect(route('dashboard.notifications.templates.index'));
 
-    public function test_admin_can_toggle_template_status(): void
-    {
-        $template = NotificationTemplate::factory()->create(['is_active' => true]);
+    $this->assertSoftDeleted('notification_templates', ['id' => $template->id]);
+});
 
-        $response = $this->actingAs($this->admin)
-            ->postJson(route('dashboard.notifications.templates.toggle-status', $template));
+test('admin can toggle template status', function () {
+    $template = NotificationTemplate::factory()->create(['is_active' => true]);
 
-        $response->assertStatus(200);
-        $response->assertJson(['is_active' => false]);
+    $response = $this->actingAs($this->admin)
+        ->postJson(route('dashboard.notifications.templates.toggle-status', $template));
 
-        $template->refresh();
-        $this->assertFalse($template->is_active);
-    }
+    $response->assertStatus(200);
+    $response->assertJson(['is_active' => false]);
 
-    public function test_regular_user_cannot_access_templates(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->get(route('dashboard.notifications.templates.index'));
+    $template->refresh();
+    expect($template->is_active)->toBeFalse();
+});
 
-        $response->assertStatus(403);
-    }
+test('regular user cannot access templates', function () {
+    $response = $this->actingAs($this->user)
+        ->get(route('dashboard.notifications.templates.index'));
 
-    public function test_create_template_validates_required_fields(): void
-    {
-        $response = $this->actingAs($this->admin)
-            ->post(route('dashboard.notifications.templates.store'), []);
+    $response->assertStatus(403);
+});
 
-        $response->assertSessionHasErrors(['name', 'subject', 'body', 'category', 'channels']);
-    }
-}
+test('create template validates required fields', function () {
+    $response = $this->actingAs($this->admin)
+        ->post(route('dashboard.notifications.templates.store'), []);
+
+    $response->assertSessionHasErrors(['name', 'subject', 'body', 'category', 'channels']);
+});

@@ -1,12 +1,12 @@
-import { AuthenticatedLayout } from '@/layouts'
-import { Main } from '@/components/layout/main'
-import { PlanForm } from './components/plan-form'
-import type { Currency, Category } from '@modules/Finance/types/finance'
+import type { Category, Currency } from "@modules/Finance/types/finance";
+import { Main } from "@/components/layout/main";
+import { AuthenticatedLayout } from "@/layouts";
+import { PlanForm } from "./components/plan-form";
 
 interface Props {
-  currencies: Currency[]
-  categories: Category[]
-  currentYear: number
+  currencies: Currency[];
+  categories: Category[];
+  currentYear: number;
 }
 
 export default function PlansCreate({ currencies, categories, currentYear }: Props) {
@@ -20,12 +20,8 @@ export default function PlansCreate({ currencies, categories, currentYear }: Pro
           </p>
         </div>
 
-        <PlanForm
-          currencies={currencies}
-          categories={categories}
-          currentYear={currentYear}
-        />
+        <PlanForm currencies={currencies} categories={categories} currentYear={currentYear} />
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

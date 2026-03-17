@@ -1,56 +1,42 @@
-import {AuthenticatedLayout} from "@/layouts"
-import {
-  ChevronLeft,
-  CalendarIcon,
-  X,
-} from "lucide-react"
-import { useTranslation } from "react-i18next"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { router } from "@inertiajs/react";
+import type { Content } from "@tiptap/react";
+import { format } from "date-fns";
+import { CalendarIcon, ChevronLeft, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Main } from "@/components/layout";
+import { MediaUploader } from "@/components/MediaLibrary";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { MinimalTiptapEditor } from "@/components/ui/minimal-tiptap";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import {Badge} from "@/components/ui/badge"
-import {Button} from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Switch } from "@/components/ui/switch"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
-import { Main } from "@/components/layout"
-import { Content } from "@tiptap/react"
-import { MinimalTiptapEditor } from "@/components/ui/minimal-tiptap"
-import { useState, useEffect } from "react"
-import { BlogCategory, BlogTag, BlogPostFormData, BlogPost } from "@/types/blog"
-import { router } from "@inertiajs/react"
-import { PageProps } from "@/types"
-import { useToast } from "@/hooks/use-toast"
-import { MediaUploader } from "@/components/MediaLibrary"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { AuthenticatedLayout } from "@/layouts";
+import { cn } from "@/lib/utils";
+import type { PageProps } from "@/types";
+import type { BlogCategory, BlogPost, BlogPostFormData, BlogTag } from "@/types/blog";
 
 interface EditBlogPostPageProps extends PageProps {
-  post: BlogPost
-  categories: BlogCategory[]
-  tags: BlogTag[]
+  post: BlogPost;
+  categories: BlogCategory[];
+  tags: BlogTag[];
 }
 
 export default function EditBlogPost({ post, categories, tags }: EditBlogPostPageProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const [data, setData] = useState<BlogPostFormData>({
     title: post.title,
     slug: post.slug,
@@ -60,497 +46,519 @@ export default function EditBlogPost({ post, categories, tags }: EditBlogPostPag
     status: post.status,
     is_featured: post.is_featured,
     category_id: post.category?.id,
-    tag_ids: post.tags?.map(tag => tag.id) || [],
+    tag_ids: post.tags?.map((tag) => tag.id) || [],
     published_at: post.published_at ? new Date(post.published_at).toISOString().slice(0, 16) : "",
     meta_title: post.meta_title || "",
     meta_description: post.meta_description || "",
-  })
+  });
 
   // Helper function to generate slug from title
   const generateSlug = (text: string) => {
     return text
       .toLowerCase()
       .trim()
-      .replace(/[^\w\s-]/g, '') // Remove special characters
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-  }
+      .replace(/[^\w\s-]/g, "") // Remove special characters
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
+      .replace(/-+/g, "-"); // Replace multiple hyphens with single hyphen
+  };
 
-  const [content, setContent] = useState<Content>(post.content)
-  const [featuredImageFiles, setFeaturedImageFiles] = useState<File[]>([])
-  const [removeFeaturedImage, setRemoveFeaturedImage] = useState(false)
+  const [content, setContent] = useState<Content>(post.content);
+  const [featuredImageFiles, setFeaturedImageFiles] = useState<File[]>([]);
+  const [removeFeaturedImage, setRemoveFeaturedImage] = useState(false);
   const [publishedDate, setPublishedDate] = useState<Date | undefined>(
-    post.published_at ? new Date(post.published_at) : undefined
-  )
-  const [publishedDateOpen, setPublishedDateOpen] = useState(false)
+    post.published_at ? new Date(post.published_at) : undefined,
+  );
+  const [publishedDateOpen, setPublishedDateOpen] = useState(false);
   const [publishedTime, setPublishedTime] = useState<string>(() => {
     if (post.published_at) {
-      const date = new Date(post.published_at)
-      return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+      const date = new Date(post.published_at);
+      return `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
     }
-    return "12:00"
-  })
-  const [processing, setProcessing] = useState(false)
-  const { toast } = useToast()
+    return "12:00";
+  });
+  const [processing, setProcessing] = useState(false);
+  const { toast } = useToast();
 
   // Prepare initial media for MediaUploader
-  const initialMedia = post.featured_image_url ? [{
-    uuid: `post-${post.id}-featured`,
-    name: 'Featured Image',
-    file_name: 'featured-image.jpg',
-    mime_type: 'image/jpeg',
-    size: 0,
-    preview_url: post.featured_image_url,
-  }] : []
+  const initialMedia = post.featured_image_url
+    ? [
+        {
+          uuid: `post-${post.id}-featured`,
+          name: "Featured Image",
+          file_name: "featured-image.jpg",
+          mime_type: "image/jpeg",
+          size: 0,
+          preview_url: post.featured_image_url,
+        },
+      ]
+    : [];
 
   useEffect(() => {
-    setContent(post.content)
-  }, [post.content])
+    setContent(post.content);
+  }, [post.content]);
 
   const handleFeaturedImageChange = (files: File[]) => {
-    setFeaturedImageFiles(files)
+    setFeaturedImageFiles(files);
     if (files.length > 0) {
-      setRemoveFeaturedImage(false)
+      setRemoveFeaturedImage(false);
     }
-  }
+  };
 
-  const handleRemoveMedia = (uuid: string) => {
-    setRemoveFeaturedImage(true)
-  }
+  const handleRemoveMedia = (_uuid: string) => {
+    setRemoveFeaturedImage(true);
+  };
 
   const handleTagToggle = (tagId: number) => {
     const updatedTags = data.tag_ids.includes(tagId)
-      ? data.tag_ids.filter(id => id !== tagId)
-      : [...data.tag_ids, tagId]
+      ? data.tag_ids.filter((id) => id !== tagId)
+      : [...data.tag_ids, tagId];
 
-    setData(prev => ({ ...prev, tag_ids: updatedTags }))
-  }
+    setData((prev) => ({ ...prev, tag_ids: updatedTags }));
+  };
 
   const handleContentChange = (value: Content) => {
-    setContent(value)
-    setData(prev => ({ ...prev, content: value as string }))
-  }
+    setContent(value);
+    setData((prev) => ({ ...prev, content: value as string }));
+  };
 
-  const handleSubmit = (status?: 'draft' | 'published') => {
-    setProcessing(true)
+  const handleSubmit = (status?: "draft" | "published") => {
+    setProcessing(true);
 
-    const formData = new FormData()
+    const formData = new FormData();
 
     // Add all form fields
-    formData.append('title', data.title)
+    formData.append("title", data.title);
     if (data.slug) {
-      formData.append('slug', data.slug)
+      formData.append("slug", data.slug);
     }
-    formData.append('content', data.content)
+    formData.append("content", data.content);
     if (data.excerpt) {
-      formData.append('excerpt', data.excerpt)
+      formData.append("excerpt", data.excerpt);
     }
-    formData.append('status', status || data.status)
-    formData.append('is_featured', data.is_featured ? '1' : '0')
+    formData.append("status", status || data.status);
+    formData.append("is_featured", data.is_featured ? "1" : "0");
 
     if (data.category_id) {
-      formData.append('category_id', data.category_id.toString())
+      formData.append("category_id", data.category_id.toString());
     }
 
     // Add tags
     data.tag_ids.forEach((tagId, index) => {
-      formData.append(`tag_ids[${index}]`, tagId.toString())
-    })
+      formData.append(`tag_ids[${index}]`, tagId.toString());
+    });
 
     // Add published_at
     if (publishedDate && publishedTime) {
-      const [hours, minutes] = publishedTime.split(':')
-      const dateTime = new Date(publishedDate)
-      dateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0)
-      formData.append('published_at', dateTime.toISOString())
-    } else if (status === 'published' || data.status === 'published') {
-      formData.append('published_at', new Date().toISOString())
+      const [hours, minutes] = publishedTime.split(":");
+      const dateTime = new Date(publishedDate);
+      dateTime.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+      formData.append("published_at", dateTime.toISOString());
+    } else if (status === "published" || data.status === "published") {
+      formData.append("published_at", new Date().toISOString());
     }
 
     // Add meta fields
     if (data.meta_title) {
-      formData.append('meta_title', data.meta_title)
+      formData.append("meta_title", data.meta_title);
     }
     if (data.meta_description) {
-      formData.append('meta_description', data.meta_description)
+      formData.append("meta_description", data.meta_description);
     }
 
     // Add featured image if selected
     if (featuredImageFiles.length > 0) {
-      formData.append('featured_image', featuredImageFiles[0])
+      formData.append("featured_image", featuredImageFiles[0]);
     } else if (removeFeaturedImage) {
       // If user removed the existing featured image
-      formData.append('remove_featured_image', '1')
+      formData.append("remove_featured_image", "1");
     }
 
     // Add _method for PUT request
-    formData.append('_method', 'PUT')
+    formData.append("_method", "PUT");
 
-    router.post(route('dashboard.posts.update', post.slug), formData, {
+    router.post(route("dashboard.posts.update", post.slug), formData, {
       forceFormData: true,
       onSuccess: () => {
-        setProcessing(false)
+        setProcessing(false);
         toast({
-          title: t('page.blog.posts.toast.updated_title'),
-          description: t('page.blog.posts.toast.updated_description'),
-        })
+          title: t("page.blog.posts.toast.updated_title"),
+          description: t("page.blog.posts.toast.updated_description"),
+        });
       },
       onError: (errors) => {
-        setProcessing(false)
-        console.error('Validation errors:', errors)
+        setProcessing(false);
+        console.error("Validation errors:", errors);
         toast({
           variant: "destructive",
-          title: t('page.blog.posts.toast.error_updating'),
-          description: t('page.blog.posts.toast.check_form'),
-        })
-      }
-    })
-  }
+          title: t("page.blog.posts.toast.error_updating"),
+          description: t("page.blog.posts.toast.check_form"),
+        });
+      },
+    });
+  };
 
-  const selectedTagObjects = tags.filter(tag => data.tag_ids.includes(tag.id))
+  const selectedTagObjects = tags.filter((tag) => data.tag_ids.includes(tag.id));
 
   return (
-    <>
-      <AuthenticatedLayout title={t('page.blog.posts.edit.title', { title: post.title })}>
-        <Main>
-          <div className="grid flex-1 items-start gap-4 md:gap-8">
-            <div className="grid flex-1 auto-rows-max gap-4">
-              <div className="flex items-center gap-4">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={() => window.history.back()}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  <span className="sr-only">{t('common.actions.back')}</span>
-                </Button>
-                <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-                  {t('page.blog.posts.edit.title_short')}
-                </h1>
-                <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleSubmit('draft')}
-                    disabled={processing}
-                  >
-                    {t('page.blog.posts.actions.save_draft')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => handleSubmit()}
-                    disabled={processing}
-                  >
-                    {processing ? t('page.blog.posts.actions.updating') : t('page.blog.posts.actions.update_post')}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-[1fr_350px] lg:gap-8">
-                <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>{t('page.blog.posts.form.details_title')}</CardTitle>
-                      <CardDescription>
-                        {t('page.blog.posts.form.update_details_description')}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid gap-6">
-                        <div className="grid gap-3">
-                          <Label htmlFor="title">{t('page.blog.posts.form.title_label')}</Label>
-                          <Input
-                            id="title"
-                            type="text"
-                            className="w-full"
-                            placeholder={t('page.blog.posts.form.title_placeholder')}
-                            value={data.title}
-                            onChange={(e) => setData(prev => ({ ...prev, title: e.target.value }))}
-                          />
-                        </div>
-
-                        <div className="grid gap-3">
-                          <div className="flex items-center justify-between">
-                            <Label htmlFor="slug">{t('page.blog.posts.form.slug')}</Label>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setData(prev => ({ ...prev, slug: generateSlug(data.title) }))}
-                              className="h-7 text-xs"
-                            >
-                              {t('page.blog.posts.form.auto_generate')}
-                            </Button>
-                          </div>
-                          <Input
-                            id="slug"
-                            type="text"
-                            className="w-full font-mono text-sm"
-                            placeholder={t('page.blog.posts.form.slug_placeholder')}
-                            value={data.slug}
-                            onChange={(e) => setData(prev => ({ ...prev, slug: e.target.value }))}
-                          />
-                          <p className="text-xs text-muted-foreground">
-                            {t('page.blog.posts.form.slug_url', { slug: data.slug || 'your-post-slug' })}
-                          </p>
-                        </div>
-
-                        <div className="grid gap-3">
-                          <Label htmlFor="excerpt">{t('page.blog.posts.form.excerpt')}</Label>
-                          <Textarea
-                            id="excerpt"
-                            placeholder={t('page.blog.posts.form.excerpt_placeholder')}
-                            className="min-h-20"
-                            value={data.excerpt}
-                            onChange={(e) => setData(prev => ({ ...prev, excerpt: e.target.value }))}
-                          />
-                        </div>
-
-                        <div className="grid gap-3">
-                          <Label htmlFor="content">{t('page.blog.posts.form.content')}</Label>
-                          <MinimalTiptapEditor
-                            value={content}
-                            onChange={handleContentChange}
-                            className="w-full"
-                            editorContentClassName="p-5"
-                            output="html"
-                            placeholder={t('page.blog.posts.form.content_placeholder')}
-                            autofocus={false}
-                            editable={true}
-                            editorClassName="focus:outline-none min-h-[400px]"
-                          />
-                        </div>
-
-                        <div className="grid gap-3">
-                          <Label htmlFor="meta_title">{t('page.blog.posts.form.seo_title')}</Label>
-                          <Input
-                            id="meta_title"
-                            type="text"
-                            placeholder={t('page.blog.posts.form.seo_title_placeholder')}
-                            value={data.meta_title}
-                            onChange={(e) => setData(prev => ({ ...prev, meta_title: e.target.value }))}
-                          />
-                        </div>
-
-                        <div className="grid gap-3">
-                          <Label htmlFor="meta_description">{t('page.blog.posts.form.seo_description')}</Label>
-                          <Textarea
-                            id="meta_description"
-                            placeholder={t('page.blog.posts.form.seo_description_placeholder')}
-                            className="min-h-20"
-                            value={data.meta_description}
-                            onChange={(e) => setData(prev => ({ ...prev, meta_description: e.target.value }))}
-                          />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>{t('page.blog.posts.form.publication')}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="grid gap-3">
-                        <Label htmlFor="status">{t('common.fields.status')}</Label>
-                        <Select
-                          value={data.status}
-                          onValueChange={(value: 'draft' | 'published' | 'archived' | 'scheduled') =>
-                            setData(prev => ({ ...prev, status: value }))
-                          }
-                        >
-                          <SelectTrigger id="status">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="draft">{t('common.statuses.draft')}</SelectItem>
-                            <SelectItem value="published">{t('common.statuses.published')}</SelectItem>
-                            <SelectItem value="scheduled">{t('common.statuses.scheduled')}</SelectItem>
-                            <SelectItem value="archived">{t('common.statuses.archived')}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        <Switch
-                          id="featured"
-                          checked={data.is_featured}
-                          onCheckedChange={(checked) => setData(prev => ({ ...prev, is_featured: checked }))}
-                        />
-                        <Label htmlFor="featured" className="text-sm font-medium">
-                          {t('page.blog.posts.form.featured_post')}
-                        </Label>
-                      </div>
-
-                      {(data.status === 'published' || data.status === 'scheduled') && (
-                        <>
-                          <div className="grid gap-3">
-                            <Label>{t('page.blog.posts.form.publication_date')}</Label>
-                            <Popover open={publishedDateOpen} onOpenChange={setPublishedDateOpen}>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  className={cn(
-                                    "w-full justify-start text-left font-normal",
-                                    !publishedDate && "text-muted-foreground"
-                                  )}
-                                >
-                                  <CalendarIcon className="mr-2 h-4 w-4" />
-                                  {publishedDate ? format(publishedDate, "PPP") : <span>{t('page.blog.posts.form.pick_date')}</span>}
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar
-                                  mode="single"
-                                  selected={publishedDate}
-                                  defaultMonth={publishedDate}
-                                  onSelect={(date) => {
-                                    setPublishedDate(date)
-                                    setPublishedDateOpen(false)
-                                  }}
-                                  initialFocus
-                                  captionLayout="dropdown"
-                                  fromYear={2000}
-                                  toYear={new Date().getFullYear() + 10}
-                                />
-                              </PopoverContent>
-                            </Popover>
-                          </div>
-                          <div className="grid gap-3">
-                            <Label htmlFor="published_time">{t('page.blog.posts.form.publication_time')}</Label>
-                            <Input
-                              id="published_time"
-                              type="time"
-                              value={publishedTime}
-                              onChange={(e) => setPublishedTime(e.target.value)}
-                            />
-                          </div>
-                        </>
-                      )}
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>{t('page.blog.posts.form.featured_image')}</CardTitle>
-                      <CardDescription>
-                        {t('page.blog.posts.form.featured_image_description')}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <MediaUploader
-                        name="featured_image"
-                        initialMedia={initialMedia}
-                        multiple={false}
-                        maxFiles={1}
-                        acceptedFileTypes={['image/jpeg', 'image/png', 'image/webp', 'image/jpg']}
-                        maxFileSize={5}
-                        onChange={handleFeaturedImageChange}
-                        onRemove={handleRemoveMedia}
-                      />
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>{t('common.fields.category')}</CardTitle>
-                      <CardDescription>
-                        {t('page.blog.posts.form.category_description')}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Select
-                        value={data.category_id?.toString() || ""}
-                        onValueChange={(value) => setData(prev => ({ ...prev, category_id: parseInt(value) }))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('page.blog.posts.form.select_category')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category.id} value={category.id.toString()}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>{t('page.blog.posts.tags')}</CardTitle>
-                      <CardDescription>
-                        {t('page.blog.posts.form.tags_description')}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-2">
-                          {tags.map((tag) => (
-                            <Button
-                              key={tag.id}
-                              variant={data.tag_ids.includes(tag.id) ? "default" : "outline"}
-                              size="sm"
-                              onClick={() => handleTagToggle(tag.id)}
-                              className="justify-start"
-                            >
-                              {data.tag_ids.includes(tag.id) && (
-                                <X className="mr-1 h-3 w-3" />
-                              )}
-                              {tag.name}
-                            </Button>
-                          ))}
-                        </div>
-
-                        {selectedTagObjects.length > 0 && (
-                          <div>
-                            <Label className="text-sm font-medium mb-2 block">
-                              {t('page.blog.posts.form.selected_tags', { count: selectedTagObjects.length })}
-                            </Label>
-                            <div className="flex flex-wrap gap-1">
-                              {selectedTagObjects.map((tag) => (
-                                <Badge key={tag.id} variant="secondary" className="text-xs">
-                                  {tag.name}
-                                  <X
-                                    className="ml-1 h-3 w-3 cursor-pointer"
-                                    onClick={() => handleTagToggle(tag.id)}
-                                  />
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-center gap-2 md:hidden">
+    <AuthenticatedLayout title={t("page.blog.posts.edit.title", { title: post.title })}>
+      <Main>
+        <div className="grid flex-1 items-start gap-4 md:gap-8">
+          <div className="grid flex-1 auto-rows-max gap-4">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => window.history.back()}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">{t("common.actions.back")}</span>
+              </Button>
+              <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
+                {t("page.blog.posts.edit.title_short")}
+              </h1>
+              <div className="hidden items-center gap-2 md:ml-auto md:flex">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleSubmit('draft')}
+                  onClick={() => handleSubmit("draft")}
                   disabled={processing}
                 >
-                  {t('page.blog.posts.actions.save_draft')}
+                  {t("page.blog.posts.actions.save_draft")}
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={() => handleSubmit()}
-                  disabled={processing}
-                >
-                  {processing ? t('page.blog.posts.actions.updating') : t('page.blog.posts.actions.update_post')}
+                <Button size="sm" onClick={() => handleSubmit()} disabled={processing}>
+                  {processing
+                    ? t("page.blog.posts.actions.updating")
+                    : t("page.blog.posts.actions.update_post")}
                 </Button>
               </div>
             </div>
+
+            <div className="grid gap-4 md:grid-cols-[1fr_350px] lg:gap-8">
+              <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t("page.blog.posts.form.details_title")}</CardTitle>
+                    <CardDescription>
+                      {t("page.blog.posts.form.update_details_description")}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-6">
+                      <div className="grid gap-3">
+                        <Label htmlFor="title">{t("page.blog.posts.form.title_label")}</Label>
+                        <Input
+                          id="title"
+                          type="text"
+                          className="w-full"
+                          placeholder={t("page.blog.posts.form.title_placeholder")}
+                          value={data.title}
+                          onChange={(e) => setData((prev) => ({ ...prev, title: e.target.value }))}
+                        />
+                      </div>
+
+                      <div className="grid gap-3">
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="slug">{t("page.blog.posts.form.slug")}</Label>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              setData((prev) => ({ ...prev, slug: generateSlug(data.title) }))
+                            }
+                            className="h-7 text-xs"
+                          >
+                            {t("page.blog.posts.form.auto_generate")}
+                          </Button>
+                        </div>
+                        <Input
+                          id="slug"
+                          type="text"
+                          className="w-full font-mono text-sm"
+                          placeholder={t("page.blog.posts.form.slug_placeholder")}
+                          value={data.slug}
+                          onChange={(e) => setData((prev) => ({ ...prev, slug: e.target.value }))}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          {t("page.blog.posts.form.slug_url", {
+                            slug: data.slug || "your-post-slug",
+                          })}
+                        </p>
+                      </div>
+
+                      <div className="grid gap-3">
+                        <Label htmlFor="excerpt">{t("page.blog.posts.form.excerpt")}</Label>
+                        <Textarea
+                          id="excerpt"
+                          placeholder={t("page.blog.posts.form.excerpt_placeholder")}
+                          className="min-h-20"
+                          value={data.excerpt}
+                          onChange={(e) =>
+                            setData((prev) => ({ ...prev, excerpt: e.target.value }))
+                          }
+                        />
+                      </div>
+
+                      <div className="grid gap-3">
+                        <Label htmlFor="content">{t("page.blog.posts.form.content")}</Label>
+                        <MinimalTiptapEditor
+                          value={content}
+                          onChange={handleContentChange}
+                          className="w-full"
+                          editorContentClassName="p-5"
+                          output="html"
+                          placeholder={t("page.blog.posts.form.content_placeholder")}
+                          autofocus={false}
+                          editable={true}
+                          editorClassName="focus:outline-hidden min-h-[400px]"
+                        />
+                      </div>
+
+                      <div className="grid gap-3">
+                        <Label htmlFor="meta_title">{t("page.blog.posts.form.seo_title")}</Label>
+                        <Input
+                          id="meta_title"
+                          type="text"
+                          placeholder={t("page.blog.posts.form.seo_title_placeholder")}
+                          value={data.meta_title}
+                          onChange={(e) =>
+                            setData((prev) => ({ ...prev, meta_title: e.target.value }))
+                          }
+                        />
+                      </div>
+
+                      <div className="grid gap-3">
+                        <Label htmlFor="meta_description">
+                          {t("page.blog.posts.form.seo_description")}
+                        </Label>
+                        <Textarea
+                          id="meta_description"
+                          placeholder={t("page.blog.posts.form.seo_description_placeholder")}
+                          className="min-h-20"
+                          value={data.meta_description}
+                          onChange={(e) =>
+                            setData((prev) => ({ ...prev, meta_description: e.target.value }))
+                          }
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t("page.blog.posts.form.publication")}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid gap-3">
+                      <Label htmlFor="status">{t("common.fields.status")}</Label>
+                      <Select
+                        value={data.status}
+                        onValueChange={(value: "draft" | "published" | "archived" | "scheduled") =>
+                          setData((prev) => ({ ...prev, status: value }))
+                        }
+                      >
+                        <SelectTrigger id="status">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="draft">{t("common.statuses.draft")}</SelectItem>
+                          <SelectItem value="published">
+                            {t("common.statuses.published")}
+                          </SelectItem>
+                          <SelectItem value="scheduled">
+                            {t("common.statuses.scheduled")}
+                          </SelectItem>
+                          <SelectItem value="archived">{t("common.statuses.archived")}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        id="featured"
+                        checked={data.is_featured}
+                        onCheckedChange={(checked) =>
+                          setData((prev) => ({ ...prev, is_featured: checked }))
+                        }
+                      />
+                      <Label htmlFor="featured" className="text-sm font-medium">
+                        {t("page.blog.posts.form.featured_post")}
+                      </Label>
+                    </div>
+
+                    {(data.status === "published" || data.status === "scheduled") && (
+                      <>
+                        <div className="grid gap-3">
+                          <Label>{t("page.blog.posts.form.publication_date")}</Label>
+                          <Popover open={publishedDateOpen} onOpenChange={setPublishedDateOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full justify-start text-left font-normal",
+                                  !publishedDate && "text-muted-foreground",
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {publishedDate ? (
+                                  format(publishedDate, "PPP")
+                                ) : (
+                                  <span>{t("page.blog.posts.form.pick_date")}</span>
+                                )}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={publishedDate}
+                                defaultMonth={publishedDate}
+                                onSelect={(date) => {
+                                  setPublishedDate(date);
+                                  setPublishedDateOpen(false);
+                                }}
+                                initialFocus
+                                captionLayout="dropdown"
+                                fromYear={2000}
+                                toYear={new Date().getFullYear() + 10}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                        <div className="grid gap-3">
+                          <Label htmlFor="published_time">
+                            {t("page.blog.posts.form.publication_time")}
+                          </Label>
+                          <Input
+                            id="published_time"
+                            type="time"
+                            value={publishedTime}
+                            onChange={(e) => setPublishedTime(e.target.value)}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t("page.blog.posts.form.featured_image")}</CardTitle>
+                    <CardDescription>
+                      {t("page.blog.posts.form.featured_image_description")}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <MediaUploader
+                      name="featured_image"
+                      initialMedia={initialMedia}
+                      multiple={false}
+                      maxFiles={1}
+                      acceptedFileTypes={["image/jpeg", "image/png", "image/webp", "image/jpg"]}
+                      maxFileSize={5}
+                      onChange={handleFeaturedImageChange}
+                      onRemove={handleRemoveMedia}
+                    />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t("common.fields.category")}</CardTitle>
+                    <CardDescription>
+                      {t("page.blog.posts.form.category_description")}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Select
+                      value={data.category_id?.toString() || ""}
+                      onValueChange={(value) =>
+                        setData((prev) => ({ ...prev, category_id: parseInt(value, 10) }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("page.blog.posts.form.select_category")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id.toString()}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t("page.blog.posts.tags")}</CardTitle>
+                    <CardDescription>{t("page.blog.posts.form.tags_description")}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-2">
+                        {tags.map((tag) => (
+                          <Button
+                            key={tag.id}
+                            variant={data.tag_ids.includes(tag.id) ? "default" : "outline-solid"}
+                            size="sm"
+                            onClick={() => handleTagToggle(tag.id)}
+                            className="justify-start"
+                          >
+                            {data.tag_ids.includes(tag.id) && <X className="mr-1 h-3 w-3" />}
+                            {tag.name}
+                          </Button>
+                        ))}
+                      </div>
+
+                      {selectedTagObjects.length > 0 && (
+                        <div>
+                          <Label className="text-sm font-medium mb-2 block">
+                            {t("page.blog.posts.form.selected_tags", {
+                              count: selectedTagObjects.length,
+                            })}
+                          </Label>
+                          <div className="flex flex-wrap gap-1">
+                            {selectedTagObjects.map((tag) => (
+                              <Badge key={tag.id} variant="secondary" className="text-xs">
+                                {tag.name}
+                                <X
+                                  className="ml-1 h-3 w-3 cursor-pointer"
+                                  onClick={() => handleTagToggle(tag.id)}
+                                />
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 md:hidden">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleSubmit("draft")}
+                disabled={processing}
+              >
+                {t("page.blog.posts.actions.save_draft")}
+              </Button>
+              <Button size="sm" onClick={() => handleSubmit()} disabled={processing}>
+                {processing
+                  ? t("page.blog.posts.actions.updating")
+                  : t("page.blog.posts.actions.update_post")}
+              </Button>
+            </div>
           </div>
-        </Main>
-      </AuthenticatedLayout>
-    </>
-  )
+        </div>
+      </Main>
+    </AuthenticatedLayout>
+  );
 }

@@ -3,6 +3,7 @@
 namespace Modules\Invoice\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Support\DbHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -90,7 +91,7 @@ class InvoiceReportController extends Controller
         $phpFormat = $groupBy === 'day' ? 'Y-m-d' : 'Y-m';
 
         $invoices = Invoice::select(
-            DB::raw("DATE_FORMAT(invoice_date, '{$dateFormat}') as period"),
+            DB::raw(DbHelper::dateFormat('invoice_date', $dateFormat).' as period'),
             'status',
             DB::raw('SUM(total) as total'),
             DB::raw('COUNT(*) as count')

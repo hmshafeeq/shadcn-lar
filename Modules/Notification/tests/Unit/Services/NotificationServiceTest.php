@@ -1,218 +1,194 @@
 <?php
 
-namespace Modules\Notification\Tests\Unit\Services;
-
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
-use Modules\Notification\{
-    Enums\NotificationCategory,
-    Enums\NotificationChannel,
-    Models\NotificationTemplate,
-    Notifications\GenericNotification,
-    Services\NotificationService
-};
+use Modules\Notification\Enums\NotificationCategory;
+use Modules\Notification\Enums\NotificationChannel;
+use Modules\Notification\Models\NotificationTemplate;
+use Modules\Notification\Notifications\GenericNotification;
+use Modules\Notification\Services\NotificationService;
 use Spatie\Permission\Models\Role;
-use Tests\TestCase;
 
-class NotificationServiceTest extends TestCase
-{
-    use RefreshDatabase;
+uses(Tests\TestCase::class, RefreshDatabase::class);
 
-    protected NotificationService $service;
+beforeEach(function () {
+    $this->service = new NotificationService;
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->service = new NotificationService;
-    }
+test('send to user', function () {
+    Notification::fake();
 
-    public function test_send_to_user(): void
-    {
-        Notification::fake();
+    $user = User::factory()->create();
 
-        $user = User::factory()->create();
+    $this->service->sendToUser(
+        user: $user,
+        title: 'Test Notification',
+        message: 'This is a test',
+        category: NotificationCategory::SYSTEM,
+    );
 
-        $this->service->sendToUser(
-            user: $user,
-            title: 'Test Notification',
-            message: 'This is a test',
-            category: NotificationCategory::SYSTEM,
-        );
+    Notification::assertSentTo($user, GenericNotification::class);
+});
 
-        Notification::assertSentTo($user, GenericNotification::class);
-    }
+test('send to users', function () {
+    Notification::fake();
 
-    public function test_send_to_users(): void
-    {
-        Notification::fake();
+    $users = User::factory()->count(3)->create();
 
-        $users = User::factory()->count(3)->create();
+    $this->service->sendToUsers(
+        users: $users,
+        title: 'Bulk Notification',
+        message: 'Sent to all',
+        category: NotificationCategory::MARKETING,
+    );
 
-        $this->service->sendToUsers(
-            users: $users,
-            title: 'Bulk Notification',
-            message: 'Sent to all',
-            category: NotificationCategory::MARKETING,
-        );
+    Notification::assertSentTo($users, GenericNotification::class);
+});
 
-        Notification::assertSentTo($users, GenericNotification::class);
-    }
+test('send to role', function () {
+    Notification::fake();
 
-    public function test_send_to_role(): void
-    {
-        Notification::fake();
+    $role = Role::create(['name' => 'admin']);
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole($role);
 
-        $role = Role::create(['name' => 'admin']);
-        $adminUser = User::factory()->create();
-        $adminUser->assignRole($role);
+    $regularUser = User::factory()->create();
 
-        $regularUser = User::factory()->create();
+    $this->service->sendToRole(
+        role: 'admin',
+        title: 'Admin Only',
+        message: 'For admins',
+        category: NotificationCategory::SYSTEM,
+    );
 
-        $this->service->sendToRole(
-            role: 'admin',
-            title: 'Admin Only',
-            message: 'For admins',
-            category: NotificationCategory::SYSTEM,
-        );
+    Notification::assertSentTo($adminUser, GenericNotification::class);
+    Notification::assertNotSentTo($regularUser, GenericNotification::class);
+});
 
-        Notification::assertSentTo($adminUser, GenericNotification::class);
-        Notification::assertNotSentTo($regularUser, GenericNotification::class);
-    }
+test('broadcast', function () {
+    Notification::fake();
 
-    public function test_broadcast(): void
-    {
-        Notification::fake();
+    $users = User::factory()->count(5)->create();
 
-        $users = User::factory()->count(5)->create();
+    $this->service->broadcast(
+        title: 'Broadcast',
+        message: 'To everyone',
+        category: NotificationCategory::COMMUNICATION,
+    );
 
-        $this->service->broadcast(
-            title: 'Broadcast',
-            message: 'To everyone',
-            category: NotificationCategory::COMMUNICATION,
-        );
+    Notification::assertSentTo($users, GenericNotification::class);
+});
 
-        Notification::assertSentTo($users, GenericNotification::class);
-    }
+test('send from template', function () {
+    Notification::fake();
 
-    public function test_send_from_template(): void
-    {
-        Notification::fake();
+    $user = User::factory()->create();
+    $template = NotificationTemplate::factory()->create([
+        'subject' => 'Hello {{ name }}',
+        'body' => 'Welcome {{ name }}!',
+        'category' => NotificationCategory::COMMUNICATION,
+        'channels' => ['database'],
+    ]);
 
-        $user = User::factory()->create();
-        $template = NotificationTemplate::factory()->create([
-            'subject' => 'Hello {{ name }}',
-            'body' => 'Welcome {{ name }}!',
-            'category' => NotificationCategory::COMMUNICATION,
-            'channels' => ['database'],
-        ]);
+    $this->service->sendFromTemplate(
+        template: $template,
+        recipients: $user,
+        variables: ['name' => 'John'],
+    );
 
-        $this->service->sendFromTemplate(
-            template: $template,
-            recipients: $user,
-            variables: ['name' => 'John'],
-        );
+    Notification::assertSentTo($user, GenericNotification::class);
+});
 
-        Notification::assertSentTo($user, GenericNotification::class);
-    }
+test('send from template to multiple users', function () {
+    Notification::fake();
 
-    public function test_send_from_template_to_multiple_users(): void
-    {
-        Notification::fake();
+    $users = User::factory()->count(3)->create();
+    $template = NotificationTemplate::factory()->create([
+        'subject' => 'Announcement',
+        'body' => 'Important update!',
+        'category' => NotificationCategory::SYSTEM,
+    ]);
 
-        $users = User::factory()->count(3)->create();
-        $template = NotificationTemplate::factory()->create([
-            'subject' => 'Announcement',
-            'body' => 'Important update!',
-            'category' => NotificationCategory::SYSTEM,
-        ]);
+    $this->service->sendFromTemplate(
+        template: $template,
+        recipients: $users,
+    );
 
-        $this->service->sendFromTemplate(
-            template: $template,
-            recipients: $users,
-        );
+    Notification::assertSentTo($users, GenericNotification::class);
+});
 
-        Notification::assertSentTo($users, GenericNotification::class);
-    }
+test('send from template by slug', function () {
+    Notification::fake();
 
-    public function test_send_from_template_by_slug(): void
-    {
-        Notification::fake();
+    $user = User::factory()->create();
+    NotificationTemplate::factory()->create([
+        'slug' => 'welcome-email',
+        'subject' => 'Welcome!',
+        'body' => 'Hello there!',
+        'category' => NotificationCategory::COMMUNICATION,
+        'is_active' => true,
+    ]);
 
-        $user = User::factory()->create();
-        NotificationTemplate::factory()->create([
-            'slug' => 'welcome-email',
-            'subject' => 'Welcome!',
-            'body' => 'Hello there!',
-            'category' => NotificationCategory::COMMUNICATION,
-            'is_active' => true,
-        ]);
+    $this->service->sendFromTemplateBySlug(
+        slug: 'welcome-email',
+        recipients: $user,
+    );
 
-        $this->service->sendFromTemplateBySlug(
-            slug: 'welcome-email',
-            recipients: $user,
-        );
+    Notification::assertSentTo($user, GenericNotification::class);
+});
 
-        Notification::assertSentTo($user, GenericNotification::class);
-    }
+test('send from template by slug fails for inactive', function () {
+    $user = User::factory()->create();
+    NotificationTemplate::factory()->create([
+        'slug' => 'inactive-template',
+        'is_active' => false,
+    ]);
 
-    public function test_send_from_template_by_slug_fails_for_inactive(): void
-    {
-        $user = User::factory()->create();
-        NotificationTemplate::factory()->create([
-            'slug' => 'inactive-template',
-            'is_active' => false,
-        ]);
+    expect(fn () => $this->service->sendFromTemplateBySlug(
+        slug: 'inactive-template',
+        recipients: $user,
+    ))->toThrow(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+});
 
-        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+test('send with custom channels', function () {
+    Notification::fake();
 
-        $this->service->sendFromTemplateBySlug(
-            slug: 'inactive-template',
-            recipients: $user,
-        );
-    }
+    $user = User::factory()->create();
 
-    public function test_send_with_custom_channels(): void
-    {
-        Notification::fake();
+    $this->service->sendToUser(
+        user: $user,
+        title: 'Test',
+        message: 'Test',
+        category: NotificationCategory::SECURITY,
+        channels: [NotificationChannel::DATABASE, NotificationChannel::EMAIL],
+    );
 
-        $user = User::factory()->create();
+    Notification::assertSentTo($user, GenericNotification::class, function ($notification) use ($user) {
+        $channels = $notification->via($user);
 
-        $this->service->sendToUser(
-            user: $user,
-            title: 'Test',
-            message: 'Test',
-            category: NotificationCategory::SECURITY,
-            channels: [NotificationChannel::DATABASE, NotificationChannel::EMAIL],
-        );
+        return in_array('database', $channels) && in_array('mail', $channels);
+    });
+});
 
-        Notification::assertSentTo($user, GenericNotification::class, function ($notification) use ($user) {
-            $channels = $notification->via($user);
+test('send with action url and label', function () {
+    Notification::fake();
 
-            return in_array('database', $channels) && in_array('mail', $channels);
-        });
-    }
+    $user = User::factory()->create();
 
-    public function test_send_with_action_url_and_label(): void
-    {
-        Notification::fake();
+    $this->service->sendToUser(
+        user: $user,
+        title: 'Test',
+        message: 'Test',
+        category: NotificationCategory::TRANSACTIONAL,
+        actionUrl: 'https://example.com/order/123',
+        actionLabel: 'View Order',
+    );
 
-        $user = User::factory()->create();
+    Notification::assertSentTo($user, GenericNotification::class, function ($notification) use ($user) {
+        $data = $notification->toArray($user);
 
-        $this->service->sendToUser(
-            user: $user,
-            title: 'Test',
-            message: 'Test',
-            category: NotificationCategory::TRANSACTIONAL,
-            actionUrl: 'https://example.com/order/123',
-            actionLabel: 'View Order',
-        );
-
-        Notification::assertSentTo($user, GenericNotification::class, function ($notification) use ($user) {
-            $data = $notification->toArray($user);
-
-            return $data['action_url'] === 'https://example.com/order/123'
-                && $data['action_label'] === 'View Order';
-        });
-    }
-}
+        return $data['action_url'] === 'https://example.com/order/123'
+            && $data['action_label'] === 'View Order';
+    });
+});

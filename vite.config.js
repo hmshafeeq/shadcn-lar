@@ -1,33 +1,39 @@
-import { defineConfig, loadEnv } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import react from '@vitejs/plugin-react';
-import path from 'path';
+import path from "node:path";
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import laravel from "laravel-vite-plugin";
+import { defineConfig, loadEnv } from "vite";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  const _env = loadEnv(mode, process.cwd(), "");
 
   return {
     plugins: [
       laravel({
-        input: 'resources/js/app.tsx',
+        input: "resources/js/app.tsx",
         refresh: [
-          'resources/views/**',
-          'Modules/*/resources/views/**',
-          'Modules/*/resources/js/**',
+          "resources/views/**",
+          "Modules/*/resources/views/**",
+          "Modules/*/resources/js/**",
         ],
       }),
-      react(),
+      react({
+        babel: {
+          plugins: [["babel-plugin-react-compiler", {}]],
+        },
+      }),
+      tailwindcss(),
     ],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, 'resources/js'),
-        '@modules/Blog': path.resolve(__dirname, 'Modules/Blog/resources/js'),
-        '@modules/Ecommerce': path.resolve(__dirname, 'Modules/Ecommerce/resources/js'),
-        '@modules/Invoice': path.resolve(__dirname, 'Modules/Invoice/resources/js'),
-        '@modules/Notification': path.resolve(__dirname, 'Modules/Notification/resources/js'),
-        '@modules/Permission': path.resolve(__dirname, 'Modules/Permission/resources/js'),
-        '@modules/Finance': path.resolve(__dirname, 'Modules/Finance/resources/js'),
-        '@modules/Settings': path.resolve(__dirname, 'Modules/Settings/resources/js'),
+        "@": path.resolve(__dirname, "resources/js"),
+        "@modules/Blog": path.resolve(__dirname, "Modules/Blog/resources/js"),
+        "@modules/Ecommerce": path.resolve(__dirname, "Modules/Ecommerce/resources/js"),
+        "@modules/Invoice": path.resolve(__dirname, "Modules/Invoice/resources/js"),
+        "@modules/Notification": path.resolve(__dirname, "Modules/Notification/resources/js"),
+        "@modules/Permission": path.resolve(__dirname, "Modules/Permission/resources/js"),
+        "@modules/Finance": path.resolve(__dirname, "Modules/Finance/resources/js"),
+        "@modules/Settings": path.resolve(__dirname, "Modules/Settings/resources/js"),
       },
     },
     build: {
@@ -36,7 +42,7 @@ export default defineConfig(({ mode }) => {
           manualChunks(id) {
             // Only chunk by modules - let Vite handle vendor chunking automatically
             // Manual vendor chunking causes cross-chunk dependency issues
-            if (id.includes('/Modules/')) {
+            if (id.includes("/Modules/")) {
               const match = id.match(/\/Modules\/(\w+)\//);
               if (match) {
                 return `module-${match[1].toLowerCase()}`;

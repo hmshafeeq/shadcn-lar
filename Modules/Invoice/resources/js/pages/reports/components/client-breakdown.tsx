@@ -1,90 +1,76 @@
-import * as React from 'react'
-import { useTranslation } from 'react-i18next'
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid } from 'recharts'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart'
+import * as React from "react";
+import { useTranslation } from "react-i18next";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 interface ClientBreakdownItem {
-  name: string
-  color: string
-  amount: number
-  count: number
-  percentage: number
+  name: string;
+  color: string;
+  amount: number;
+  count: number;
+  percentage: number;
 }
 
 interface ClientBreakdownProps {
-  data: ClientBreakdownItem[]
-  currency: string
+  data: ClientBreakdownItem[];
+  currency: string;
 }
 
 function formatCurrency(value: number, currency: string): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency,
-    notation: 'compact',
+    notation: "compact",
     maximumFractionDigits: 1,
-  }).format(value)
+  }).format(value);
 }
 
 function formatFullCurrency(value: number, currency: string): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency,
-  }).format(value)
+  }).format(value);
 }
 
 export function ClientBreakdown({ data, currency }: ClientBreakdownProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const chartConfig = React.useMemo(() => {
     return {
       amount: {
-        label: t('form.amount'),
-        color: 'hsl(199, 89%, 48%)',
+        label: t("form.amount"),
+        color: "hsl(199, 89%, 48%)",
       },
-    }
-  }, [t])
+    };
+  }, [t]);
 
   const chartData = data.map((item) => ({
     ...item,
-    shortName: item.name.length > 15 ? item.name.substring(0, 15) + '...' : item.name,
-  }))
+    shortName: item.name.length > 15 ? `${item.name.substring(0, 15)}...` : item.name,
+  }));
 
   if (data.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{t('page.invoice_reports.top_clients')}</CardTitle>
-          <CardDescription>
-            {t('page.invoice_reports.revenue_by_client')}
-          </CardDescription>
+          <CardTitle>{t("page.invoice_reports.top_clients")}</CardTitle>
+          <CardDescription>{t("page.invoice_reports.revenue_by_client")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex h-[300px] items-center justify-center text-muted-foreground">
-            {t('page.invoice_reports.no_data_available')}
+            {t("page.invoice_reports.no_data_available")}
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('page.invoice_reports.top_clients')}</CardTitle>
-        <CardDescription>
-          {t('page.invoice_reports.revenue_by_client_top_10')}
-        </CardDescription>
+        <CardTitle>{t("page.invoice_reports.top_clients")}</CardTitle>
+        <CardDescription>{t("page.invoice_reports.revenue_by_client_top_10")}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full">
@@ -117,7 +103,9 @@ export function ClientBreakdown({ data, currency }: ClientBreakdownProps) {
                       <span className="font-medium">{props.payload.name}</span>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground">Amount:</span>
-                        <span className="font-mono">{formatFullCurrency(value as number, currency)}</span>
+                        <span className="font-mono">
+                          {formatFullCurrency(value as number, currency)}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground">Invoices:</span>
@@ -128,11 +116,7 @@ export function ClientBreakdown({ data, currency }: ClientBreakdownProps) {
                 />
               }
             />
-            <Bar
-              dataKey="amount"
-              fill="var(--color-amount)"
-              radius={[0, 4, 4, 0]}
-            />
+            <Bar dataKey="amount" fill="var(--color-amount)" radius={[0, 4, 4, 0]} />
           </BarChart>
         </ChartContainer>
 
@@ -140,10 +124,7 @@ export function ClientBreakdown({ data, currency }: ClientBreakdownProps) {
           {data.slice(0, 5).map((item) => (
             <div key={item.name} className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
-                <div
-                  className="h-3 w-3 rounded-full"
-                  style={{ backgroundColor: item.color }}
-                />
+                <div className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
                 <span className="truncate max-w-[150px]">{item.name}</span>
               </div>
               <div className="flex items-center gap-2">
@@ -155,5 +136,5 @@ export function ClientBreakdown({ data, currency }: ClientBreakdownProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

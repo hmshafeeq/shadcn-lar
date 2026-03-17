@@ -1,16 +1,11 @@
+import type { PropsWithChildren } from "react";
 import { Header } from "./header";
-import { PropsWithChildren } from 'react';
 
-export function PageLayout({
-    children,
-    title,
-  }: PropsWithChildren<{ title?: string }>) {
+export function PageLayout({ children, title }: PropsWithChildren<{ title?: string }>) {
   return (
     <>
-      <Header title={title}/>
-      <main>
-        {children}
-      </main>
+      <Header title={title} />
+      <main>{children}</main>
     </>
-  )
+  );
 }

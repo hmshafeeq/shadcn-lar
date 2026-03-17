@@ -10,10 +10,16 @@ use Illuminate\Database\Eloquent\{
     Relations\HasMany,
     SoftDeletes
 };
+use Modules\Ecommerce\Database\Factories\OrderFactory;
 
 class Order extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected static function newFactory(): OrderFactory
+    {
+        return OrderFactory::new();
+    }
 
     protected $fillable = [
         'order_number',

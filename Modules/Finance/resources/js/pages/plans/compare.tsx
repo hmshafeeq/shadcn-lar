@@ -1,23 +1,6 @@
-import { Link } from '@inertiajs/react'
-import { AuthenticatedLayout } from '@/layouts'
-import { Main } from '@/components/layout/main'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Link } from "@inertiajs/react";
+import type { FinancialPlan, PlanComparison } from "@modules/Finance/types/finance";
+import { ArrowLeft, Target, TrendingDown, TrendingUp } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -27,36 +10,47 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts'
-import { ArrowLeft, TrendingUp, TrendingDown, Target } from 'lucide-react'
-import type { FinancialPlan, PlanComparison } from '@modules/Finance/types/finance'
+} from "recharts";
+import { Main } from "@/components/layout/main";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { AuthenticatedLayout } from "@/layouts";
 
 interface Props {
-  plan: FinancialPlan
-  comparison: PlanComparison[]
+  plan: FinancialPlan;
+  comparison: PlanComparison[];
 }
 
-function formatMoney(amount: number, currencyCode = 'VND'): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+function formatMoney(amount: number, currencyCode = "VND"): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency: currencyCode,
     maximumFractionDigits: 0,
-  }).format(amount)
+  }).format(amount);
 }
 
 function formatPercent(value: number): string {
-  const sign = value >= 0 ? '+' : ''
-  return `${sign}${value.toFixed(1)}%`
+  const sign = value >= 0 ? "+" : "";
+  return `${sign}${value.toFixed(1)}%`;
 }
 
 export default function PlansCompare({ plan, comparison }: Props) {
   const chartData = comparison.map((c) => ({
     year: String(c.year),
-    'Planned Income': c.planned_income,
-    'Actual Income': c.actual_income,
-    'Planned Expense': c.planned_expense,
-    'Actual Expense': c.actual_expense,
-  }))
+    "Planned Income": c.planned_income,
+    "Actual Income": c.actual_income,
+    "Planned Expense": c.planned_expense,
+    "Actual Expense": c.actual_expense,
+  }));
 
   const totals = comparison.reduce(
     (acc, c) => ({
@@ -65,13 +59,13 @@ export default function PlansCompare({ plan, comparison }: Props) {
       planned_expense: acc.planned_expense + c.planned_expense,
       actual_expense: acc.actual_expense + c.actual_expense,
     }),
-    { planned_income: 0, actual_income: 0, planned_expense: 0, actual_expense: 0 }
-  )
+    { planned_income: 0, actual_income: 0, planned_expense: 0, actual_expense: 0 },
+  );
 
-  const incomeVariance = totals.actual_income - totals.planned_income
-  const expenseVariance = totals.actual_expense - totals.planned_expense
-  const netPlanned = totals.planned_income - totals.planned_expense
-  const netActual = totals.actual_income - totals.actual_expense
+  const incomeVariance = totals.actual_income - totals.planned_income;
+  const expenseVariance = totals.actual_expense - totals.planned_expense;
+  const netPlanned = totals.planned_income - totals.planned_expense;
+  const netActual = totals.actual_income - totals.actual_expense;
 
   return (
     <AuthenticatedLayout title={`Compare: ${plan.name}`}>
@@ -80,7 +74,7 @@ export default function PlansCompare({ plan, comparison }: Props) {
           <div>
             <div className="flex items-center gap-3 mb-2">
               <Button variant="ghost" size="icon" asChild>
-                <Link href={route('dashboard.finance.plans.show', plan.id)}>
+                <Link href={route("dashboard.finance.plans.show", plan.id)}>
                   <ArrowLeft className="h-4 w-4" />
                 </Link>
               </Button>
@@ -112,13 +106,9 @@ export default function PlansCompare({ plan, comparison }: Props) {
                 <p className="text-xl font-bold text-green-600">
                   Actual: {formatMoney(totals.actual_income, plan.currency_code)}
                 </p>
-                <p
-                  className={`text-sm ${
-                    incomeVariance >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}
-                >
+                <p className={`text-sm ${incomeVariance >= 0 ? "text-green-600" : "text-red-600"}`}>
                   {formatMoney(Math.abs(incomeVariance), plan.currency_code)}
-                  {incomeVariance >= 0 ? ' over' : ' under'} plan
+                  {incomeVariance >= 0 ? " over" : " under"} plan
                 </p>
               </div>
             </CardContent>
@@ -140,12 +130,10 @@ export default function PlansCompare({ plan, comparison }: Props) {
                   Actual: {formatMoney(totals.actual_expense, plan.currency_code)}
                 </p>
                 <p
-                  className={`text-sm ${
-                    expenseVariance <= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}
+                  className={`text-sm ${expenseVariance <= 0 ? "text-green-600" : "text-red-600"}`}
                 >
                   {formatMoney(Math.abs(expenseVariance), plan.currency_code)}
-                  {expenseVariance <= 0 ? ' under' : ' over'} plan
+                  {expenseVariance <= 0 ? " under" : " over"} plan
                 </p>
               </div>
             </CardContent>
@@ -161,7 +149,7 @@ export default function PlansCompare({ plan, comparison }: Props) {
             <CardContent>
               <p
                 className={`text-2xl font-bold ${
-                  netPlanned >= 0 ? 'text-green-600' : 'text-red-600'
+                  netPlanned >= 0 ? "text-green-600" : "text-red-600"
                 }`}
               >
                 {formatMoney(netPlanned, plan.currency_code)}
@@ -179,7 +167,7 @@ export default function PlansCompare({ plan, comparison }: Props) {
             <CardContent>
               <p
                 className={`text-2xl font-bold ${
-                  netActual >= 0 ? 'text-green-600' : 'text-red-600'
+                  netActual >= 0 ? "text-green-600" : "text-red-600"
                 }`}
               >
                 {formatMoney(netActual, plan.currency_code)}
@@ -198,52 +186,30 @@ export default function PlansCompare({ plan, comparison }: Props) {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} barGap={0}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis
-                    dataKey="year"
-                    tick={{ fontSize: 12 }}
-                    className="text-muted-foreground"
-                  />
+                  <XAxis dataKey="year" tick={{ fontSize: 12 }} className="text-muted-foreground" />
                   <YAxis
                     tick={{ fontSize: 12 }}
                     className="text-muted-foreground"
                     tickFormatter={(value) =>
-                      new Intl.NumberFormat('en', {
-                        notation: 'compact',
+                      new Intl.NumberFormat("en", {
+                        notation: "compact",
                         maximumFractionDigits: 1,
                       }).format(value)
                     }
                   />
                   <Tooltip
-                    formatter={(value: number) =>
-                      formatMoney(value, plan.currency_code)
-                    }
+                    formatter={(value: number) => formatMoney(value, plan.currency_code)}
                     contentStyle={{
-                      backgroundColor: 'hsl(var(--card))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px',
+                      backgroundColor: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px",
                     }}
                   />
                   <Legend />
-                  <Bar
-                    dataKey="Planned Income"
-                    fill="#86efac"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Bar
-                    dataKey="Actual Income"
-                    fill="#22c55e"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Bar
-                    dataKey="Planned Expense"
-                    fill="#fca5a5"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Bar
-                    dataKey="Actual Expense"
-                    fill="#ef4444"
-                    radius={[4, 4, 0, 0]}
-                  />
+                  <Bar dataKey="Planned Income" fill="#86efac" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Actual Income" fill="#22c55e" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Planned Expense" fill="#fca5a5" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Actual Expense" fill="#ef4444" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -280,7 +246,7 @@ export default function PlansCompare({ plan, comparison }: Props) {
                     </TableCell>
                     <TableCell
                       className={`text-right ${
-                        c.income_variance >= 0 ? 'text-green-600' : 'text-red-600'
+                        c.income_variance >= 0 ? "text-green-600" : "text-red-600"
                       }`}
                     >
                       {formatPercent(c.income_variance_percent)}
@@ -293,7 +259,7 @@ export default function PlansCompare({ plan, comparison }: Props) {
                     </TableCell>
                     <TableCell
                       className={`text-right ${
-                        c.expense_variance <= 0 ? 'text-green-600' : 'text-red-600'
+                        c.expense_variance <= 0 ? "text-green-600" : "text-red-600"
                       }`}
                     >
                       {formatPercent(c.expense_variance_percent)}
@@ -306,5 +272,5 @@ export default function PlansCompare({ plan, comparison }: Props) {
         </Card>
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

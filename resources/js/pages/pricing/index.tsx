@@ -1,10 +1,10 @@
-import { Pricing } from "./components/Pricing";
 import { PageLayout } from "@/layouts";
+import { Pricing } from "./components/Pricing";
 
 export default function PricingPage() {
-  return <>
+  return (
     <PageLayout title="Plans and Pricing">
-      <Pricing/>
+      <Pricing />
     </PageLayout>
-  </>
+  );
 }

@@ -1,17 +1,13 @@
-import { useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 interface ChatImageAttachmentProps {
-  url: string
+  url: string;
 }
 
 export function ChatImageAttachment({ url }: ChatImageAttachmentProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   return (
     <>
@@ -35,5 +31,5 @@ export function ChatImageAttachment({ url }: ChatImageAttachmentProps) {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

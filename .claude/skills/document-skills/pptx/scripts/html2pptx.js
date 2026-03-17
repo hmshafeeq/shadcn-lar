@@ -547,7 +547,7 @@ async function extractSlideData(page) {
 
         if (hasBg || hasBorder || hasShadow) {
           errors.push(
-            `Text element <${el.tagName.toLowerCase()}> has ${hasBg ? 'background' : hasBorder ? 'border' : 'shadow'}. ` +
+            `Text element <${el.tagName.toLowerCase()}> has ${hasBg ? 'background' : hasBorder ? 'border' : 'shadow-sm'}. ` +
             'Backgrounds, borders, and shadows are only supported on <div> elements, not text elements.'
           );
           return;

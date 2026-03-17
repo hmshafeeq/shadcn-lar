@@ -1,8 +1,3 @@
-import * as React from "react"
-import type { Editor } from "@tiptap/react"
-import type { FormatAction } from "../../types"
-import type { toggleVariants } from "@/components/ui/toggle"
-import type { VariantProps } from "class-variance-authority"
 import {
   CodeIcon,
   DotsHorizontalIcon,
@@ -11,8 +6,13 @@ import {
   StrikethroughIcon,
   TextNoneIcon,
   UnderlineIcon,
-} from "@radix-ui/react-icons"
-import { ToolbarSection } from "../toolbar-section"
+} from "@radix-ui/react-icons";
+import type { Editor } from "@tiptap/react";
+import type { VariantProps } from "class-variance-authority";
+import type * as React from "react";
+import type { toggleVariants } from "@/components/ui/toggle";
+import type { FormatAction } from "../../types";
+import { ToolbarSection } from "../toolbar-section";
 
 type TextStyleAction =
   | "bold"
@@ -20,10 +20,10 @@ type TextStyleAction =
   | "underline"
   | "strikethrough"
   | "code"
-  | "clearFormatting"
+  | "clearFormatting";
 
 interface TextStyle extends FormatAction {
-  value: TextStyleAction
+  value: TextStyleAction;
 }
 
 const formatActions: TextStyle[] = [
@@ -34,8 +34,7 @@ const formatActions: TextStyle[] = [
     action: (editor) => editor.chain().focus().toggleBold().run(),
     isActive: (editor) => editor.isActive("bold"),
     canExecute: (editor) =>
-      editor.can().chain().focus().toggleBold().run() &&
-      !editor.isActive("codeBlock"),
+      editor.can().chain().focus().toggleBold().run() && !editor.isActive("codeBlock"),
     shortcuts: ["mod", "B"],
   },
   {
@@ -45,8 +44,7 @@ const formatActions: TextStyle[] = [
     action: (editor) => editor.chain().focus().toggleItalic().run(),
     isActive: (editor) => editor.isActive("italic"),
     canExecute: (editor) =>
-      editor.can().chain().focus().toggleItalic().run() &&
-      !editor.isActive("codeBlock"),
+      editor.can().chain().focus().toggleItalic().run() && !editor.isActive("codeBlock"),
     shortcuts: ["mod", "I"],
   },
   {
@@ -56,8 +54,7 @@ const formatActions: TextStyle[] = [
     action: (editor) => editor.chain().focus().toggleUnderline().run(),
     isActive: (editor) => editor.isActive("underline"),
     canExecute: (editor) =>
-      editor.can().chain().focus().toggleUnderline().run() &&
-      !editor.isActive("codeBlock"),
+      editor.can().chain().focus().toggleUnderline().run() && !editor.isActive("codeBlock"),
     shortcuts: ["mod", "U"],
   },
   {
@@ -67,8 +64,7 @@ const formatActions: TextStyle[] = [
     action: (editor) => editor.chain().focus().toggleStrike().run(),
     isActive: (editor) => editor.isActive("strike"),
     canExecute: (editor) =>
-      editor.can().chain().focus().toggleStrike().run() &&
-      !editor.isActive("codeBlock"),
+      editor.can().chain().focus().toggleStrike().run() && !editor.isActive("codeBlock"),
     shortcuts: ["mod", "shift", "S"],
   },
   {
@@ -78,8 +74,7 @@ const formatActions: TextStyle[] = [
     action: (editor) => editor.chain().focus().toggleCode().run(),
     isActive: (editor) => editor.isActive("code"),
     canExecute: (editor) =>
-      editor.can().chain().focus().toggleCode().run() &&
-      !editor.isActive("codeBlock"),
+      editor.can().chain().focus().toggleCode().run() && !editor.isActive("codeBlock"),
     shortcuts: ["mod", "E"],
   },
   {
@@ -89,16 +84,15 @@ const formatActions: TextStyle[] = [
     action: (editor) => editor.chain().focus().unsetAllMarks().run(),
     isActive: () => false,
     canExecute: (editor) =>
-      editor.can().chain().focus().unsetAllMarks().run() &&
-      !editor.isActive("codeBlock"),
+      editor.can().chain().focus().unsetAllMarks().run() && !editor.isActive("codeBlock"),
     shortcuts: ["mod", "\\"],
   },
-]
+];
 
 interface SectionTwoProps extends VariantProps<typeof toggleVariants> {
-  editor: Editor
-  activeActions?: TextStyleAction[]
-  mainActionCount?: number
+  editor: Editor;
+  activeActions?: TextStyleAction[];
+  mainActionCount?: number;
 }
 
 export const SectionTwo: React.FC<SectionTwoProps> = ({
@@ -120,9 +114,9 @@ export const SectionTwo: React.FC<SectionTwoProps> = ({
       size={size}
       variant={variant}
     />
-  )
-}
+  );
+};
 
-SectionTwo.displayName = "SectionTwo"
+SectionTwo.displayName = "SectionTwo";
 
-export default SectionTwo
+export default SectionTwo;

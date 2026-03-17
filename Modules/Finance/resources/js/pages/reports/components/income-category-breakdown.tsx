@@ -1,74 +1,66 @@
-import { useTranslation } from 'react-i18next'
-import { Pie, PieChart, Cell, Label } from 'recharts'
+import type { CategoryBreakdownItem } from "@modules/Finance/types/finance";
+import { useTranslation } from "react-i18next";
+import { Cell, Label, Pie, PieChart } from "recharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart'
-import type { CategoryBreakdownItem } from '@modules/Finance/types/finance'
+} from "@/components/ui/chart";
 
 interface IncomeCategoryBreakdownProps {
-  data: CategoryBreakdownItem[]
-  currencyCode: string
+  data: CategoryBreakdownItem[];
+  currencyCode: string;
 }
 
 function formatCurrency(value: number, code: string): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency: code,
-    notation: 'compact',
+    notation: "compact",
     maximumFractionDigits: 1,
-  }).format(value)
+  }).format(value);
 }
 
 function formatFullCurrency(value: number, code: string): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency: code,
-  }).format(value)
+  }).format(value);
 }
 
 export function IncomeCategoryBreakdown({ data, currencyCode }: IncomeCategoryBreakdownProps) {
-  const { t } = useTranslation()
-  const total = data.reduce((sum, item) => sum + item.amount, 0)
+  const { t } = useTranslation();
+  const total = data.reduce((sum, item) => sum + item.amount, 0);
 
   const chartConfig = data.reduce((config, item) => {
     config[item.name] = {
       label: item.name,
       color: item.color,
-    }
-    return config
-  }, {} as ChartConfig)
+    };
+    return config;
+  }, {} as ChartConfig);
 
   if (data.length === 0) {
     return (
       <Card className="h-full">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t('page.reports.income_by_category')}</CardTitle>
-          <CardDescription>{t('page.reports.no_income_data')}</CardDescription>
+          <CardTitle className="text-base">{t("page.reports.income_by_category")}</CardTitle>
+          <CardDescription>{t("page.reports.no_income_data")}</CardDescription>
         </CardHeader>
         <CardContent className="flex h-[200px] items-center justify-center">
-          <p className="text-muted-foreground">{t('page.reports.no_data')}</p>
+          <p className="text-muted-foreground">{t("page.reports.no_data")}</p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
     <Card className="h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">{t('page.reports.income_by_category')}</CardTitle>
-        <CardDescription>
-          {t('page.reports.top_income_sources')}
-        </CardDescription>
+        <CardTitle className="text-base">{t("page.reports.income_by_category")}</CardTitle>
+        <CardDescription>{t("page.reports.top_income_sources")}</CardDescription>
       </CardHeader>
       <CardContent className="pb-4">
         <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[220px]">
@@ -101,7 +93,7 @@ export function IncomeCategoryBreakdown({ data, currencyCode }: IncomeCategoryBr
               ))}
               <Label
                 content={({ viewBox }) => {
-                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
                     return (
                       <text
                         x={viewBox.cx}
@@ -121,10 +113,10 @@ export function IncomeCategoryBreakdown({ data, currencyCode }: IncomeCategoryBr
                           y={(viewBox.cy || 0) + 16}
                           className="fill-muted-foreground text-xs"
                         >
-                          {t('common.total')}
+                          {t("common.total")}
                         </tspan>
                       </text>
-                    )
+                    );
                   }
                 }}
               />
@@ -146,5 +138,5 @@ export function IncomeCategoryBreakdown({ data, currencyCode }: IncomeCategoryBr
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

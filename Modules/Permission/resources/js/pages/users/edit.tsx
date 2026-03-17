@@ -1,125 +1,124 @@
-import { AuthenticatedLayout } from "@/layouts"
-import { ChevronLeft } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Main } from "@/components/layout"
-import { useState } from "react"
-import { router, usePage } from "@inertiajs/react"
-import { PageProps } from "@/types"
-import { useToast } from "@/hooks/use-toast"
-import { Badge } from "@/components/ui/badge"
+import { router, usePage } from "@inertiajs/react";
+import { ChevronLeft } from "lucide-react";
+import { useState } from "react";
+import { Main } from "@/components/layout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { AuthenticatedLayout } from "@/layouts";
+import type { PageProps } from "@/types";
 
 interface Role {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
 interface UserRole {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
 interface UserData {
-  id: number
-  name: string
-  email: string
-  created_at: string
-  roles: UserRole[]
-  role_names: string[]
+  id: number;
+  name: string;
+  email: string;
+  created_at: string;
+  roles: UserRole[];
+  role_names: string[];
 }
 
 interface EditUserPageProps extends PageProps {
-  user: UserData
-  roles: Role[]
-  userRoles: string[]
+  user: UserData;
+  roles: Role[];
+  userRoles: string[];
 }
 
 export default function EditUser({ user, roles, userRoles }: EditUserPageProps) {
-  const [name, setName] = useState(user.name)
-  const [email, setEmail] = useState(user.email)
-  const [password, setPassword] = useState("")
-  const [passwordConfirmation, setPasswordConfirmation] = useState("")
-  const [selectedRoles, setSelectedRoles] = useState<string[]>(userRoles || [])
-  const [processing, setProcessing] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const { toast } = useToast()
-  const { auth } = usePage<PageProps>().props
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(userRoles || []);
+  const [processing, setProcessing] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { toast } = useToast();
+  const { auth } = usePage<PageProps>().props;
 
-  const isCurrentUser = user.id === auth.user?.id
-  const isSuperAdmin = userRoles?.includes('Super Admin') || false
+  const isCurrentUser = user.id === auth.user?.id;
+  const isSuperAdmin = userRoles?.includes("Super Admin") || false;
 
   const handleRoleToggle = (roleName: string) => {
-    if (roleName === 'Super Admin' && isSuperAdmin && isCurrentUser) {
+    if (roleName === "Super Admin" && isSuperAdmin && isCurrentUser) {
       toast({
         variant: "destructive",
         title: "Cannot remove",
         description: "You cannot remove your own Super Admin role.",
-      })
-      return
+      });
+      return;
     }
 
-    setSelectedRoles(prev =>
-      prev.includes(roleName)
-        ? prev.filter(r => r !== roleName)
-        : [...prev, roleName]
-    )
-  }
+    setSelectedRoles((prev) =>
+      prev.includes(roleName) ? prev.filter((r) => r !== roleName) : [...prev, roleName],
+    );
+  };
 
   const handleSubmit = () => {
-    setErrors({})
+    setErrors({});
 
     if (!name.trim()) {
-      setErrors(prev => ({ ...prev, name: "Name is required" }))
-      return
+      setErrors((prev) => ({ ...prev, name: "Name is required" }));
+      return;
     }
 
     if (!email.trim()) {
-      setErrors(prev => ({ ...prev, email: "Email is required" }))
-      return
+      setErrors((prev) => ({ ...prev, email: "Email is required" }));
+      return;
     }
 
     if (password && password !== passwordConfirmation) {
-      setErrors(prev => ({ ...prev, password_confirmation: "Passwords do not match" }))
-      return
+      setErrors((prev) => ({ ...prev, password_confirmation: "Passwords do not match" }));
+      return;
     }
 
-    setProcessing(true)
+    setProcessing(true);
 
-    const formData = new FormData()
-    formData.append('name', name)
-    formData.append('email', email)
-    formData.append('_method', 'PUT')
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("_method", "PUT");
     selectedRoles.forEach((role, index) => {
-      formData.append(`roles[${index}]`, role)
-    })
+      formData.append(`roles[${index}]`, role);
+    });
 
     if (password) {
-      formData.append('password', password)
-      formData.append('password_confirmation', passwordConfirmation)
+      formData.append("password", password);
+      formData.append("password_confirmation", passwordConfirmation);
     }
 
-    router.post(route('dashboard.users.update', user.id), formData, {
+    router.post(route("dashboard.users.update", user.id), formData, {
       onSuccess: () => {
-        setProcessing(false)
+        setProcessing(false);
         toast({
           title: "User updated!",
           description: "The user has been updated successfully.",
-        })
+        });
       },
       onError: (errors) => {
-        setProcessing(false)
-        setErrors(errors as Record<string, string>)
+        setProcessing(false);
+        setErrors(errors as Record<string, string>);
         toast({
           variant: "destructive",
           title: "Error updating user",
-          description: Object.values(errors)[0] as string || "Please check your form and try again.",
-        })
-      }
-    })
-  }
+          description:
+            (Object.values(errors)[0] as string) || "Please check your form and try again.",
+        });
+      },
+    });
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -128,8 +127,8 @@ export default function EditUser({ user, roles, userRoles }: EditUserPageProps) 
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    })
-  }
+    });
+  };
 
   return (
     <AuthenticatedLayout title="Edit User">
@@ -137,22 +136,25 @@ export default function EditUser({ user, roles, userRoles }: EditUserPageProps) 
         <div className="grid flex-1 items-start gap-4 md:gap-8">
           <div className="grid flex-1 auto-rows-max gap-4">
             <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => window.history.back()}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => window.history.back()}
+              >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Back</span>
               </Button>
               <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
                 Edit User
               </h1>
-              {isCurrentUser && (
-                <Badge variant="outline">Your Account</Badge>
-              )}
+              {isCurrentUser && <Badge variant="outline">Your Account</Badge>}
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                <Button variant="outline" onClick={() => router.get(route('dashboard.users'))}>
+                <Button variant="outline" onClick={() => router.get(route("dashboard.users"))}>
                   Cancel
                 </Button>
                 <Button size="sm" onClick={handleSubmit} disabled={processing}>
-                  {processing ? 'Saving...' : 'Save Changes'}
+                  {processing ? "Saving..." : "Save Changes"}
                 </Button>
               </div>
             </div>
@@ -176,9 +178,7 @@ export default function EditUser({ user, roles, userRoles }: EditUserPageProps) 
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                         />
-                        {errors.name && (
-                          <p className="text-sm text-red-500">{errors.name}</p>
-                        )}
+                        {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                       </div>
 
                       <div className="grid gap-3">
@@ -191,9 +191,7 @@ export default function EditUser({ user, roles, userRoles }: EditUserPageProps) 
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                         />
-                        {errors.email && (
-                          <p className="text-sm text-red-500">{errors.email}</p>
-                        )}
+                        {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                       </div>
                     </div>
                   </CardContent>
@@ -254,7 +252,7 @@ export default function EditUser({ user, roles, userRoles }: EditUserPageProps) 
                             id={`role-${role.id}`}
                             checked={selectedRoles.includes(role.name)}
                             onCheckedChange={() => handleRoleToggle(role.name)}
-                            disabled={role.name === 'Super Admin' && isSuperAdmin && isCurrentUser}
+                            disabled={role.name === "Super Admin" && isSuperAdmin && isCurrentUser}
                           />
                           <Label
                             htmlFor={`role-${role.id}`}
@@ -303,16 +301,16 @@ export default function EditUser({ user, roles, userRoles }: EditUserPageProps) 
             </div>
 
             <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button variant="outline" onClick={() => router.get(route('dashboard.users'))}>
+              <Button variant="outline" onClick={() => router.get(route("dashboard.users"))}>
                 Cancel
               </Button>
               <Button size="sm" onClick={handleSubmit} disabled={processing}>
-                {processing ? 'Saving...' : 'Save Changes'}
+                {processing ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </div>
         </div>
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

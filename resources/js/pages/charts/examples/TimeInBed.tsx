@@ -1,23 +1,21 @@
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
-import {Area, AreaChart, XAxis, YAxis} from "recharts";
+import { Area, AreaChart, XAxis, YAxis } from "recharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 export function TimeInBed() {
   return (
-    <Card
-      className="w-full" x-chunk="charts-01-chunk-7"
-    >
+    <Card className="w-full" x-chunk="charts-01-chunk-7">
       <CardHeader className="space-y-0 pb-0">
         <CardDescription>Time in Bed</CardDescription>
         <CardTitle className="flex items-baseline gap-1 text-4xl tabular-nums">
           8
           <span className="font-sans text-sm font-normal tracking-normal text-muted-foreground">
-                      hr
-                    </span>
+            hr
+          </span>
           35
           <span className="font-sans text-sm font-normal tracking-normal text-muted-foreground">
-                      min
-                    </span>
+            min
+          </span>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
@@ -72,16 +70,8 @@ export function TimeInBed() {
             <YAxis domain={["dataMin - 5", "dataMax + 2"]} hide />
             <defs>
               <linearGradient id="fillTime" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-time)"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-time)"
-                  stopOpacity={0.1}
-                />
+                <stop offset="5%" stopColor="var(--color-time)" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="var(--color-time)" stopOpacity={0.1} />
               </linearGradient>
             </defs>
             <Area
@@ -99,9 +89,7 @@ export function TimeInBed() {
                   Time in bed
                   <div className="ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground">
                     {value}
-                    <span className="font-normal text-muted-foreground">
-                                hr
-                              </span>
+                    <span className="font-normal text-muted-foreground">hr</span>
                   </div>
                 </div>
               )}
@@ -110,5 +98,5 @@ export function TimeInBed() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -7,10 +7,16 @@ use Illuminate\Database\Eloquent\{
     Model,
     Relations\BelongsTo
 };
+use Modules\Ecommerce\Database\Factories\OrderItemFactory;
 
 class OrderItem extends Model
 {
     use HasFactory;
+
+    protected static function newFactory(): OrderItemFactory
+    {
+        return OrderItemFactory::new();
+    }
 
     protected $fillable = [
         'order_id',

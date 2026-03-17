@@ -69,7 +69,7 @@ export default function Page() {
 - `sizes` - Responsive sizes hint for srcset
 - `quality` - 1-100 (default 75)
 - `priority` - Disable lazy loading, preload image
-- `placeholder` - 'blur' | 'empty' (default 'empty')
+- `placeholder` - 'blur-sm' | 'empty' (default 'empty')
 - `blurDataURL` - Data URL for blur placeholder
 - `loading` - 'lazy' | 'eager' (default 'lazy')
 - `style` - CSS styles

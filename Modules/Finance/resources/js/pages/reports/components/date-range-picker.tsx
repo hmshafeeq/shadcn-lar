@@ -1,67 +1,63 @@
-import { useState } from 'react'
-import { format } from 'date-fns'
-import { router } from '@inertiajs/react'
-import { CalendarIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
-import type { DateRangePreset, ReportFilters } from '@modules/Finance/types/finance'
+import { router } from "@inertiajs/react";
+import type { DateRangePreset, ReportFilters } from "@modules/Finance/types/finance";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface DateRangePickerProps {
-  filters: ReportFilters
+  filters: ReportFilters;
 }
 
 const presets: { value: DateRangePreset; label: string }[] = [
-  { value: '30d', label: '30 Days' },
-  { value: '6m', label: '6 Months' },
-  { value: '12m', label: '12 Months' },
-  { value: 'ytd', label: 'YTD' },
-  { value: 'custom', label: 'Custom' },
-]
+  { value: "30d", label: "30 Days" },
+  { value: "6m", label: "6 Months" },
+  { value: "12m", label: "12 Months" },
+  { value: "ytd", label: "YTD" },
+  { value: "custom", label: "Custom" },
+];
 
 export function DateRangePicker({ filters }: DateRangePickerProps) {
-  const [showCustom, setShowCustom] = useState(filters.range === 'custom')
+  const [showCustom, setShowCustom] = useState(filters.range === "custom");
   const [startDate, setStartDate] = useState<Date | undefined>(
-    filters.startDate ? new Date(filters.startDate) : undefined
-  )
+    filters.startDate ? new Date(filters.startDate) : undefined,
+  );
   const [endDate, setEndDate] = useState<Date | undefined>(
-    filters.endDate ? new Date(filters.endDate) : undefined
-  )
-  const [startDateOpen, setStartDateOpen] = useState(false)
-  const [endDateOpen, setEndDateOpen] = useState(false)
+    filters.endDate ? new Date(filters.endDate) : undefined,
+  );
+  const [startDateOpen, setStartDateOpen] = useState(false);
+  const [endDateOpen, setEndDateOpen] = useState(false);
 
   const handlePresetChange = (preset: DateRangePreset) => {
-    if (preset === 'custom') {
-      setShowCustom(true)
-      return
+    if (preset === "custom") {
+      setShowCustom(true);
+      return;
     }
 
-    setShowCustom(false)
+    setShowCustom(false);
     router.get(
-      route('dashboard.finance.reports'),
+      route("dashboard.finance.reports"),
       { range: preset },
-      { preserveState: true, preserveScroll: true }
-    )
-  }
+      { preserveState: true, preserveScroll: true },
+    );
+  };
 
   const handleCustomRangeApply = () => {
-    if (!startDate || !endDate) return
+    if (!startDate || !endDate) return;
 
     router.get(
-      route('dashboard.finance.reports'),
+      route("dashboard.finance.reports"),
       {
-        range: 'custom',
-        start: format(startDate, 'yyyy-MM-dd'),
-        end: format(endDate, 'yyyy-MM-dd'),
+        range: "custom",
+        start: format(startDate, "yyyy-MM-dd"),
+        end: format(endDate, "yyyy-MM-dd"),
       },
-      { preserveState: true, preserveScroll: true }
-    )
-  }
+      { preserveState: true, preserveScroll: true },
+    );
+  };
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -69,7 +65,7 @@ export function DateRangePicker({ filters }: DateRangePickerProps) {
         {presets.map((preset) => (
           <Button
             key={preset.value}
-            variant={filters.range === preset.value ? 'secondary' : 'ghost'}
+            variant={filters.range === preset.value ? "secondary" : "ghost"}
             size="sm"
             onClick={() => handlePresetChange(preset.value)}
             className="px-3"
@@ -87,12 +83,12 @@ export function DateRangePicker({ filters }: DateRangePickerProps) {
                 variant="outline"
                 size="sm"
                 className={cn(
-                  'w-[130px] justify-start text-left font-normal',
-                  !startDate && 'text-muted-foreground'
+                  "w-[130px] justify-start text-left font-normal",
+                  !startDate && "text-muted-foreground",
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {startDate ? format(startDate, 'MMM d, yyyy') : 'Start date'}
+                {startDate ? format(startDate, "MMM d, yyyy") : "Start date"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -101,10 +97,10 @@ export function DateRangePicker({ filters }: DateRangePickerProps) {
                 selected={startDate}
                 defaultMonth={startDate}
                 onSelect={(date) => {
-                  setStartDate(date)
-                  setStartDateOpen(false)
+                  setStartDate(date);
+                  setStartDateOpen(false);
                 }}
-                disabled={(date) => endDate ? date > endDate : false}
+                disabled={(date) => (endDate ? date > endDate : false)}
                 captionLayout="dropdown"
                 fromYear={2000}
                 toYear={new Date().getFullYear() + 1}
@@ -120,12 +116,12 @@ export function DateRangePicker({ filters }: DateRangePickerProps) {
                 variant="outline"
                 size="sm"
                 className={cn(
-                  'w-[130px] justify-start text-left font-normal',
-                  !endDate && 'text-muted-foreground'
+                  "w-[130px] justify-start text-left font-normal",
+                  !endDate && "text-muted-foreground",
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {endDate ? format(endDate, 'MMM d, yyyy') : 'End date'}
+                {endDate ? format(endDate, "MMM d, yyyy") : "End date"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -134,10 +130,10 @@ export function DateRangePicker({ filters }: DateRangePickerProps) {
                 selected={endDate}
                 defaultMonth={endDate}
                 onSelect={(date) => {
-                  setEndDate(date)
-                  setEndDateOpen(false)
+                  setEndDate(date);
+                  setEndDateOpen(false);
                 }}
-                disabled={(date) => startDate ? date < startDate : false}
+                disabled={(date) => (startDate ? date < startDate : false)}
                 captionLayout="dropdown"
                 fromYear={2000}
                 toYear={new Date().getFullYear() + 1}
@@ -151,5 +147,5 @@ export function DateRangePicker({ filters }: DateRangePickerProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

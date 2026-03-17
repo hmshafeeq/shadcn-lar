@@ -14,6 +14,9 @@
             <directory>Modules/Notification/tests/Feature</directory>
             <directory>Modules/Settings/tests/Feature</directory>
             <directory>Modules/Finance/tests/Feature</directory>
+            <directory>Modules/Ecommerce/Tests/Feature</directory>
+            <directory>Modules/Blog/Tests/Feature</directory>
+            <directory>Modules/Permission/Tests/Feature</directory>
         </testsuite>
     </testsuites>
     <source>

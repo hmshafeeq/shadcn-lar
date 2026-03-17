@@ -1,6 +1,6 @@
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {ChartContainer} from "@/components/ui/chart";
-import {Bar, BarChart, Rectangle, XAxis} from "recharts";
+import { Bar, BarChart, Rectangle, XAxis } from "recharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer } from "@/components/ui/chart";
 
 export function ActiveEnergy() {
   return (
@@ -14,9 +14,7 @@ export function ActiveEnergy() {
       <CardContent className="flex flex-row items-baseline gap-4 p-4 pt-2">
         <div className="flex items-baseline gap-2 text-3xl font-bold tabular-nums leading-none">
           1,254
-          <span className="text-sm font-normal text-muted-foreground">
-                      kcal/day
-                    </span>
+          <span className="text-sm font-normal text-muted-foreground">kcal/day</span>
         </div>
         <ChartContainer
           config={{
@@ -74,16 +72,10 @@ export function ActiveEnergy() {
               activeIndex={6}
               activeBar={<Rectangle fillOpacity={0.8} />}
             />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={4}
-              hide
-            />
+            <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={4} hide />
           </BarChart>
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

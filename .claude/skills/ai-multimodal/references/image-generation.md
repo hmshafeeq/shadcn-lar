@@ -440,10 +440,10 @@ response2 = client.models.generate_content(
 ### Negative Prompts (Indirect)
 
 ```python
-# Instead of "no blur", be specific about what you want
+# Instead of "no blur-sm", be specific about what you want
 response = client.models.generate_content(
     model='gemini-2.5-flash-image',
-    contents='A crystal clear, sharp photograph of a diamond ring with perfect focus and high detail'
+    contents='A crystal clear, sharp photograph of a diamond ring-3 with perfect focus and high detail'
 )
 ```
 

@@ -1,141 +1,119 @@
 <?php
 
-namespace Modules\Notification\Tests\Unit\Models;
-
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Modules\Notification\{
-    Enums\NotificationCategory,
-    Enums\NotificationChannel,
-    Models\NotificationPreference
-};
-use Tests\TestCase;
+use Modules\Notification\Enums\NotificationCategory;
+use Modules\Notification\Enums\NotificationChannel;
+use Modules\Notification\Models\NotificationPreference;
 
-class NotificationPreferenceTest extends TestCase
-{
-    use RefreshDatabase;
+uses(Tests\TestCase::class, RefreshDatabase::class);
 
-    public function test_can_create_notification_preference(): void
-    {
-        $user = User::factory()->create();
+test('can create notification preference', function () {
+    $user = User::factory()->create();
 
-        $preference = NotificationPreference::create([
-            'user_id' => $user->id,
-            'category' => NotificationCategory::MARKETING,
-            'channel' => NotificationChannel::EMAIL,
-            'enabled' => true,
-        ]);
+    NotificationPreference::create([
+        'user_id' => $user->id,
+        'category' => NotificationCategory::MARKETING,
+        'channel' => NotificationChannel::EMAIL,
+        'enabled' => true,
+    ]);
 
-        $this->assertDatabaseHas('notification_preferences', [
-            'user_id' => $user->id,
-            'category' => 'marketing',
-            'channel' => 'email',
-            'enabled' => true,
-        ]);
-    }
+    $this->assertDatabaseHas('notification_preferences', [
+        'user_id' => $user->id,
+        'category' => 'marketing',
+        'channel' => 'email',
+        'enabled' => true,
+    ]);
+});
 
-    public function test_casts_category_to_enum(): void
-    {
-        $preference = NotificationPreference::factory()->create([
-            'category' => NotificationCategory::SECURITY,
-        ]);
+test('casts category to enum', function () {
+    $preference = NotificationPreference::factory()->create([
+        'category' => NotificationCategory::SECURITY,
+    ]);
 
-        $this->assertInstanceOf(NotificationCategory::class, $preference->category);
-        $this->assertEquals(NotificationCategory::SECURITY, $preference->category);
-    }
+    expect($preference->category)->toBeInstanceOf(NotificationCategory::class);
+    expect($preference->category)->toBe(NotificationCategory::SECURITY);
+});
 
-    public function test_casts_channel_to_enum(): void
-    {
-        $preference = NotificationPreference::factory()->create([
-            'channel' => NotificationChannel::DATABASE,
-        ]);
+test('casts channel to enum', function () {
+    $preference = NotificationPreference::factory()->create([
+        'channel' => NotificationChannel::DATABASE,
+    ]);
 
-        $this->assertInstanceOf(NotificationChannel::class, $preference->channel);
-        $this->assertEquals(NotificationChannel::DATABASE, $preference->channel);
-    }
+    expect($preference->channel)->toBeInstanceOf(NotificationChannel::class);
+    expect($preference->channel)->toBe(NotificationChannel::DATABASE);
+});
 
-    public function test_casts_enabled_to_boolean(): void
-    {
-        $preference = NotificationPreference::factory()->create([
-            'enabled' => 1,
-        ]);
+test('casts enabled to boolean', function () {
+    $preference = NotificationPreference::factory()->create([
+        'enabled' => 1,
+    ]);
 
-        $this->assertIsBool($preference->enabled);
-        $this->assertTrue($preference->enabled);
-    }
+    expect($preference->enabled)->toBeBool()->toBeTrue();
+});
 
-    public function test_belongs_to_user(): void
-    {
-        $user = User::factory()->create();
-        $preference = NotificationPreference::factory()->create([
-            'user_id' => $user->id,
-        ]);
+test('belongs to user', function () {
+    $user = User::factory()->create();
+    $preference = NotificationPreference::factory()->create([
+        'user_id' => $user->id,
+    ]);
 
-        $this->assertInstanceOf(User::class, $preference->user);
-        $this->assertEquals($user->id, $preference->user->id);
-    }
+    expect($preference->user)->toBeInstanceOf(User::class);
+    expect($preference->user->id)->toBe($user->id);
+});
 
-    public function test_factory_creates_valid_preference(): void
-    {
-        $preference = NotificationPreference::factory()->create();
+test('factory creates valid preference', function () {
+    $preference = NotificationPreference::factory()->create();
 
-        $this->assertNotNull($preference->id);
-        $this->assertNotNull($preference->user_id);
-        $this->assertInstanceOf(NotificationCategory::class, $preference->category);
-        $this->assertInstanceOf(NotificationChannel::class, $preference->channel);
-        $this->assertIsBool($preference->enabled);
-    }
+    expect($preference->id)->not->toBeNull();
+    expect($preference->user_id)->not->toBeNull();
+    expect($preference->category)->toBeInstanceOf(NotificationCategory::class);
+    expect($preference->channel)->toBeInstanceOf(NotificationChannel::class);
+    expect($preference->enabled)->toBeBool();
+});
 
-    public function test_factory_enabled_state(): void
-    {
-        $preference = NotificationPreference::factory()->enabled()->create();
+test('factory enabled state', function () {
+    $preference = NotificationPreference::factory()->enabled()->create();
 
-        $this->assertTrue($preference->enabled);
-    }
+    expect($preference->enabled)->toBeTrue();
+});
 
-    public function test_factory_disabled_state(): void
-    {
-        $preference = NotificationPreference::factory()->disabled()->create();
+test('factory disabled state', function () {
+    $preference = NotificationPreference::factory()->disabled()->create();
 
-        $this->assertFalse($preference->enabled);
-    }
+    expect($preference->enabled)->toBeFalse();
+});
 
-    public function test_factory_for_category_state(): void
-    {
-        $preference = NotificationPreference::factory()
-            ->forCategory(NotificationCategory::TRANSACTIONAL)
-            ->create();
+test('factory for category state', function () {
+    $preference = NotificationPreference::factory()
+        ->forCategory(NotificationCategory::TRANSACTIONAL)
+        ->create();
 
-        $this->assertEquals(NotificationCategory::TRANSACTIONAL, $preference->category);
-    }
+    expect($preference->category)->toBe(NotificationCategory::TRANSACTIONAL);
+});
 
-    public function test_factory_for_channel_state(): void
-    {
-        $preference = NotificationPreference::factory()
-            ->forChannel(NotificationChannel::PUSH)
-            ->create();
+test('factory for channel state', function () {
+    $preference = NotificationPreference::factory()
+        ->forChannel(NotificationChannel::PUSH)
+        ->create();
 
-        $this->assertEquals(NotificationChannel::PUSH, $preference->channel);
-    }
+    expect($preference->channel)->toBe(NotificationChannel::PUSH);
+});
 
-    public function test_unique_constraint_on_user_category_channel(): void
-    {
-        $user = User::factory()->create();
+test('unique constraint on user category channel', function () {
+    $user = User::factory()->create();
 
-        NotificationPreference::create([
-            'user_id' => $user->id,
-            'category' => NotificationCategory::MARKETING,
-            'channel' => NotificationChannel::EMAIL,
-            'enabled' => true,
-        ]);
+    NotificationPreference::create([
+        'user_id' => $user->id,
+        'category' => NotificationCategory::MARKETING,
+        'channel' => NotificationChannel::EMAIL,
+        'enabled' => true,
+    ]);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
-
-        NotificationPreference::create([
-            'user_id' => $user->id,
-            'category' => NotificationCategory::MARKETING,
-            'channel' => NotificationChannel::EMAIL,
-            'enabled' => false,
-        ]);
-    }
-}
+    expect(fn () => NotificationPreference::create([
+        'user_id' => $user->id,
+        'category' => NotificationCategory::MARKETING,
+        'channel' => NotificationChannel::EMAIL,
+        'enabled' => false,
+    ]))->toThrow(\Illuminate\Database\QueryException::class);
+});

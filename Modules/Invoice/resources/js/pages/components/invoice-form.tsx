@@ -1,144 +1,151 @@
-import { useMemo, useState } from 'react'
-import { useForm } from '@inertiajs/react'
-import { format } from 'date-fns'
-import { CalendarIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { SelectDropdown } from '@/components/select-dropdown'
-import { LineItemsInput } from './line-items-input'
-import { InvoiceSummary } from './invoice-summary'
-import { Invoice, LineItem } from '../data/schema'
-import { invoiceStatuses } from '../data/data'
-import { cn } from '@/lib/utils'
+import { useForm } from "@inertiajs/react";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useMemo, useState } from "react";
+import { SelectDropdown } from "@/components/select-dropdown";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import { invoiceStatuses } from "../data/data";
+import type { Invoice, LineItem } from "../data/schema";
+import { InvoiceSummary } from "./invoice-summary";
+import { LineItemsInput } from "./line-items-input";
 
 function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 }
 
 interface InvoiceDefaults {
-  from_name?: string
-  from_address?: string
-  from_email?: string
-  from_phone?: string
-  tax_rate?: number
-  payment_terms?: number
+  from_name?: string;
+  from_address?: string;
+  from_email?: string;
+  from_phone?: string;
+  tax_rate?: number;
+  payment_terms?: number;
 }
 
 interface Props {
-  invoice?: Invoice
-  defaults?: InvoiceDefaults
+  invoice?: Invoice;
+  defaults?: InvoiceDefaults;
 }
 
 export function InvoiceForm({ invoice, defaults }: Props) {
-  const isEdit = !!invoice
-  const paymentTerms = defaults?.payment_terms ?? 30
+  const isEdit = !!invoice;
+  const paymentTerms = defaults?.payment_terms ?? 30;
 
   const parseDate = (dateStr: string | undefined): Date | undefined => {
-    if (!dateStr) return undefined
-    const d = new Date(dateStr)
-    return isNaN(d.getTime()) ? undefined : d
-  }
+    if (!dateStr) return undefined;
+    const d = new Date(dateStr);
+    return Number.isNaN(d.getTime()) ? undefined : d;
+  };
 
   const calculateDueDate = (invoiceDate: Date, terms: number): Date => {
-    const dueDate = new Date(invoiceDate)
-    dueDate.setDate(dueDate.getDate() + terms)
-    return dueDate
-  }
+    const dueDate = new Date(invoiceDate);
+    dueDate.setDate(dueDate.getDate() + terms);
+    return dueDate;
+  };
 
-  const initialInvoiceDate = parseDate(invoice?.invoice_date) || new Date()
-  const initialDueDate = parseDate(invoice?.due_date) || calculateDueDate(initialInvoiceDate, paymentTerms)
+  const initialInvoiceDate = parseDate(invoice?.invoice_date) || new Date();
+  const initialDueDate =
+    parseDate(invoice?.due_date) || calculateDueDate(initialInvoiceDate, paymentTerms);
 
-  const [invoiceDate, setInvoiceDate] = useState<Date | undefined>(initialInvoiceDate)
-  const [dueDate, setDueDate] = useState<Date | undefined>(initialDueDate)
-  const [invoiceDateOpen, setInvoiceDateOpen] = useState(false)
-  const [dueDateOpen, setDueDateOpen] = useState(false)
+  const [invoiceDate, setInvoiceDate] = useState<Date | undefined>(initialInvoiceDate);
+  const [dueDate, setDueDate] = useState<Date | undefined>(initialDueDate);
+  const [invoiceDateOpen, setInvoiceDateOpen] = useState(false);
+  const [dueDateOpen, setDueDateOpen] = useState(false);
 
   const { data, setData, post, put, processing, errors } = useForm({
-    invoice_date: invoiceDate ? format(invoiceDate, 'yyyy-MM-dd') : '',
-    due_date: dueDate ? format(dueDate, 'yyyy-MM-dd') : '',
-    from_name: invoice?.from_name || defaults?.from_name || '',
-    from_address: invoice?.from_address || defaults?.from_address || '',
-    from_email: invoice?.from_email || defaults?.from_email || '',
-    from_phone: invoice?.from_phone || defaults?.from_phone || '',
-    to_name: invoice?.to_name || '',
-    to_address: invoice?.to_address || '',
-    to_email: invoice?.to_email || '',
+    invoice_date: invoiceDate ? format(invoiceDate, "yyyy-MM-dd") : "",
+    due_date: dueDate ? format(dueDate, "yyyy-MM-dd") : "",
+    from_name: invoice?.from_name || defaults?.from_name || "",
+    from_address: invoice?.from_address || defaults?.from_address || "",
+    from_email: invoice?.from_email || defaults?.from_email || "",
+    from_phone: invoice?.from_phone || defaults?.from_phone || "",
+    to_name: invoice?.to_name || "",
+    to_address: invoice?.to_address || "",
+    to_email: invoice?.to_email || "",
     tax_rate: invoice?.tax_rate ? Number(invoice.tax_rate) : (defaults?.tax_rate ?? 0.1),
-    notes: invoice?.notes || '',
-    status: invoice?.status || 'draft',
-    items: invoice?.items?.map(item => ({
+    notes: invoice?.notes || "",
+    status: invoice?.status || "draft",
+    items: invoice?.items?.map((item) => ({
       id: String(item.id || generateId()),
       description: item.description,
       quantity: Number(item.quantity),
       unit_price: Number(item.unit_price),
-    })) || [{ id: generateId(), description: '', quantity: 1, unit_price: 0 }],
-  })
+    })) || [{ id: generateId(), description: "", quantity: 1, unit_price: 0 }],
+  });
 
   const totals = useMemo(() => {
-    const subtotal = data.items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0)
-    const tax = subtotal * data.tax_rate
-    return { subtotal, tax, total: subtotal + tax }
-  }, [data.items, data.tax_rate])
+    const subtotal = data.items.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
+    const tax = subtotal * data.tax_rate;
+    return { subtotal, tax, total: subtotal + tax };
+  }, [data.items, data.tax_rate]);
 
   const handleItemChange = (index: number, field: keyof LineItem, value: string | number) => {
-    const updated = data.items.map((item, i) =>
-      i === index ? { ...item, [field]: value } : item
-    )
-    setData('items', updated)
-  }
+    const updated = data.items.map((item, i) => (i === index ? { ...item, [field]: value } : item));
+    setData("items", updated);
+  };
 
   const addItem = () => {
-    setData('items', [...data.items, { id: generateId(), description: '', quantity: 1, unit_price: 0 }])
-  }
+    setData("items", [
+      ...data.items,
+      { id: generateId(), description: "", quantity: 1, unit_price: 0 },
+    ]);
+  };
 
   const removeItem = (index: number) => {
-    setData('items', data.items.filter((_, i) => i !== index))
-  }
+    setData(
+      "items",
+      data.items.filter((_, i) => i !== index),
+    );
+  };
 
   const handleInvoiceDateChange = (date: Date | undefined) => {
-    setInvoiceDate(date)
-    setData('invoice_date', date ? format(date, 'yyyy-MM-dd') : '')
-    setInvoiceDateOpen(false)
+    setInvoiceDate(date);
+    setData("invoice_date", date ? format(date, "yyyy-MM-dd") : "");
+    setInvoiceDateOpen(false);
 
     // Auto-update due date when creating new invoice
     if (!isEdit && date) {
-      const newDueDate = calculateDueDate(date, paymentTerms)
-      setDueDate(newDueDate)
-      setData('due_date', format(newDueDate, 'yyyy-MM-dd'))
+      const newDueDate = calculateDueDate(date, paymentTerms);
+      setDueDate(newDueDate);
+      setData("due_date", format(newDueDate, "yyyy-MM-dd"));
     }
-  }
+  };
 
   const handleDueDateChange = (date: Date | undefined) => {
-    setDueDate(date)
-    setData('due_date', date ? format(date, 'yyyy-MM-dd') : '')
-    setDueDateOpen(false)
-  }
+    setDueDate(date);
+    setData("due_date", date ? format(date, "yyyy-MM-dd") : "");
+    setDueDateOpen(false);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (isEdit && invoice) {
-      put(route('dashboard.invoices.update', invoice.id))
+      put(route("dashboard.invoices.update", invoice.id));
     } else {
-      post(route('dashboard.invoices.store'))
+      post(route("dashboard.invoices.store"));
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
-          <CardHeader><CardTitle>From</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>From</CardTitle>
+          </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <Label>Business Name *</Label>
               <Input
                 value={data.from_name}
-                onChange={e => setData('from_name', e.target.value)}
+                onChange={(e) => setData("from_name", e.target.value)}
                 placeholder="Your business name"
               />
               {errors.from_name && <p className="text-sm text-red-500 mt-1">{errors.from_name}</p>}
@@ -147,7 +154,7 @@ export function InvoiceForm({ invoice, defaults }: Props) {
               <Label>Address</Label>
               <Textarea
                 value={data.from_address}
-                onChange={e => setData('from_address', e.target.value)}
+                onChange={(e) => setData("from_address", e.target.value)}
                 placeholder="Street, City, State, ZIP"
                 rows={3}
               />
@@ -158,7 +165,7 @@ export function InvoiceForm({ invoice, defaults }: Props) {
                 <Input
                   type="email"
                   value={data.from_email}
-                  onChange={e => setData('from_email', e.target.value)}
+                  onChange={(e) => setData("from_email", e.target.value)}
                   placeholder="email@example.com"
                 />
               </div>
@@ -166,7 +173,7 @@ export function InvoiceForm({ invoice, defaults }: Props) {
                 <Label>Phone</Label>
                 <Input
                   value={data.from_phone}
-                  onChange={e => setData('from_phone', e.target.value)}
+                  onChange={(e) => setData("from_phone", e.target.value)}
                   placeholder="+1 234 567 890"
                 />
               </div>
@@ -175,13 +182,15 @@ export function InvoiceForm({ invoice, defaults }: Props) {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Bill To</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>Bill To</CardTitle>
+          </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <Label>Client Name *</Label>
               <Input
                 value={data.to_name}
-                onChange={e => setData('to_name', e.target.value)}
+                onChange={(e) => setData("to_name", e.target.value)}
                 placeholder="Client or company name"
               />
               {errors.to_name && <p className="text-sm text-red-500 mt-1">{errors.to_name}</p>}
@@ -190,7 +199,7 @@ export function InvoiceForm({ invoice, defaults }: Props) {
               <Label>Address</Label>
               <Textarea
                 value={data.to_address}
-                onChange={e => setData('to_address', e.target.value)}
+                onChange={(e) => setData("to_address", e.target.value)}
                 placeholder="Street, City, State, ZIP"
                 rows={3}
               />
@@ -200,7 +209,7 @@ export function InvoiceForm({ invoice, defaults }: Props) {
               <Input
                 type="email"
                 value={data.to_email}
-                onChange={e => setData('to_email', e.target.value)}
+                onChange={(e) => setData("to_email", e.target.value)}
                 placeholder="client@example.com"
               />
             </div>
@@ -219,7 +228,7 @@ export function InvoiceForm({ invoice, defaults }: Props) {
                     variant="outline"
                     className={cn(
                       "w-full justify-start text-left font-normal",
-                      !invoiceDate && "text-muted-foreground"
+                      !invoiceDate && "text-muted-foreground",
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -249,7 +258,7 @@ export function InvoiceForm({ invoice, defaults }: Props) {
                     variant="outline"
                     className={cn(
                       "w-full justify-start text-left font-normal",
-                      !dueDate && "text-muted-foreground"
+                      !dueDate && "text-muted-foreground",
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -279,7 +288,7 @@ export function InvoiceForm({ invoice, defaults }: Props) {
                 min="0"
                 max="100"
                 value={data.tax_rate * 100}
-                onChange={e => setData('tax_rate', (parseFloat(e.target.value) || 0) / 100)}
+                onChange={(e) => setData("tax_rate", (parseFloat(e.target.value) || 0) / 100)}
               />
             </div>
             {isEdit && (
@@ -287,9 +296,9 @@ export function InvoiceForm({ invoice, defaults }: Props) {
                 <Label>Status</Label>
                 <SelectDropdown
                   defaultValue={data.status}
-                  onValueChange={(value) => setData('status', value as typeof data.status)}
+                  onValueChange={(value) => setData("status", value as typeof data.status)}
                   placeholder="Select status"
-                  items={invoiceStatuses.map(s => ({ label: s.label, value: s.value }))}
+                  items={invoiceStatuses.map((s) => ({ label: s.label, value: s.value }))}
                 />
               </div>
             )}
@@ -298,7 +307,9 @@ export function InvoiceForm({ invoice, defaults }: Props) {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Items</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Items</CardTitle>
+        </CardHeader>
         <CardContent>
           <LineItemsInput
             items={data.items}
@@ -312,11 +323,13 @@ export function InvoiceForm({ invoice, defaults }: Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
-          <CardHeader><CardTitle>Notes</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>Notes</CardTitle>
+          </CardHeader>
           <CardContent>
             <Textarea
               value={data.notes}
-              onChange={e => setData('notes', e.target.value)}
+              onChange={(e) => setData("notes", e.target.value)}
               placeholder="Additional notes or payment instructions..."
               rows={4}
             />
@@ -330,9 +343,9 @@ export function InvoiceForm({ invoice, defaults }: Props) {
           Cancel
         </Button>
         <Button type="submit" disabled={processing}>
-          {processing ? 'Saving...' : (isEdit ? 'Update Invoice' : 'Create Invoice')}
+          {processing ? "Saving..." : isEdit ? "Update Invoice" : "Create Invoice"}
         </Button>
       </div>
     </form>
-  )
+  );
 }

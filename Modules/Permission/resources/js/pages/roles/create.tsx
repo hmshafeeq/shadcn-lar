@@ -1,66 +1,66 @@
-import { AuthenticatedLayout } from "@/layouts"
-import { ChevronLeft } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Main } from "@/components/layout"
-import { useState } from "react"
-import { router } from "@inertiajs/react"
-import { PageProps } from "@/types"
-import { useToast } from "@/hooks/use-toast"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { router } from "@inertiajs/react";
+import { ChevronLeft } from "lucide-react";
+import { useState } from "react";
+import { Main } from "@/components/layout";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
+import { AuthenticatedLayout } from "@/layouts";
+import type { PageProps } from "@/types";
 
 interface Permission {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
 interface GroupedPermissions {
   [key: string]: {
-    name: string
-    action: string
-  }[]
+    name: string;
+    action: string;
+  }[];
 }
 
 interface CreateRolePageProps extends PageProps {
-  permissions: Permission[]
-  groupedPermissions: GroupedPermissions
+  permissions: Permission[];
+  groupedPermissions: GroupedPermissions;
 }
 
 export default function CreateRole({ permissions, groupedPermissions }: CreateRolePageProps) {
-  const [name, setName] = useState("")
-  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
-  const [processing, setProcessing] = useState(false)
-  const { toast } = useToast()
+  const [name, setName] = useState("");
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+  const [processing, setProcessing] = useState(false);
+  const { toast } = useToast();
 
   const handlePermissionToggle = (permissionName: string) => {
-    setSelectedPermissions(prev =>
+    setSelectedPermissions((prev) =>
       prev.includes(permissionName)
-        ? prev.filter(p => p !== permissionName)
-        : [...prev, permissionName]
-    )
-  }
+        ? prev.filter((p) => p !== permissionName)
+        : [...prev, permissionName],
+    );
+  };
 
-  const handleGroupToggle = (group: string, permissions: { name: string }[]) => {
-    const groupPermissionNames = permissions.map(p => p.name)
-    const allSelected = groupPermissionNames.every(p => selectedPermissions.includes(p))
+  const handleGroupToggle = (_group: string, permissions: { name: string }[]) => {
+    const groupPermissionNames = permissions.map((p) => p.name);
+    const allSelected = groupPermissionNames.every((p) => selectedPermissions.includes(p));
 
     if (allSelected) {
-      setSelectedPermissions(prev => prev.filter(p => !groupPermissionNames.includes(p)))
+      setSelectedPermissions((prev) => prev.filter((p) => !groupPermissionNames.includes(p)));
     } else {
-      setSelectedPermissions(prev => [...new Set([...prev, ...groupPermissionNames])])
+      setSelectedPermissions((prev) => [...new Set([...prev, ...groupPermissionNames])]);
     }
-  }
+  };
 
   const handleSelectAll = () => {
     if (selectedPermissions.length === permissions.length) {
-      setSelectedPermissions([])
+      setSelectedPermissions([]);
     } else {
-      setSelectedPermissions(permissions.map(p => p.name))
+      setSelectedPermissions(permissions.map((p) => p.name));
     }
-  }
+  };
 
   const handleSubmit = () => {
     if (!name.trim()) {
@@ -68,40 +68,48 @@ export default function CreateRole({ permissions, groupedPermissions }: CreateRo
         variant: "destructive",
         title: "Validation Error",
         description: "Role name is required.",
-      })
-      return
+      });
+      return;
     }
 
-    setProcessing(true)
-    router.post(route('dashboard.roles.store'), {
-      name: name,
-      permissions: selectedPermissions,
-    }, {
-      onSuccess: () => {
-        setProcessing(false)
-        toast({
-          title: "Role created!",
-          description: "The role has been created successfully.",
-        })
+    setProcessing(true);
+    router.post(
+      route("dashboard.roles.store"),
+      {
+        name: name,
+        permissions: selectedPermissions,
       },
-      onError: (errors) => {
-        setProcessing(false)
-        toast({
-          variant: "destructive",
-          title: "Error creating role",
-          description: Object.values(errors)[0] as string || "Please check your form and try again.",
-        })
-      }
-    })
-  }
+      {
+        onSuccess: () => {
+          setProcessing(false);
+          toast({
+            title: "Role created!",
+            description: "The role has been created successfully.",
+          });
+        },
+        onError: (errors) => {
+          setProcessing(false);
+          toast({
+            variant: "destructive",
+            title: "Error creating role",
+            description:
+              (Object.values(errors)[0] as string) || "Please check your form and try again.",
+          });
+        },
+      },
+    );
+  };
 
   const isGroupFullySelected = (permissions: { name: string }[]) => {
-    return permissions.every(p => selectedPermissions.includes(p.name))
-  }
+    return permissions.every((p) => selectedPermissions.includes(p.name));
+  };
 
   const isGroupPartiallySelected = (permissions: { name: string }[]) => {
-    return permissions.some(p => selectedPermissions.includes(p.name)) && !isGroupFullySelected(permissions)
-  }
+    return (
+      permissions.some((p) => selectedPermissions.includes(p.name)) &&
+      !isGroupFullySelected(permissions)
+    );
+  };
 
   return (
     <AuthenticatedLayout title="Create Role">
@@ -109,7 +117,12 @@ export default function CreateRole({ permissions, groupedPermissions }: CreateRo
         <div className="grid flex-1 items-start gap-4 md:gap-8">
           <div className="grid flex-1 auto-rows-max gap-4">
             <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => window.history.back()}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => window.history.back()}
+              >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Back</span>
               </Button>
@@ -117,11 +130,14 @@ export default function CreateRole({ permissions, groupedPermissions }: CreateRo
                 Create Role
               </h1>
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                <Button variant="outline" onClick={() => router.get(route('dashboard.roles.index'))}>
+                <Button
+                  variant="outline"
+                  onClick={() => router.get(route("dashboard.roles.index"))}
+                >
                   Cancel
                 </Button>
                 <Button size="sm" onClick={handleSubmit} disabled={processing}>
-                  {processing ? 'Creating...' : 'Create Role'}
+                  {processing ? "Creating..." : "Create Role"}
                 </Button>
               </div>
             </div>
@@ -156,7 +172,9 @@ export default function CreateRole({ permissions, groupedPermissions }: CreateRo
                         <CardDescription>Select permissions for this role</CardDescription>
                       </div>
                       <Button variant="outline" size="sm" onClick={handleSelectAll}>
-                        {selectedPermissions.length === permissions.length ? 'Deselect All' : 'Select All'}
+                        {selectedPermissions.length === permissions.length
+                          ? "Deselect All"
+                          : "Select All"}
                       </Button>
                     </div>
                   </CardHeader>
@@ -171,7 +189,9 @@ export default function CreateRole({ permissions, groupedPermissions }: CreateRo
                                 checked={isGroupFullySelected(perms)}
                                 ref={(ref) => {
                                   if (ref) {
-                                    (ref as HTMLButtonElement & { indeterminate: boolean }).indeterminate = isGroupPartiallySelected(perms)
+                                    (
+                                      ref as HTMLButtonElement & { indeterminate: boolean }
+                                    ).indeterminate = isGroupPartiallySelected(perms);
                                   }
                                 }}
                                 onCheckedChange={() => handleGroupToggle(group, perms)}
@@ -183,7 +203,8 @@ export default function CreateRole({ permissions, groupedPermissions }: CreateRo
                                 {group}
                               </Label>
                               <span className="text-xs text-muted-foreground">
-                                ({perms.filter(p => selectedPermissions.includes(p.name)).length}/{perms.length})
+                                ({perms.filter((p) => selectedPermissions.includes(p.name)).length}/
+                                {perms.length})
                               </span>
                             </div>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pl-6">
@@ -219,11 +240,13 @@ export default function CreateRole({ permissions, groupedPermissions }: CreateRo
                   <CardContent className="space-y-4">
                     <div>
                       <p className="text-sm text-muted-foreground">Role Name</p>
-                      <p className="font-medium">{name || '-'}</p>
+                      <p className="font-medium">{name || "-"}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Selected Permissions</p>
-                      <p className="font-medium">{selectedPermissions.length} of {permissions.length}</p>
+                      <p className="font-medium">
+                        {selectedPermissions.length} of {permissions.length}
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -231,16 +254,16 @@ export default function CreateRole({ permissions, groupedPermissions }: CreateRo
             </div>
 
             <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button variant="outline" onClick={() => router.get(route('dashboard.roles.index'))}>
+              <Button variant="outline" onClick={() => router.get(route("dashboard.roles.index"))}>
                 Cancel
               </Button>
               <Button size="sm" onClick={handleSubmit} disabled={processing}>
-                {processing ? 'Creating...' : 'Create Role'}
+                {processing ? "Creating..." : "Create Role"}
               </Button>
             </div>
           </div>
         </div>
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }

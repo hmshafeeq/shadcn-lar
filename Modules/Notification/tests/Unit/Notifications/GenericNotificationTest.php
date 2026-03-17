@@ -1,149 +1,129 @@
 <?php
 
-namespace Modules\Notification\Tests\Unit\Notifications;
-
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Modules\Notification\{
-    Enums\NotificationCategory,
-    Enums\NotificationChannel,
-    Models\NotificationTemplate,
-    Notifications\GenericNotification
-};
-use Tests\TestCase;
+use Modules\Notification\Enums\NotificationCategory;
+use Modules\Notification\Enums\NotificationChannel;
+use Modules\Notification\Models\NotificationTemplate;
+use Modules\Notification\Notifications\GenericNotification;
 
-class GenericNotificationTest extends TestCase
-{
-    use RefreshDatabase;
+uses(Tests\TestCase::class, RefreshDatabase::class);
 
-    public function test_can_create_generic_notification(): void
-    {
-        $notification = new GenericNotification(
-            title: 'Test Title',
-            message: 'Test message',
-            category: NotificationCategory::SYSTEM,
-        );
+test('can create generic notification', function () {
+    $notification = new GenericNotification(
+        title: 'Test Title',
+        message: 'Test message',
+        category: NotificationCategory::SYSTEM,
+    );
 
-        $this->assertInstanceOf(GenericNotification::class, $notification);
-    }
+    expect($notification)->toBeInstanceOf(GenericNotification::class);
+});
 
-    public function test_via_returns_correct_channels(): void
-    {
-        $notification = new GenericNotification(
-            title: 'Test',
-            message: 'Test',
-            category: NotificationCategory::SYSTEM,
-            channels: [NotificationChannel::DATABASE, NotificationChannel::EMAIL],
-        );
+test('via returns correct channels', function () {
+    $notification = new GenericNotification(
+        title: 'Test',
+        message: 'Test',
+        category: NotificationCategory::SYSTEM,
+        channels: [NotificationChannel::DATABASE, NotificationChannel::EMAIL],
+    );
 
-        $user = User::factory()->create();
-        $channels = $notification->via($user);
+    $user = User::factory()->create();
+    $channels = $notification->via($user);
 
-        $this->assertContains('database', $channels);
-        $this->assertContains('mail', $channels);
-    }
+    expect($channels)->toContain('database')->toContain('mail');
+});
 
-    public function test_to_array_returns_correct_structure(): void
-    {
-        $notification = new GenericNotification(
-            title: 'Test Title',
-            message: 'Test message',
-            category: NotificationCategory::MARKETING,
-            actionUrl: 'https://example.com',
-            actionLabel: 'Click here',
-            icon: 'sparkles',
-        );
+test('to array returns correct structure', function () {
+    $notification = new GenericNotification(
+        title: 'Test Title',
+        message: 'Test message',
+        category: NotificationCategory::MARKETING,
+        actionUrl: 'https://example.com',
+        actionLabel: 'Click here',
+        icon: 'sparkles',
+    );
 
-        $user = User::factory()->create();
-        $array = $notification->toArray($user);
+    $user = User::factory()->create();
+    $array = $notification->toArray($user);
 
-        $this->assertEquals('Test Title', $array['title']);
-        $this->assertEquals('Test message', $array['message']);
-        $this->assertEquals('marketing', $array['category']);
-        $this->assertEquals('https://example.com', $array['action_url']);
-        $this->assertEquals('Click here', $array['action_label']);
-        $this->assertEquals('sparkles', $array['icon']);
-    }
+    expect($array['title'])->toBe('Test Title');
+    expect($array['message'])->toBe('Test message');
+    expect($array['category'])->toBe('marketing');
+    expect($array['action_url'])->toBe('https://example.com');
+    expect($array['action_label'])->toBe('Click here');
+    expect($array['icon'])->toBe('sparkles');
+});
 
-    public function test_to_mail_returns_mail_message(): void
-    {
-        $notification = new GenericNotification(
-            title: 'Test Title',
-            message: 'Test message',
-            category: NotificationCategory::COMMUNICATION,
-            actionUrl: 'https://example.com',
-            actionLabel: 'View',
-        );
+test('to mail returns mail message', function () {
+    $notification = new GenericNotification(
+        title: 'Test Title',
+        message: 'Test message',
+        category: NotificationCategory::COMMUNICATION,
+        actionUrl: 'https://example.com',
+        actionLabel: 'View',
+    );
 
-        $user = User::factory()->create();
-        $mail = $notification->toMail($user);
+    $user = User::factory()->create();
+    $mail = $notification->toMail($user);
 
-        $this->assertInstanceOf(\Illuminate\Notifications\Messages\MailMessage::class, $mail);
-    }
+    expect($mail)->toBeInstanceOf(\Illuminate\Notifications\Messages\MailMessage::class);
+});
 
-    public function test_from_template_creates_notification(): void
-    {
-        $template = NotificationTemplate::factory()->create([
-            'subject' => 'Hello {{ user_name }}',
-            'body' => 'Welcome {{ user_name }}!',
-            'category' => NotificationCategory::COMMUNICATION,
-            'channels' => ['database', 'email'],
-        ]);
+test('from template creates notification', function () {
+    $template = NotificationTemplate::factory()->create([
+        'subject' => 'Hello {{ user_name }}',
+        'body' => 'Welcome {{ user_name }}!',
+        'category' => NotificationCategory::COMMUNICATION,
+        'channels' => ['database', 'email'],
+    ]);
 
-        $notification = GenericNotification::fromTemplate(
-            template: $template,
-            variables: ['user_name' => 'John'],
-            actionUrl: 'https://example.com',
-        );
+    $notification = GenericNotification::fromTemplate(
+        template: $template,
+        variables: ['user_name' => 'John'],
+        actionUrl: 'https://example.com',
+    );
 
-        $user = User::factory()->create();
-        $array = $notification->toArray($user);
+    $user = User::factory()->create();
+    $array = $notification->toArray($user);
 
-        $this->assertEquals('Hello John', $array['title']);
-        $this->assertEquals('Welcome John!', $array['message']);
-    }
+    expect($array['title'])->toBe('Hello John');
+    expect($array['message'])->toBe('Welcome John!');
+});
 
-    public function test_defaults_to_database_channel(): void
-    {
-        $notification = new GenericNotification(
-            title: 'Test',
-            message: 'Test',
-            category: NotificationCategory::SYSTEM,
-        );
+test('defaults to database channel', function () {
+    $notification = new GenericNotification(
+        title: 'Test',
+        message: 'Test',
+        category: NotificationCategory::SYSTEM,
+    );
 
-        $user = User::factory()->create();
-        $channels = $notification->via($user);
+    $user = User::factory()->create();
+    $channels = $notification->via($user);
 
-        $this->assertContains('database', $channels);
-    }
+    expect($channels)->toContain('database');
+});
 
-    public function test_uses_category_icon_when_not_provided(): void
-    {
-        $notification = new GenericNotification(
-            title: 'Test',
-            message: 'Test',
-            category: NotificationCategory::SECURITY,
-        );
+test('uses category icon when not provided', function () {
+    $notification = new GenericNotification(
+        title: 'Test',
+        message: 'Test',
+        category: NotificationCategory::SECURITY,
+    );
 
-        $user = User::factory()->create();
-        $array = $notification->toArray($user);
+    $user = User::factory()->create();
+    $array = $notification->toArray($user);
 
-        $this->assertEquals(NotificationCategory::SECURITY->icon(), $array['icon']);
-    }
+    expect($array['icon'])->toBe(NotificationCategory::SECURITY->icon());
+});
 
-    public function test_to_database_returns_same_as_to_array(): void
-    {
-        $notification = new GenericNotification(
-            title: 'Test',
-            message: 'Test',
-            category: NotificationCategory::TRANSACTIONAL,
-        );
+test('to database returns same as to array', function () {
+    $notification = new GenericNotification(
+        title: 'Test',
+        message: 'Test',
+        category: NotificationCategory::TRANSACTIONAL,
+    );
 
-        $user = User::factory()->create();
+    $user = User::factory()->create();
 
-        $this->assertEquals(
-            $notification->toArray($user),
-            $notification->toDatabase($user)
-        );
-    }
-}
+    expect($notification->toDatabase($user))->toBe($notification->toArray($user));
+});

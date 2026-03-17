@@ -1,14 +1,12 @@
 "use client";
 
+import { useState } from "react";
+import { PAYMENT_FREQUENCIES, TIERS } from "@/config";
 import { PricingCard } from "./PricingCard";
 import { PricingHeader } from "./PricingHeader";
-import { PAYMENT_FREQUENCIES, TIERS } from "@/config";
-import { useState } from "react";
 
 export const Pricing = () => {
-  const [selectedPaymentFreq, setSelectedPaymentFreq] = useState(
-    PAYMENT_FREQUENCIES[0],
-  );
+  const [selectedPaymentFreq, setSelectedPaymentFreq] = useState(PAYMENT_FREQUENCIES[0]);
 
   return (
     <section className="flex flex-col items-center gap-10 py-10">
@@ -24,11 +22,7 @@ export const Pricing = () => {
       {/* Pricing Cards */}
       <div className="grid w-full max-w-6xl gap-6 sm:grid-cols-2 xl:grid-cols-4">
         {TIERS.map((tier, i) => (
-          <PricingCard
-            key={i}
-            tier={tier}
-            paymentFrequency={selectedPaymentFreq}
-          />
+          <PricingCard key={i} tier={tier} paymentFrequency={selectedPaymentFreq} />
         ))}
       </div>
     </section>

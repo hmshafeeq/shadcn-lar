@@ -1,12 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Props {
   totals: {
-    subtotal: number
-    tax: number
-    total: number
-  }
-  taxRate: number
+    subtotal: number;
+    tax: number;
+    total: number;
+  };
+  taxRate: number;
 }
 
 export function InvoiceSummary({ totals, taxRate }: Props) {
@@ -30,5 +30,5 @@ export function InvoiceSummary({ totals, taxRate }: Props) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

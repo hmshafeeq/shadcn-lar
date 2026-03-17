@@ -1,21 +1,21 @@
-import { AuthenticatedLayout } from '@/layouts'
-import { useTranslation } from 'react-i18next'
-import { Main } from '@/components/layout/main'
-import { PageProps, Role } from '@/types'
-import { columns } from './components/users-columns'
-import { UsersDialogs } from './components/users-dialogs'
-import { UsersPrimaryButtons } from './components/users-primary-buttons'
-import { UsersTable } from './components/users-table'
-import UsersProvider from './context/users-context'
-import { PaginatedUsers } from './data/schema'
+import { useTranslation } from "react-i18next";
+import { Main } from "@/components/layout/main";
+import { AuthenticatedLayout } from "@/layouts";
+import type { PageProps, Role } from "@/types";
+import { columns } from "./components/users-columns";
+import { UsersDialogs } from "./components/users-dialogs";
+import { UsersPrimaryButtons } from "./components/users-primary-buttons";
+import { UsersTable } from "./components/users-table";
+import UsersProvider from "./context/users-context";
+import type { PaginatedUsers } from "./data/schema";
 
 interface UsersPageProps extends PageProps {
-  users: PaginatedUsers
-  roles: Role[]
+  users: PaginatedUsers;
+  roles: Role[];
   filters?: {
-    search?: string
-    role?: string
-  }
+    search?: string;
+    role?: string;
+  };
 }
 
 // Default pagination values for safety
@@ -25,14 +25,14 @@ const defaultPagination: PaginatedUsers = {
   last_page: 1,
   per_page: 10,
   total: 0,
-}
+};
 
 export default function Users({
   users = defaultPagination,
   roles = [],
   filters = {},
 }: UsersPageProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   // Ensure users has proper structure
   const safeUsers: PaginatedUsers = {
@@ -41,18 +41,16 @@ export default function Users({
     last_page: users?.last_page ?? 1,
     per_page: users?.per_page ?? 10,
     total: users?.total ?? 0,
-  }
+  };
 
   return (
     <UsersProvider>
-      <AuthenticatedLayout title={t('page.users.title')}>
+      <AuthenticatedLayout title={t("page.users.title")}>
         <Main>
           <div className="mb-2 flex items-center justify-between space-y-2 flex-wrap">
             <div>
-              <h2 className="text-2xl font-bold tracking-tight">{t('page.users.list')}</h2>
-              <p className="text-muted-foreground">
-                {t('page.users.description')}
-              </p>
+              <h2 className="text-2xl font-bold tracking-tight">{t("page.users.list")}</h2>
+              <p className="text-muted-foreground">{t("page.users.description")}</p>
             </div>
             <UsersPrimaryButtons />
           </div>
@@ -70,5 +68,5 @@ export default function Users({
         <UsersDialogs />
       </AuthenticatedLayout>
     </UsersProvider>
-  )
+  );
 }

@@ -1,151 +1,130 @@
 <?php
 
-namespace Modules\Finance\Tests\Feature;
-
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Modules\Finance\Models\{Account, Budget, Category, Currency, Transaction};
-use Tests\TestCase;
 
-class DashboardApiTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    protected User $user;
+beforeEach(function () {
+    $this->user = User::factory()->create();
 
-    protected Account $account;
+    Currency::create([
+        'code' => 'USD',
+        'name' => 'US Dollar',
+        'symbol' => '$',
+        'decimal_places' => 2,
+        'is_default' => true,
+    ]);
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    $this->account = Account::create([
+        'user_id' => $this->user->id,
+        'name' => 'Test Account',
+        'account_type' => 'bank',
+        'currency_code' => 'USD',
+        'initial_balance' => 10000,
+        'current_balance' => 10000,
+        'is_active' => true,
+    ]);
+});
 
-        $this->user = User::factory()->create();
+test('user can get dashboard data', function () {
+    Sanctum::actingAs($this->user);
 
-        Currency::create([
-            'code' => 'USD',
-            'name' => 'US Dollar',
-            'symbol' => '$',
-            'decimal_places' => 2,
-            'is_default' => true,
-        ]);
-
-        $this->account = Account::create([
-            'user_id' => $this->user->id,
-            'name' => 'Test Account',
-            'account_type' => 'bank',
-            'currency_code' => 'USD',
-            'initial_balance' => 10000,
-            'current_balance' => 10000,
-            'is_active' => true,
-        ]);
-    }
-
-    public function test_user_can_get_dashboard_data(): void
-    {
-        Sanctum::actingAs($this->user);
-
-        $response = $this->getJson('/api/v1/finance/dashboard');
-
-        $response->assertOk()
-            ->assertJsonStructure([
-                'data' => [
-                    'summary' => [
-                        'total_assets',
-                        'total_liabilities',
-                        'net_worth',
-                        'total_balance',
-                        'currency_code',
-                        'accounts_count',
-                    ],
-                    'recent_transactions',
-                    'budgets',
-                    'spending_trend',
-                    'recurring_projection',
-                    'upcoming_recurrings',
+    $this->getJson('/api/v1/finance/dashboard')
+        ->assertOk()
+        ->assertJsonStructure([
+            'data' => [
+                'summary' => [
+                    'total_assets',
+                    'total_liabilities',
+                    'net_worth',
+                    'total_balance',
+                    'currency_code',
+                    'accounts_count',
                 ],
-            ]);
-    }
-
-    public function test_dashboard_shows_recent_transactions(): void
-    {
-        Sanctum::actingAs($this->user);
-
-        Transaction::create([
-            'account_id' => $this->account->id,
-            'user_id' => $this->user->id,
-            'transaction_type' => 'expense',
-            'amount' => 100,
-            'currency_code' => 'USD',
-            'transaction_date' => now(),
-            'description' => 'Test Transaction',
+                'recent_transactions',
+                'budgets',
+                'spending_trend',
+                'recurring_projection',
+                'upcoming_recurrings',
+            ],
         ]);
+});
 
-        $response = $this->getJson('/api/v1/finance/dashboard');
+test('dashboard shows recent transactions', function () {
+    Sanctum::actingAs($this->user);
 
-        $response->assertOk();
-        $this->assertCount(1, $response->json('data.recent_transactions'));
-    }
+    Transaction::create([
+        'account_id' => $this->account->id,
+        'user_id' => $this->user->id,
+        'transaction_type' => 'expense',
+        'amount' => 100,
+        'currency_code' => 'USD',
+        'transaction_date' => now(),
+        'description' => 'Test Transaction',
+    ]);
 
-    public function test_dashboard_shows_active_budgets(): void
-    {
-        Sanctum::actingAs($this->user);
+    $response = $this->getJson('/api/v1/finance/dashboard');
 
-        $category = Category::create([
-            'name' => 'Food',
-            'type' => 'expense',
-            'color' => '#ff0000',
-        ]);
+    $response->assertOk();
+    expect($response->json('data.recent_transactions'))->toHaveCount(1);
+});
 
-        Budget::create([
-            'user_id' => $this->user->id,
-            'name' => 'Food Budget',
-            'category_id' => $category->id,
-            'allocated_amount' => 500,
-            'spent_amount' => 0,
-            'currency_code' => 'USD',
-            'period_type' => 'monthly',
-            'start_date' => now()->startOfMonth(),
-            'end_date' => now()->endOfMonth(),
-            'is_active' => true,
-        ]);
+test('dashboard shows active budgets', function () {
+    Sanctum::actingAs($this->user);
 
-        $response = $this->getJson('/api/v1/finance/dashboard');
+    $category = Category::create([
+        'name' => 'Food',
+        'type' => 'expense',
+        'color' => '#ff0000',
+    ]);
 
-        $response->assertOk();
-        $this->assertCount(1, $response->json('data.budgets'));
-    }
+    Budget::create([
+        'user_id' => $this->user->id,
+        'name' => 'Food Budget',
+        'category_id' => $category->id,
+        'allocated_amount' => 500,
+        'spent_amount' => 0,
+        'currency_code' => 'USD',
+        'period_type' => 'monthly',
+        'start_date' => now()->startOfMonth(),
+        'end_date' => now()->endOfMonth(),
+        'is_active' => true,
+    ]);
 
-    public function test_dashboard_calculates_net_worth_correctly(): void
-    {
-        Sanctum::actingAs($this->user);
+    $response = $this->getJson('/api/v1/finance/dashboard');
 
-        // Create a credit card with debt
-        Account::create([
-            'user_id' => $this->user->id,
-            'name' => 'Credit Card',
-            'account_type' => 'credit_card',
-            'currency_code' => 'USD',
-            'initial_balance' => 5000, // credit limit
-            'current_balance' => 4000, // available credit (1000 owed)
-            'is_active' => true,
-            'has_credit_limit' => true,
-        ]);
+    $response->assertOk();
+    expect($response->json('data.budgets'))->toHaveCount(1);
+});
 
-        $response = $this->getJson('/api/v1/finance/dashboard');
+test('dashboard calculates net worth correctly', function () {
+    Sanctum::actingAs($this->user);
 
-        $response->assertOk();
-        $summary = $response->json('data.summary');
+    Account::create([
+        'user_id' => $this->user->id,
+        'name' => 'Credit Card',
+        'account_type' => 'credit_card',
+        'currency_code' => 'USD',
+        'initial_balance' => 5000,
+        'current_balance' => 4000,
+        'is_active' => true,
+        'has_credit_limit' => true,
+    ]);
 
-        $this->assertEquals(10000, $summary['total_assets']);
-        $this->assertEquals(1000, $summary['total_liabilities']);
-        $this->assertEquals(9000, $summary['net_worth']);
-    }
+    $response = $this->getJson('/api/v1/finance/dashboard');
 
-    public function test_unauthenticated_user_cannot_access_dashboard(): void
-    {
-        $response = $this->getJson('/api/v1/finance/dashboard');
+    $response->assertOk();
+    $summary = $response->json('data.summary');
 
-        $response->assertUnauthorized();
-    }
-}
+    expect($summary['total_assets'])->toBe(10000);
+    expect($summary['total_liabilities'])->toBe(1000);
+    expect($summary['net_worth'])->toBe(9000);
+});
+
+test('unauthenticated user cannot access dashboard', function () {
+    $this->getJson('/api/v1/finance/dashboard')
+        ->assertUnauthorized();
+});

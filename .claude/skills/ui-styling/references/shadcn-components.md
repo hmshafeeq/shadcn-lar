@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button"
 <Button variant="link">Link Style</Button>
 ```
 
-Variants: `default | destructive | outline | secondary | ghost | link`
+Variants: `default | destructive | outline-solid | secondary | ghost | link`
 Sizes: `default | sm | lg | icon`
 
 ### Input

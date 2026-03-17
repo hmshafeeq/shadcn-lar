@@ -394,7 +394,7 @@ Always provide visible focus indicators:
 
 **Custom focus styles:**
 ```tsx
-<a href="#" className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:underline">
+<a href="#" className="focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:underline">
   Link
 </a>
 ```
@@ -402,7 +402,7 @@ Always provide visible focus indicators:
 **Don't remove focus styles:**
 ```tsx
 // Avoid
-<button className="focus:outline-none">Bad</button>
+<button className="focus:outline-hidden">Bad</button>
 
 // Use focus-visible instead
 <button className="focus-visible:ring-2">Good</button>

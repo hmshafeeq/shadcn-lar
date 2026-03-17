@@ -1,19 +1,19 @@
-import axiosRequest from "axios"
-import { axios } from "@/lib/axios"
-import { assetUrl } from "@/lib/urls"
+import axiosRequest from "axios";
+import { axios } from "@/lib/axios";
+import { assetUrl } from "@/lib/urls";
 
-export type BucketId = "uploads/images" | "uploads/avatars" | "uploads/attachments"
+export type BucketId = "uploads/images" | "uploads/avatars" | "uploads/attachments";
 
 export interface PresignedResponse {
-  path: string
-  url: string
-  headers: Record<string, string>
+  path: string;
+  url: string;
+  headers: Record<string, string>;
 }
 
 export interface UploaderOptions {
-  unique?: boolean
-  bucketId?: BucketId
-  onUploadProgress?: (event: { loaded: number; total?: number }) => void
+  unique?: boolean;
+  bucketId?: BucketId;
+  onUploadProgress?: (event: { loaded: number; total?: number }) => void;
 }
 
 function createImageUploader({
@@ -32,9 +32,9 @@ function createImageUploader({
         mimeType: file.type,
         contentLength: file.size,
       },
-    })
+    });
 
-    const { path, url, headers } = response.data
+    const { path, url, headers } = response.data;
 
     await axiosRequest.request({
       method: "PUT",
@@ -46,10 +46,10 @@ function createImageUploader({
         "Content-Disposition": `inline; filename="${file.name}"`,
         ...headers,
       },
-    })
+    });
 
-    return assetUrl(path)
-  }
+    return assetUrl(path);
+  };
 }
 
-export { createImageUploader }
+export { createImageUploader };

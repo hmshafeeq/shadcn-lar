@@ -1,18 +1,16 @@
-import { z } from 'zod'
+import { z } from "zod";
 
-export const invoiceStatusSchema = z.enum([
-  'draft', 'sent', 'paid', 'overdue', 'cancelled'
-])
-export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>
+export const invoiceStatusSchema = z.enum(["draft", "sent", "paid", "overdue", "cancelled"]);
+export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;
 
 export const lineItemSchema = z.object({
   id: z.union([z.string(), z.number()]).optional(),
-  description: z.string().min(1, 'Description required'),
-  quantity: z.number().min(0.01, 'Min 0.01'),
-  unit_price: z.number().min(0, 'Min 0'),
+  description: z.string().min(1, "Description required"),
+  quantity: z.number().min(0.01, "Min 0.01"),
+  unit_price: z.number().min(0, "Min 0"),
   amount: z.number().optional(),
-})
-export type LineItem = z.infer<typeof lineItemSchema>
+});
+export type LineItem = z.infer<typeof lineItemSchema>;
 
 export const invoiceSchema = z.object({
   id: z.number(),
@@ -35,7 +33,7 @@ export const invoiceSchema = z.object({
   items: z.array(lineItemSchema),
   created_at: z.string(),
   updated_at: z.string(),
-})
-export type Invoice = z.infer<typeof invoiceSchema>
+});
+export type Invoice = z.infer<typeof invoiceSchema>;
 
-export const invoiceListSchema = z.array(invoiceSchema)
+export const invoiceListSchema = z.array(invoiceSchema);

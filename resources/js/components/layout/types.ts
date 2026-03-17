@@ -1,49 +1,49 @@
-import { LinkProps } from '@tanstack/react-router'
+import type { LinkProps } from "@tanstack/react-router";
 
 interface User {
-  name: string
-  email: string
-  avatar: string
+  name: string;
+  email: string;
+  avatar: string;
 }
 
 interface Team {
-  name: string
-  logo: React.ElementType
-  plan: string
+  name: string;
+  logo: React.ElementType;
+  plan: string;
 }
 
 interface BaseNavItem {
-  title: string
-  titleKey?: string
-  badge?: string
-  icon?: React.ElementType
-  permission?: string | string[]
+  title: string;
+  titleKey?: string;
+  badge?: string;
+  icon?: React.ElementType;
+  permission?: string | string[];
 }
 
 type NavLink = BaseNavItem & {
-  url: LinkProps['to']
-  items?: never
-}
+  url: LinkProps["to"];
+  items?: never;
+};
 
 type NavCollapsible = BaseNavItem & {
-  items: (BaseNavItem & { url: LinkProps['to'] })[]
-  url?: never
-}
+  items: (BaseNavItem & { url: LinkProps["to"] })[];
+  url?: never;
+};
 
-type NavItem = NavCollapsible | NavLink
+type NavItem = NavCollapsible | NavLink;
 
 interface NavGroup {
-  title: string
-  titleKey?: string
-  items: NavItem[]
-  collapsible?: boolean
-  requiresModule?: string
+  title: string;
+  titleKey?: string;
+  items: NavItem[];
+  collapsible?: boolean;
+  requiresModule?: string;
 }
 
 interface SidebarData {
-  user: User
-  teams: Team[]
-  navGroups: NavGroup[]
+  user: User;
+  teams: Team[];
+  navGroups: NavGroup[];
 }
 
-export type { SidebarData, NavGroup, NavItem, NavCollapsible, NavLink }
+export type { NavCollapsible, NavGroup, NavItem, NavLink, SidebarData };

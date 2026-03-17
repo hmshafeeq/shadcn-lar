@@ -1,9 +1,21 @@
-import { useState } from 'react'
-import { router, Link } from '@inertiajs/react'
-import { AuthenticatedLayout } from '@/layouts'
-import { Main } from '@/components/layout/main'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Link, router } from "@inertiajs/react";
+import type { FinancialPlan, MonthlyProjection } from "@modules/Finance/types/finance";
+import {
+  ArrowRight,
+  BarChart3,
+  Calendar,
+  Eye,
+  MoreVertical,
+  Plus,
+  RefreshCw,
+  Target,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Wallet,
+} from "lucide-react";
+import { useState } from "react";
+import { Main } from "@/components/layout/main";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,97 +25,82 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  Plus,
-  Calendar,
-  MoreVertical,
-  Eye,
-  Trash2,
-  BarChart3,
-  TrendingUp,
-  TrendingDown,
-  RefreshCw,
-  Wallet,
-  Target,
-  ArrowRight,
-} from 'lucide-react'
-import type { FinancialPlan, MonthlyProjection } from '@modules/Finance/types/finance'
+} from "@/components/ui/dropdown-menu";
+import { AuthenticatedLayout } from "@/layouts";
 
 interface UpcomingRecurring {
-  id: number
-  name: string
-  transaction_type: 'income' | 'expense'
-  amount: number
-  currency_code: string
-  frequency: string
-  next_run_date: string
+  id: number;
+  name: string;
+  transaction_type: "income" | "expense";
+  amount: number;
+  currency_code: string;
+  frequency: string;
+  next_run_date: string;
   category?: {
-    name: string
-    color?: string
-    is_passive: boolean
-  }
+    name: string;
+    color?: string;
+    is_passive: boolean;
+  };
 }
 
 interface Props {
-  plans: FinancialPlan[]
-  recurringProjection: MonthlyProjection
-  upcomingRecurrings: UpcomingRecurring[]
+  plans: FinancialPlan[];
+  recurringProjection: MonthlyProjection;
+  upcomingRecurrings: UpcomingRecurring[];
 }
 
-function formatMoney(amount: number, currencyCode = 'VND'): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
+function formatMoney(amount: number, currencyCode = "VND"): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
     currency: currencyCode,
-  }).format(amount)
+  }).format(amount);
 }
 
 function getStatusBadge(status: string) {
-  const variants: Record<string, { variant: 'default' | 'secondary' | 'outline'; label: string }> = {
-    draft: { variant: 'secondary', label: 'Draft' },
-    active: { variant: 'default', label: 'Active' },
-    archived: { variant: 'outline', label: 'Archived' },
-  }
-  const config = variants[status] || variants.draft
-  return <Badge variant={config.variant}>{config.label}</Badge>
+  const variants: Record<
+    string,
+    { variant: "default" | "secondary" | "outline-solid"; label: string }
+  > = {
+    draft: { variant: "secondary", label: "Draft" },
+    active: { variant: "default", label: "Active" },
+    archived: { variant: "outline", label: "Archived" },
+  };
+  const config = variants[status] || variants.draft;
+  return <Badge variant={config.variant}>{config.label}</Badge>;
 }
 
 export default function PlansIndex({ plans, recurringProjection, upcomingRecurrings }: Props) {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState<FinancialPlan | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<FinancialPlan | null>(null);
 
   const handleDelete = (plan: FinancialPlan) => {
-    setSelectedPlan(plan)
-    setShowDeleteDialog(true)
-  }
+    setSelectedPlan(plan);
+    setShowDeleteDialog(true);
+  };
 
   const confirmDelete = () => {
     if (selectedPlan) {
-      router.delete(route('dashboard.finance.plans.destroy', selectedPlan.id), {
+      router.delete(route("dashboard.finance.plans.destroy", selectedPlan.id), {
         onSuccess: () => {
-          setShowDeleteDialog(false)
-          setSelectedPlan(null)
+          setShowDeleteDialog(false);
+          setSelectedPlan(null);
         },
-      })
+      });
     }
-  }
+  };
 
-  const activePlans = plans.filter((p) => p.status === 'active')
-  const draftPlans = plans.filter((p) => p.status === 'draft')
-  const archivedPlans = plans.filter((p) => p.status === 'archived')
+  const activePlans = plans.filter((p) => p.status === "active");
+  const draftPlans = plans.filter((p) => p.status === "draft");
+  const archivedPlans = plans.filter((p) => p.status === "archived");
 
   return (
     <AuthenticatedLayout title="Financial Plans">
@@ -116,7 +113,7 @@ export default function PlansIndex({ plans, recurringProjection, upcomingRecurri
             </p>
           </div>
           <Button asChild>
-            <Link href={route('dashboard.finance.plans.create')}>
+            <Link href={route("dashboard.finance.plans.create")}>
               <Plus className="mr-2 h-4 w-4" />
               New Plan
             </Link>
@@ -132,34 +129,41 @@ export default function PlansIndex({ plans, recurringProjection, upcomingRecurri
                 <CardTitle className="text-lg">Recurring Overview</CardTitle>
               </div>
               <Button variant="ghost" size="sm" asChild>
-                <Link href={route('dashboard.finance.recurring-transactions.index')}>
+                <Link href={route("dashboard.finance.recurring-transactions.index")}>
                   Manage
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
             </div>
-            <CardDescription>
-              Monthly projection from active recurring transactions
-            </CardDescription>
+            <CardDescription>Monthly projection from active recurring transactions</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">Monthly Income</p>
                 <p className="text-lg font-semibold text-green-600">
-                  {formatMoney(recurringProjection.monthly_income, recurringProjection.currency_code)}
+                  {formatMoney(
+                    recurringProjection.monthly_income,
+                    recurringProjection.currency_code,
+                  )}
                 </p>
               </div>
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">Monthly Expense</p>
                 <p className="text-lg font-semibold text-red-600">
-                  {formatMoney(recurringProjection.monthly_expense, recurringProjection.currency_code)}
+                  {formatMoney(
+                    recurringProjection.monthly_expense,
+                    recurringProjection.currency_code,
+                  )}
                 </p>
               </div>
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">Net Monthly</p>
-                <p className={`text-lg font-semibold ${recurringProjection.monthly_net >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {recurringProjection.monthly_net >= 0 ? '+' : ''}{formatMoney(recurringProjection.monthly_net, recurringProjection.currency_code)}
+                <p
+                  className={`text-lg font-semibold ${recurringProjection.monthly_net >= 0 ? "text-green-600" : "text-red-600"}`}
+                >
+                  {recurringProjection.monthly_net >= 0 ? "+" : ""}
+                  {formatMoney(recurringProjection.monthly_net, recurringProjection.currency_code)}
                 </p>
               </div>
               <div className="space-y-1">
@@ -167,7 +171,10 @@ export default function PlansIndex({ plans, recurringProjection, upcomingRecurri
                   <Wallet className="h-3 w-3" /> Passive Income
                 </p>
                 <p className="text-lg font-semibold text-blue-600">
-                  {formatMoney(recurringProjection.monthly_passive_income, recurringProjection.currency_code)}
+                  {formatMoney(
+                    recurringProjection.monthly_passive_income,
+                    recurringProjection.currency_code,
+                  )}
                 </p>
               </div>
               <div className="space-y-1">
@@ -189,9 +196,10 @@ export default function PlansIndex({ plans, recurringProjection, upcomingRecurri
                     <Badge
                       key={r.id}
                       variant="outline"
-                      className={`text-xs ${r.transaction_type === 'income' ? 'border-green-200 bg-green-50 text-green-700' : 'border-red-200 bg-red-50 text-red-700'}`}
+                      className={`text-xs ${r.transaction_type === "income" ? "border-green-200 bg-green-50 text-green-700" : "border-red-200 bg-red-50 text-red-700"}`}
                     >
-                      {r.name}: {r.transaction_type === 'income' ? '+' : '-'}{formatMoney(r.amount, r.currency_code)}
+                      {r.name}: {r.transaction_type === "income" ? "+" : "-"}
+                      {formatMoney(r.amount, r.currency_code)}
                     </Badge>
                   ))}
                 </div>
@@ -208,7 +216,7 @@ export default function PlansIndex({ plans, recurringProjection, upcomingRecurri
               Create a plan to forecast your income and expenses
             </p>
             <Button asChild>
-              <Link href={route('dashboard.finance.plans.create')}>
+              <Link href={route("dashboard.finance.plans.create")}>
                 <Plus className="mr-2 h-4 w-4" />
                 Create Plan
               </Link>
@@ -231,9 +239,7 @@ export default function PlansIndex({ plans, recurringProjection, upcomingRecurri
             {/* Draft Plans */}
             {draftPlans.length > 0 && (
               <div>
-                <h3 className="text-lg font-medium text-muted-foreground mb-4">
-                  Drafts
-                </h3>
+                <h3 className="text-lg font-medium text-muted-foreground mb-4">Drafts</h3>
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                   {draftPlans.map((plan) => (
                     <PlanCard key={plan.id} plan={plan} onDelete={handleDelete} />
@@ -245,9 +251,7 @@ export default function PlansIndex({ plans, recurringProjection, upcomingRecurri
             {/* Archived Plans */}
             {archivedPlans.length > 0 && (
               <div>
-                <h3 className="text-lg font-medium text-muted-foreground mb-4">
-                  Archived
-                </h3>
+                <h3 className="text-lg font-medium text-muted-foreground mb-4">Archived</h3>
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 opacity-60">
                   {archivedPlans.map((plan) => (
                     <PlanCard key={plan.id} plan={plan} onDelete={handleDelete} />
@@ -264,16 +268,13 @@ export default function PlansIndex({ plans, recurringProjection, upcomingRecurri
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Financial Plan</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete "{selectedPlan?.name}"? This
-                action cannot be undone.
+                Are you sure you want to delete "{selectedPlan?.name}"? This action cannot be
+                undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={confirmDelete}
-                className="bg-red-600 hover:bg-red-700"
-              >
+              <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
                 Delete
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -281,15 +282,15 @@ export default function PlansIndex({ plans, recurringProjection, upcomingRecurri
         </AlertDialog>
       </Main>
     </AuthenticatedLayout>
-  )
+  );
 }
 
 function PlanCard({
   plan,
   onDelete,
 }: {
-  plan: FinancialPlan
-  onDelete: (plan: FinancialPlan) => void
+  plan: FinancialPlan;
+  onDelete: (plan: FinancialPlan) => void;
 }) {
   return (
     <Card>
@@ -299,7 +300,7 @@ function PlanCard({
             <CardTitle className="text-lg">{plan.name}</CardTitle>
             <CardDescription>
               {plan.start_year} - {plan.end_year} ({plan.year_span} year
-              {plan.year_span > 1 ? 's' : ''})
+              {plan.year_span > 1 ? "s" : ""})
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
@@ -312,21 +313,18 @@ function PlanCard({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link href={route('dashboard.finance.plans.show', plan.id)}>
+                  <Link href={route("dashboard.finance.plans.show", plan.id)}>
                     <Eye className="mr-2 h-4 w-4" />
                     View & Edit
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href={route('dashboard.finance.plans.compare', plan.id)}>
+                  <Link href={route("dashboard.finance.plans.compare", plan.id)}>
                     <BarChart3 className="mr-2 h-4 w-4" />
                     Compare
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => onDelete(plan)}
-                  className="text-red-600"
-                >
+                <DropdownMenuItem onClick={() => onDelete(plan)} className="text-red-600">
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete
                 </DropdownMenuItem>
@@ -337,9 +335,7 @@ function PlanCard({
       </CardHeader>
       <CardContent>
         {plan.description && (
-          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-            {plan.description}
-          </p>
+          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{plan.description}</p>
         )}
         <div className="grid grid-cols-3 gap-4 text-sm">
           <div>
@@ -359,9 +355,7 @@ function PlanCard({
           <div>
             <p className="text-muted-foreground">Net</p>
             <p
-              className={`font-medium ${
-                plan.net_planned >= 0 ? 'text-green-600' : 'text-red-600'
-              }`}
+              className={`font-medium ${plan.net_planned >= 0 ? "text-green-600" : "text-red-600"}`}
             >
               {formatMoney(plan.net_planned, plan.currency_code)}
             </p>
@@ -369,5 +363,5 @@ function PlanCard({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

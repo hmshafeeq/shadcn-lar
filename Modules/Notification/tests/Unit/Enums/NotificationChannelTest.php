@@ -1,74 +1,60 @@
 <?php
 
-namespace Modules\Notification\Tests\Unit\Enums;
-
 use Modules\Notification\Enums\NotificationChannel;
-use PHPUnit\Framework\TestCase;
 
-class NotificationChannelTest extends TestCase
-{
-    public function test_has_expected_cases(): void
-    {
-        $cases = NotificationChannel::cases();
+uses(Tests\TestCase::class);
 
-        $this->assertCount(4, $cases);
-        $this->assertContains(NotificationChannel::DATABASE, $cases);
-        $this->assertContains(NotificationChannel::EMAIL, $cases);
-        $this->assertContains(NotificationChannel::SMS, $cases);
-        $this->assertContains(NotificationChannel::PUSH, $cases);
+test('has expected cases', function () {
+    $cases = NotificationChannel::cases();
+
+    expect($cases)->toHaveCount(4);
+    expect($cases)->toContain(NotificationChannel::DATABASE);
+    expect($cases)->toContain(NotificationChannel::EMAIL);
+    expect($cases)->toContain(NotificationChannel::SMS);
+    expect($cases)->toContain(NotificationChannel::PUSH);
+});
+
+test('has correct values', function () {
+    expect(NotificationChannel::DATABASE->value)->toBe('database');
+    expect(NotificationChannel::EMAIL->value)->toBe('email');
+    expect(NotificationChannel::SMS->value)->toBe('sms');
+    expect(NotificationChannel::PUSH->value)->toBe('push');
+});
+
+test('label returns human readable string', function () {
+    expect(NotificationChannel::DATABASE->label())->toBe('In-App');
+    expect(NotificationChannel::EMAIL->label())->toBe('Email');
+    expect(NotificationChannel::SMS->label())->toBe('SMS');
+    expect(NotificationChannel::PUSH->label())->toBe('Push');
+});
+
+test('description returns string', function () {
+    foreach (NotificationChannel::cases() as $channel) {
+        expect($channel->description())->toBeString()->not->toBeEmpty();
     }
+});
 
-    public function test_has_correct_values(): void
-    {
-        $this->assertEquals('database', NotificationChannel::DATABASE->value);
-        $this->assertEquals('email', NotificationChannel::EMAIL->value);
-        $this->assertEquals('sms', NotificationChannel::SMS->value);
-        $this->assertEquals('push', NotificationChannel::PUSH->value);
+test('icon returns string', function () {
+    foreach (NotificationChannel::cases() as $channel) {
+        expect($channel->icon())->toBeString()->not->toBeEmpty();
     }
+});
 
-    public function test_label_returns_human_readable_string(): void
-    {
-        $this->assertEquals('In-App', NotificationChannel::DATABASE->label());
-        $this->assertEquals('Email', NotificationChannel::EMAIL->label());
-        $this->assertEquals('SMS', NotificationChannel::SMS->label());
-        $this->assertEquals('Push', NotificationChannel::PUSH->label());
-    }
+test('driver returns correct driver', function () {
+    expect(NotificationChannel::DATABASE->driver())->toBe('database');
+    expect(NotificationChannel::EMAIL->driver())->toBe('mail');
+    expect(NotificationChannel::SMS->driver())->toBe('vonage');
+    expect(NotificationChannel::PUSH->driver())->toBe('fcm');
+});
 
-    public function test_description_returns_string(): void
-    {
-        foreach (NotificationChannel::cases() as $channel) {
-            $this->assertIsString($channel->description());
-            $this->assertNotEmpty($channel->description());
-        }
-    }
+test('can be created from value', function () {
+    $channel = NotificationChannel::from('email');
 
-    public function test_icon_returns_string(): void
-    {
-        foreach (NotificationChannel::cases() as $channel) {
-            $this->assertIsString($channel->icon());
-            $this->assertNotEmpty($channel->icon());
-        }
-    }
+    expect($channel)->toBe(NotificationChannel::EMAIL);
+});
 
-    public function test_driver_returns_correct_driver(): void
-    {
-        $this->assertEquals('database', NotificationChannel::DATABASE->driver());
-        $this->assertEquals('mail', NotificationChannel::EMAIL->driver());
-        $this->assertEquals('vonage', NotificationChannel::SMS->driver());
-        $this->assertEquals('fcm', NotificationChannel::PUSH->driver());
-    }
+test('try from returns null for invalid value', function () {
+    $channel = NotificationChannel::tryFrom('invalid');
 
-    public function test_can_be_created_from_value(): void
-    {
-        $channel = NotificationChannel::from('email');
-
-        $this->assertEquals(NotificationChannel::EMAIL, $channel);
-    }
-
-    public function test_try_from_returns_null_for_invalid_value(): void
-    {
-        $channel = NotificationChannel::tryFrom('invalid');
-
-        $this->assertNull($channel);
-    }
-}
+    expect($channel)->toBeNull();
+});
